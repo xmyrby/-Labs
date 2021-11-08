@@ -1,0 +1,5 @@
+﻿  lab2Baunti.cpp
+C:\Users\XMyRby\source\repos\lab2Baunti\lab2Baunti\lab2Baunti.cpp(19,6): warning C4244: =: преобразование "double" в "int", возможна потеря данных
+C:\Users\XMyRby\source\repos\lab2Baunti\lab2Baunti\lab2Baunti.cpp(20,11): warning C4244: =: преобразование "double" в "int", возможна потеря данных
+C:\Users\XMyRby\source\repos\lab2Baunti\lab2Baunti\lab2Baunti.cpp(21,10): warning C4244: =: преобразование "double" в "int", возможна потеря данных
+  lab2Baunti.vcxproj -> C:\Users\XMyRby\source\repos\lab2Baunti\Debug\lab2Baunti.exe

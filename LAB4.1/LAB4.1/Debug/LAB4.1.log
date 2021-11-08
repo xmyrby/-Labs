@@ -1,0 +1,4 @@
+﻿  Source.cpp
+C:\Users\XMyRby\source\repos\LAB4.1\LAB4.1\Source.cpp(15,10): warning C4244: =: преобразование "double" в "int", возможна потеря данных
+C:\Users\XMyRby\source\repos\LAB4.1\LAB4.1\Source.cpp(17,10): warning C4244: =: преобразование "double" в "int", возможна потеря данных
+  LAB4.1.vcxproj -> C:\Users\XMyRby\source\repos\LAB4.1\Debug\LAB4.1.exe
