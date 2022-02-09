@@ -1,0 +1,3 @@
+﻿  Source.cpp
+C:\Users\XMyRby\source\repos\Lab14_\Lab14_\Source.cpp(140,12): warning C4244: аргумент: преобразование "time_t" в "unsigned int", возможна потеря данных
+  Lab14_.vcxproj -> C:\Users\XMyRby\source\repos\Lab14_\Debug\Lab14_.exe

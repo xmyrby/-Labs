@@ -1,0 +1,3 @@
+﻿  Source.cpp
+C:\Users\XMyRby\source\repos\Zhenya14\Zhenya14\Source.cpp(44,12): warning C4244: аргумент: преобразование "time_t" в "unsigned int", возможна потеря данных
+  Zhenya14.vcxproj -> C:\Users\XMyRby\source\repos\Zhenya14\Debug\Zhenya14.exe

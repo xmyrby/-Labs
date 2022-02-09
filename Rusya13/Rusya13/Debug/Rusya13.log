@@ -1,0 +1,5 @@
+﻿  Source.cpp
+C:\Users\XMyRby\source\repos\Rusya13\Rusya13\Source.cpp(24,12): warning C4244: аргумент: преобразование "time_t" в "unsigned int", возможна потеря данных
+C:\Users\XMyRby\source\repos\Rusya13\Rusya13\Source.cpp(21,6): warning C4101: max: неиспользованная локальная переменная
+C:\Users\XMyRby\source\repos\Rusya13\Rusya13\Source.cpp(21,11): warning C4101: l: неиспользованная локальная переменная
+  Rusya13.vcxproj -> C:\Users\XMyRby\source\repos\Rusya13\Debug\Rusya13.exe
