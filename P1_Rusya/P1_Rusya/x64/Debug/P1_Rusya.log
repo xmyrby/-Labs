@@ -1,0 +1,3 @@
+﻿  P1.1_17.cpp
+C:\Users\User\source\repos\P1_Rusya\P1_Rusya\P1.1_17.cpp(39,12): warning C4244: аргумент: преобразование "time_t" в "unsigned int", возможна потеря данных
+  P1_Rusya.vcxproj -> C:\Users\User\source\repos\P1_Rusya\x64\Debug\P1.1_17.exe

@@ -1,0 +1,3 @@
+﻿  13.cpp
+C:\Users\User\source\repos\Ilya13\Ilya13\13.cpp(105,12): warning C4244: аргумент: преобразование "time_t" в "unsigned int", возможна потеря данных
+  Ilya13.vcxproj -> C:\Users\User\source\repos\Ilya13\x64\Debug\Ilya13.exe

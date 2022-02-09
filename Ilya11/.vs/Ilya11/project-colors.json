@@ -1,0 +1,21 @@
+{
+  "Version": 1,
+  "ProjectMap": {
+    "ba81ec4a-0fc2-41af-b90d-98dc086ede0a": {
+      "ProjectGuid": "ba81ec4a-0fc2-41af-b90d-98dc086ede0a",
+      "DisplayName": "Ilya11_1",
+      "ColorIndex": 0
+    },
+    "a2fe74e1-b743-11d0-ae1a-00a0c90fffc3": {
+      "ProjectGuid": "a2fe74e1-b743-11d0-ae1a-00a0c90fffc3",
+      "DisplayName": "Прочие файлы",
+      "ColorIndex": -1
+    },
+    "852262d4-b924-43ae-ba0f-e02bf72cbb6d": {
+      "ProjectGuid": "852262d4-b924-43ae-ba0f-e02bf72cbb6d",
+      "DisplayName": "Ilya11_2",
+      "ColorIndex": 1
+    }
+  },
+  "NextColorIndex": 2
+}
