@@ -1,0 +1,16 @@
+{
+  "Version": 1,
+  "ProjectMap": {
+    "bc2a5b11-142b-48a3-9f1d-fb3b21375ac3": {
+      "ProjectGuid": "bc2a5b11-142b-48a3-9f1d-fb3b21375ac3",
+      "DisplayName": "Ilya15",
+      "ColorIndex": 0
+    },
+    "a2fe74e1-b743-11d0-ae1a-00a0c90fffc3": {
+      "ProjectGuid": "a2fe74e1-b743-11d0-ae1a-00a0c90fffc3",
+      "DisplayName": "Прочие файлы",
+      "ColorIndex": -1
+    }
+  },
+  "NextColorIndex": 1
+}

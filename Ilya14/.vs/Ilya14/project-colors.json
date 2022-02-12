@@ -1,0 +1,16 @@
+{
+  "Version": 1,
+  "ProjectMap": {
+    "a09c29fd-fa5a-404f-a4b8-df27e9a1dfb9": {
+      "ProjectGuid": "a09c29fd-fa5a-404f-a4b8-df27e9a1dfb9",
+      "DisplayName": "Ilya14",
+      "ColorIndex": 0
+    },
+    "a2fe74e1-b743-11d0-ae1a-00a0c90fffc3": {
+      "ProjectGuid": "a2fe74e1-b743-11d0-ae1a-00a0c90fffc3",
+      "DisplayName": "Прочие файлы",
+      "ColorIndex": -1
+    }
+  },
+  "NextColorIndex": 1
+}
