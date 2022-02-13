@@ -3,6 +3,7 @@
 #include <stdlib.h>
 #include <ctime>
 
+//Заполнение самостоятельно
 void selffill(int* mas, int size)
 {
 	for (int i = 0; i < size; i++)
@@ -13,6 +14,7 @@ void selffill(int* mas, int size)
 	}
 }
 
+//Заполнение случайными числами
 void randfill(int* mas, int size)
 {
 	int start, end;
@@ -29,6 +31,7 @@ void randfill(int* mas, int size)
 		mas[i] = rand() % (end - start + 1) + start;
 }
 
+//Вывод массива
 void printmas(int* mas, int size)
 {
 	for (int i = 0; i < size; i++)
@@ -37,6 +40,7 @@ void printmas(int* mas, int size)
 	}
 }
 
+//Выбор способа
 void choosetype(int& type)
 {
 	do
@@ -47,6 +51,7 @@ void choosetype(int& type)
 	} while (type < 1 || type > 2);
 }
 
+//Задания размера
 void setsize(int& size)
 {
 	do
@@ -57,6 +62,7 @@ void setsize(int& size)
 	} while (size <= 0 || size > 100);
 }
 
+//Заполнение
 void switcher(int* mas, int& size, int type)
 {
 	switch (type)
@@ -77,6 +83,7 @@ void switcher(int* mas, int& size, int type)
 	}
 }
 
+//Трансформация массива
 int transform(int* mas, int size)
 {
 	int count = 0, min = 100000;
@@ -104,6 +111,7 @@ int main()
 	system("chcp 1251 > nul");
 	srand(time(NULL));
 
+	//Объявление пременных
 	int type, size;
 	int mas[100];
 

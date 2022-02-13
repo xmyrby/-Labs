@@ -1,11 +1,13 @@
 #include<iostream>
 
+//Создание структуры
 struct Product
 {
 	char Name[100];
 	int Cost;
 };
 
+//Загрузка из файла
 void input_file(Product* mas, int& size)
 {
 	FILE* ft;
@@ -24,6 +26,7 @@ void input_file(Product* mas, int& size)
 	}
 }
 
+//Сохранение в файл
 void output_file(Product* mas, int size)
 {
 	FILE* f;
@@ -41,6 +44,8 @@ void output_file(Product* mas, int size)
 		fclose(f);
 	}
 }
+
+//Вывод массива
 void printmas(Product* mas, int size)
 {
 	for (int i = 0; i < size; i++)
@@ -49,6 +54,7 @@ void printmas(Product* mas, int size)
 	}
 }
 
+//Ручное заполнение
 void hand(Product* mas, int size)
 {
 	for (int i = 0; i < size; i++)
@@ -61,6 +67,7 @@ void hand(Product* mas, int size)
 	}
 }
 
+//Получение средней стоимости
 double task(Product* mas, int size)
 {
 	double sum = 0;
@@ -71,6 +78,7 @@ double task(Product* mas, int size)
 	return sum / size;
 }
 
+//Выбор способа
 void choosetype(int& type)
 {
 	do
@@ -81,6 +89,7 @@ void choosetype(int& type)
 	} while (type < 1 || type > 2);
 }
 
+//Задание размера
 void setsize(int& size)
 {
 	do
@@ -91,6 +100,7 @@ void setsize(int& size)
 	} while (size <= 0 || size > 100);
 }
 
+//Решение
 void switcher(Product* mas, int& size, int type)
 {
 	switch (type)
@@ -117,6 +127,7 @@ int main()
 	system("chcp 1251 > nul");
 	srand(time(NULL));
 
+	//Объявление переменных
 	int type = 0, size = 0;
 	Product mas[100];
 

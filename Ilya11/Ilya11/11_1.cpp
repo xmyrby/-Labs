@@ -2,9 +2,11 @@
 //(-1)^(2i+1)1/x+i
 int main()
 {
+	//ќбъ€вление переменных
 	int n = 0, polar = -1;
 	double x = 0, s = 0;
 
+	//¬вод количества элементов
 	do
 	{
 		system("cls");
@@ -12,9 +14,11 @@ int main()
 		scanf_s("%d", &n);
 	} while (n < 1);
 
+	//¬вод x
 	printf("Print x: ");
 	scanf_s("%lf", &x);
 
+	//—уммирование
 	for (int i = 1; i <= n; i++)
 	{
 		double number = polar * (1 / (x + i));

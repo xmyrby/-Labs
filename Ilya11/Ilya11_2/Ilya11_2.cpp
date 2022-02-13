@@ -3,14 +3,18 @@
 //(-1)^i*(|x-9|^i/(i+4)!)
 int main()
 {
+	//ќбъ€вление переменных
 	int i = 0;
 	double s = 0, x, e, number, fact = 24, lastx, polar = -1;
+
+	//¬вод x и e
 	printf("Print x: ");
 	scanf_s("%lf", &x);
 	printf("Print e: ");
 	scanf_s("%lf", &e);
 	lastx = x-9;
 
+	//—уммирование
 	do
 	{
 		i++;
