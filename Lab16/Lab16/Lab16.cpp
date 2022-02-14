@@ -41,13 +41,7 @@ void input_bin(Rect* mas, int& size)
 	}
 	fread(&size, sizeof(int), 1, ft);
 
-	for (int i = 0; i < size; i++)
-	{
-		fread(&mas[i].x1, sizeof(int), 1, ft);
-		fread(&mas[i].x2, sizeof(int), 1, ft);
-		fread(&mas[i].y1, sizeof(int), 1, ft);
-		fread(&mas[i].y2, sizeof(int), 1, ft);
-	}
+	fread(mas, sizeof(Rect), size, ft);
 	fclose(ft);
 }
 
@@ -76,13 +70,7 @@ void output_bin(Rect* mas, int size)
 		exit(1);
 	}
 	fwrite(&size, sizeof(int), 1, f);
-	for (int i = 0; i < size; i++)
-	{
-		fwrite(&mas[i].x1, sizeof(int), 1, f);
-		fwrite(&mas[i].x2, sizeof(int), 1, f);
-		fwrite(&mas[i].y1, sizeof(int), 1, f);
-		fwrite(&mas[i].y2, sizeof(int), 1, f);
-	}
+	fwrite(mas, sizeof(Rect), size, f);
 	fclose(f);
 }
 

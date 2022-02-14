@@ -33,8 +33,7 @@ void input_bin(double mas[100][100], int& sizei, int& sizej)
 	fread(&sizej, sizeof(int), 1, ft);
 
 	for (int i = 0; i < sizei; i++)
-		for (int j = 0; j < sizej; j++)
-			fread(&mas[i][j], sizeof(double), 1, ft);
+		fread(mas[i], sizeof(double), sizej, ft);
 	fclose(ft);
 }
 
@@ -67,8 +66,7 @@ void output_bin(double mas[100][100], int sizei, int sizej)
 	fwrite(&sizei, sizeof(int), 1, f);
 	fwrite(&sizej, sizeof(int), 1, f);
 	for (int i = 0; i < sizei; i++)
-		for (int j = 0; j < sizej; j++)
-			fwrite(&mas[i][j], sizeof(double), 1, f);
+		fwrite(mas[i], sizeof(double), sizej, f);
 	fclose(f);
 }
 
@@ -125,6 +123,16 @@ void printmas(double mas[100][100], int sizei, int sizej)
 			printf("%8.2lf", mas[i][j]);
 		printf("\n");
 	}
+}
+
+double sumEl(double mas[100][100], int sizei, int sizej)
+{
+	double sum = 0;
+	for (int i = 0; i < sizei; i++)
+		for (int j = 0; j < sizej; j++)
+			if (i * j % 2 == 0)
+				sum += mas[i][j];
+	return sum;
 }
 
 void choosetype(int& type)
@@ -205,6 +213,7 @@ int main()
 
 	system("cls");
 	printmas(mas, sizei, sizej);
+	printf("\nСумма элементов = %.3lf", sumEl(mas, sizei, sizej));
 
 	output_file(mas, sizei, sizej);
 	output_bin(mas, sizei, sizej);
