@@ -3,6 +3,7 @@
 #include <stdlib.h>
 #include <ctime>
 #include <math.h>
+#include <windows.h>
 
 struct Sums
 {
@@ -19,7 +20,7 @@ Sums getSums(int mas[100][100], int sizei, int sizej)
 		sums.sums[i] = 0;
 		sums.indexes[i] = i;
 		for (int j = 0; j < sizej; j++)
-			if (mas[i][j] % 2 == 0)
+			if (mas[i][j] % 2 == 0 && mas[i][j] >= 0)
 				sums.sums[i] += mas[i][j];
 	}
 	return sums;
@@ -108,27 +109,67 @@ void randfill(int mas[100][100], int sizei, int sizej)
 			mas[i][j] = (rand() % (end - start + 1) + start);
 }
 
-void printmas(int mas[100][100], int sizei, int sizej)
+int getRowPro(int mas[100][100], int i, int sizej)
 {
+	int pro = 1;
+	int otr = 0;
+	for (int j = 0; j < sizej; j++)
+		if (mas[i][j] < 0)
+			otr++;
+	if (!otr)
+		for (int j = 0; j < sizej; j++)
+			pro *= mas[i][j];
+	else
+		return 0;
+	return pro;
+}
+
+void getMaxDiagInd(int mas[100][100], int sizei, int sizej, int& im, int& jm)
+{
+	if (sizei != sizej)
+		return;
+
+	int max = -1000;
+
+	for (int i = 0; i < sizei; i++)
+		for (int j = 0; j < sizej; j++)
+			if (i != j && mas[i][j] > max)
+			{
+				max = mas[i][j];
+				im = i;
+				jm = j;
+			}
+}
+
+void printmas(int mas[100][100], int sizei, int sizej, int stage)
+{
+	HANDLE handle = GetStdHandle(STD_OUTPUT_HANDLE);
+
 	Sums sums = getSums(mas, sizei, sizej);
+	int im = -1, jm = -1;
 	printf("Массив:\n");
+	if (stage == 0)
+		getMaxDiagInd(mas, sizei, sizej, im, jm);
+
 	for (int i = 0; i < sizei; i++)
 	{
 		for (int j = 0; j < sizej; j++)
+		{
+			if (im == i && jm == j)
+				SetConsoleTextAttribute(handle, FOREGROUND_RED);
 			printf("%6d", mas[i][j]);
-		printf("	: %d", sums.sums[i]);
+			SetConsoleTextAttribute(handle, FOREGROUND_RED | FOREGROUND_GREEN | FOREGROUND_BLUE);
+		}
+
+		printf("	: Сумма %5d", sums.sums[i]);
+		if (stage == 0)
+		{
+			int pro = getRowPro(mas, i, sizej);
+			if (pro)
+				printf("	: Произведение %5d", pro);
+		}
 		printf("\n");
 	}
-}
-
-double sumEl(int mas[100][100], int sizei, int sizej)
-{
-	double sum = 0;
-	for (int i = 0; i < sizei; i++)
-		for (int j = 0; j < sizej; j++)
-			if (i * j % 2 == 0)
-				sum += mas[i][j];
-	return sum;
 }
 
 void choosetype(int& type)
@@ -226,7 +267,22 @@ void moveRows(int mas[100][100], int sizei, int sizej)
 	for (int s = 0; s < sizei; s++)
 		for (int j = 0; j < sizej; j++)
 			mas2[s][j] = mas[sums.indexes[s]][j];
-	printmas(mas2, sizei, sizej);
+	printmas(mas2, sizei, sizej, 1);
+}
+
+void getMaxDiag(int mas[100][100], int sizei, int sizej)
+{
+	if (sizei != sizej)
+		return;
+
+	int max = -1000;
+
+	for (int i = 0; i < sizei; i++)
+		for (int j = 0; j < sizej; j++)
+			if (i != j && mas[i][j] > max)
+				max = mas[i][j];
+
+	printf("Максимум среди элементов диагоналей, параллельных главной = %d\n\n", max);
 }
 
 int main()
@@ -244,8 +300,10 @@ int main()
 
 	switcher(mas, sizei, sizej, type);
 	system("cls");
-	printmas(mas, sizei, sizej);
-	printf("\nСтолбцы не содержащие нулевых эл-тов = %d\n\n", getCol(mas, sizei, sizej));
+	printmas(mas, sizei, sizej, 0);
+	int a = getRowPro(mas, sizei, sizej);
+	printf("\nСтолбцы не содержащие нулевых эл-тов = %d\nПроизведение элементов строк, не содержащих отрицательных эл-ов = %d\n", getCol(mas, sizei, sizej), getRowPro(mas, sizei, sizej));
+	getMaxDiag(mas, sizei, sizej);
 	moveRows(mas, sizei, sizej);
 	output_file(mas, sizei, sizej);
 	output_bin(mas, sizei, sizej);
