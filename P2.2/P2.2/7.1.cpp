@@ -5,12 +5,14 @@
 #include <math.h>
 #include <windows.h>
 
+//Структура сумм
 struct Sums
 {
 	int sums[100];
 	int indexes[100];
 };
 
+//Получение сумм элементов строк
 Sums getSums(int mas[100][100], int sizei, int sizej)
 {
 	Sums sums;
@@ -26,6 +28,7 @@ Sums getSums(int mas[100][100], int sizei, int sizej)
 	return sums;
 }
 
+//Загрузка из текстового файла
 void input_file(int mas[100][100], int& sizei, int& sizej)
 {
 	FILE* ft;
@@ -43,6 +46,7 @@ void input_file(int mas[100][100], int& sizei, int& sizej)
 	fclose(ft);
 }
 
+//Загрузка из bin файла
 void input_bin(int mas[100][100], int& sizei, int& sizej)
 {
 	FILE* ft = NULL;
@@ -59,6 +63,7 @@ void input_bin(int mas[100][100], int& sizei, int& sizej)
 	fclose(ft);
 }
 
+//Сохранение в текстовый файл
 void output_file(int mas[100][100], int sizei, int sizej)
 {
 	FILE* f;
@@ -76,6 +81,7 @@ void output_file(int mas[100][100], int sizei, int sizej)
 	fclose(f);
 }
 
+//Сохранение в bin файл
 void output_bin(int mas[100][100], int sizei, int sizej)
 {
 	FILE* f;
@@ -92,12 +98,17 @@ void output_bin(int mas[100][100], int sizei, int sizej)
 	fclose(f);
 }
 
+//Заполнение случайными числами
 void randfill(int mas[100][100], int sizei, int sizej)
 {
+	int err = 0;
 	int start, end;
 	do
 	{
 		system("cls");
+		if (err)
+			printf("Неверный ввод!\n");
+		err = 1;
 		printf("Введите начальную границу значений = ");
 		scanf_s("%d", &start);
 		printf("Введите конечную границу значений = ");
@@ -109,6 +120,7 @@ void randfill(int mas[100][100], int sizei, int sizej)
 			mas[i][j] = (rand() % (end - start + 1) + start);
 }
 
+//Получение произведения элементов строк, не содержащих отрицательных переменных
 int getRowPro(int mas[100][100], int i, int sizej)
 {
 	int pro = 1;
@@ -124,6 +136,7 @@ int getRowPro(int mas[100][100], int i, int sizej)
 	return pro;
 }
 
+//Получение индекса максимального числа в диагоналях
 void getMaxDiagInd(int mas[100][100], int sizei, int sizej, int& im, int& jm)
 {
 	if (sizei != sizej)
@@ -141,6 +154,19 @@ void getMaxDiagInd(int mas[100][100], int sizei, int sizej, int& im, int& jm)
 			}
 }
 
+//Проверка столбца на содержание в нём нулевых элементов
+int CheckCol(int mas[100][100], int sizei, int j)
+{
+	int zero = 0;
+	for (int i = 0; i < sizei; i++)
+		if (mas[i][j] == 0)
+			zero++;
+	if (!zero)
+		return 1;
+	return 0;
+}
+
+//Вывод массива с выделением цвета
 void printmas(int mas[100][100], int sizei, int sizej, int stage)
 {
 	HANDLE handle = GetStdHandle(STD_OUTPUT_HANDLE);
@@ -157,11 +183,14 @@ void printmas(int mas[100][100], int sizei, int sizej, int stage)
 		{
 			if (im == i && jm == j)
 				SetConsoleTextAttribute(handle, FOREGROUND_RED);
+			if (j == i && stage == 0 && sizei == sizej)
+				SetConsoleTextAttribute(handle, FOREGROUND_GREEN);
 			printf("%6d", mas[i][j]);
 			SetConsoleTextAttribute(handle, FOREGROUND_RED | FOREGROUND_GREEN | FOREGROUND_BLUE);
 		}
 
-		printf("	: Сумма %5d", sums.sums[i]);
+		if (sums.sums[i] > 0)
+			printf("	: Сумма %5d", sums.sums[i]);
 		if (stage == 0)
 		{
 			int pro = getRowPro(mas, i, sizej);
@@ -170,34 +199,70 @@ void printmas(int mas[100][100], int sizei, int sizej, int stage)
 		}
 		printf("\n");
 	}
+
+	if (stage == 0)
+	{
+		for (int j = 0; j < sizej; j++)
+		{
+			int check = CheckCol(mas, sizei, j);
+			if (check)
+			{
+				SetConsoleTextAttribute(handle, FOREGROUND_BLUE);
+				printf("     ^");
+			}
+			else
+			{
+				SetConsoleTextAttribute(handle, FOREGROUND_RED);
+				printf("     *");
+			}
+		}
+		SetConsoleTextAttribute(handle, FOREGROUND_RED | FOREGROUND_GREEN | FOREGROUND_BLUE);
+	}
+
+	printf("\n");
 }
 
+//Выбор способа заполнения
 void choosetype(int& type)
 {
+	int err = 0;
 	do
 	{
 		system("cls");
+		if (err)
+			printf("Неверный ввод!\n");
+		err = 1;
 		printf("Способы ввода:\n1 - случайными числами\n2 - из файла\n3 - из бинарного файла\nВыбор : ");
 		scanf_s("%d", &type);
-	} while (type < 1 || type > 5);
+	} while (type < 1 || type > 3);
 }
 
+//Задание размера массива
 void setsize(int& sizei, int& sizej)
 {
+	int err = 0;
 	do
 	{
 		system("cls");
+		if (err)
+			printf("Неверный ввод!\n");
+		err = 1;
 		printf("Введите размер массива i = ");
 		scanf_s("%d", &sizei);
 	} while (sizei <= 0 || sizei > 100);
+	err = 0;
 	do
 	{
 		system("cls");
+		if (err)
+			printf("Неверный ввод!\n");
+		err = 1;
 		printf("Введите размер массива j = ");
 		scanf_s("%d", &sizej);
 	} while (sizej <= 0 || sizej > 100);
 }
 
+//Определние способа
 void switcher(int mas[100][100], int& sizei, int& sizej, int type)
 {
 	switch (type)
@@ -222,6 +287,7 @@ void switcher(int mas[100][100], int& sizei, int& sizej, int type)
 	}
 }
 
+//Получение количества колонок, не содержащих нулевых элементов
 int getCol(int mas[100][100], int sizei, int sizej)
 {
 	int count = 0;
@@ -237,6 +303,7 @@ int getCol(int mas[100][100], int sizei, int sizej)
 	return count;
 }
 
+//Сортировка строк по суммам
 void moveRows(int mas[100][100], int sizei, int sizej)
 {
 	Sums sums = getSums(mas, sizei, sizej);
@@ -270,6 +337,7 @@ void moveRows(int mas[100][100], int sizei, int sizej)
 	printmas(mas2, sizei, sizej, 1);
 }
 
+//Получение максимального числа диагоналей
 void getMaxDiag(int mas[100][100], int sizei, int sizej)
 {
 	if (sizei != sizej)
@@ -302,7 +370,7 @@ int main()
 	system("cls");
 	printmas(mas, sizei, sizej, 0);
 	int a = getRowPro(mas, sizei, sizej);
-	printf("\nСтолбцы не содержащие нулевых эл-тов = %d\nПроизведение элементов строк, не содержащих отрицательных эл-ов = %d\n", getCol(mas, sizei, sizej), getRowPro(mas, sizei, sizej));
+	printf("\nСтолбцы не содержащие нулевых эл-тов = %d\n", getCol(mas, sizei, sizej));
 	getMaxDiag(mas, sizei, sizej);
 	moveRows(mas, sizei, sizej);
 	output_file(mas, sizei, sizej);

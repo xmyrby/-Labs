@@ -1,0 +1,16 @@
+{
+  "Version": 1,
+  "ProjectMap": {
+    "89ea54f5-e65f-40e3-979e-141b58da54e7": {
+      "ProjectGuid": "89ea54f5-e65f-40e3-979e-141b58da54e7",
+      "DisplayName": "P3.1",
+      "ColorIndex": 0
+    },
+    "42479064-70b1-4c46-bb43-473b93e42298": {
+      "ProjectGuid": "42479064-70b1-4c46-bb43-473b93e42298",
+      "DisplayName": "P3.2",
+      "ColorIndex": 1
+    }
+  },
+  "NextColorIndex": 2
+}
