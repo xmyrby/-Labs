@@ -1,0 +1,4 @@
+﻿C:\Program Files\Microsoft Visual Studio\2022\Community\MSBuild\Microsoft\VC\v170\Microsoft.CppBuild.targets(510,5): warning MSB8028: промежуточный каталог (x64\Debug\) содержит файлы, которые используются совместно с другим проектом (P3Ilya.vcxproj).  Это может привести к ошибкам очистки и перестроения.
+  P3.1.cpp
+D:\GitHub\-Labs\P2Ilya\P2Ilya\P3.1.cpp(78,12): warning C4244: аргумент: преобразование "time_t" в "unsigned int", возможна потеря данных
+  P2Ilya.vcxproj -> D:\GitHub\-Labs\P2Ilya\x64\Debug\P3.1.exe

@@ -1,0 +1,21 @@
+{
+  "Version": 1,
+  "ProjectMap": {
+    "efb5ce42-3ce3-4b6c-bec2-bbf431bc2ad2": {
+      "ProjectGuid": "efb5ce42-3ce3-4b6c-bec2-bbf431bc2ad2",
+      "DisplayName": "P3Ilya",
+      "ColorIndex": 0
+    },
+    "0c2917c9-0a46-46c7-96e4-961ff39fd59c": {
+      "ProjectGuid": "0c2917c9-0a46-46c7-96e4-961ff39fd59c",
+      "DisplayName": "P3.2",
+      "ColorIndex": 1
+    },
+    "54d4b1c6-7c3c-40b5-a220-345b645c5756": {
+      "ProjectGuid": "54d4b1c6-7c3c-40b5-a220-345b645c5756",
+      "DisplayName": "P3.3",
+      "ColorIndex": 2
+    }
+  },
+  "NextColorIndex": 3
+}
