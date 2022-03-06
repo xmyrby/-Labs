@@ -10,7 +10,12 @@
       "ProjectGuid": "42479064-70b1-4c46-bb43-473b93e42298",
       "DisplayName": "P3.2",
       "ColorIndex": 1
+    },
+    "4f7bdd57-9f0d-4150-a7d3-15b11cb0de59": {
+      "ProjectGuid": "4f7bdd57-9f0d-4150-a7d3-15b11cb0de59",
+      "DisplayName": "P3.3",
+      "ColorIndex": 2
     }
   },
-  "NextColorIndex": 2
+  "NextColorIndex": 3
 }
