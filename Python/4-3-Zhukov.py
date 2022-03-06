@@ -1,0 +1,16 @@
+x = float(input('Введите x: '))
+e = float(input('Введите e: '))
+k = 3
+s = 0
+polar = 1
+fact = 2
+numb = e
+lastx = (4*x)**8
+while(abs(numb)>=e):
+    numb = polar * lastx / fact
+    s+=numb
+    print('Число = ', "{:.4f}".format(numb))
+    polar*=-1
+    lastx *= 4*x**3
+    fact *= k-1
+print('Сумма = ', "{:.4f}".format(s))
