@@ -8,7 +8,8 @@ SDL_Renderer* ren = NULL;
 int winWdt = 1920;
 int winHgt = 1080;
 float fallangle = 1.39626;
-const int countBlobs = 1500;
+float speedcoef = 0.5;
+const int countBlobs = 800;
 
 struct Rgb
 {
@@ -70,8 +71,9 @@ void drawBLobs(Blob* blobs)
 	for (int i = 0; i < countBlobs; i++)
 	{
 		drawLine(blobs[i].x, blobs[i].y, fallangle, blobs[i].y / 3.0 + 20, blobs[i].color);
-		blobs[i].x += cos(fallangle) * blobs[i].speed;
-		blobs[i].y += sin(fallangle) * blobs[i].speed;
+		blobs[i].x += cos(fallangle) * blobs[i].speed * speedcoef;
+		blobs[i].y += sin(fallangle) * blobs[i].speed * speedcoef;
+
 		if (blobs[i].x > winWdt * 1.35)
 			blobs[i].x = 0;
 		if (blobs[i].x < -winWdt * 0.35)
@@ -87,9 +89,9 @@ void CreateBlobs(Blob* blobs)
 {
 	for (int i = 0; i < countBlobs; i++)
 	{
-		blobs[i].color.red = 50;
-		blobs[i].color.green = 0;
-		blobs[i].color.blue = (rand() % 229 - 144 + 1) - 74;
+		blobs[i].color.red = 60;
+		blobs[i].color.green = 60;
+		blobs[i].color.blue = rand() % 136 + 50;
 		blobs[i].x = rand() % winWdt;
 		blobs[i].y = rand() % winHgt;
 		blobs[i].speed = (rand() % 56) / 10.0 + 4.5;
@@ -106,12 +108,49 @@ int main()
 
 	CreateBlobs(blobs);
 
+	int turn = 0;
+	int turns = 0;
+
 	while (true)
 	{
-		fallangle += 0.001;
 		drawBLobs(blobs);
 
 		SDL_RenderPresent(ren);
+		
+		if (turn == -1)
+		{
+			turns++;
+			fallangle -= 0.0005;
+			speedcoef += 0.0005;
+			if (turns >= 1500)
+			{
+				turns = 0;
+				turn = -2;
+			}	
+		}
+		else if (turn == 0 || turn == -2)
+		{
+			turns++;
+			if (turns >= 1500)
+			{
+				turns = 0;
+				if (turn == 0)
+					turn = -1;
+				else
+					turn = 1;
+			}
+		}
+		else
+		{
+			turns++;
+			fallangle += 0.0005;
+			speedcoef -= 0.0005;
+			if (turns >= 1500)
+			{
+				turns = 0;
+				turn = 0;
+			}
+		}
 
 		SDL_Delay(1);
 		SDL_SetRenderDrawColor(ren, 0, 0, 0, 0);

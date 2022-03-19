@@ -1,15 +1,18 @@
 ﻿  Source.cpp
-D:\GitHub\-Labs\Rain\Rain\Source.cpp(10,26): warning C4305: инициализация: усечение из "double" в "float"
-D:\GitHub\-Labs\Rain\Rain\Source.cpp(65,59): warning C4244: аргумент: преобразование "float" в "int", возможна потеря данных
-D:\GitHub\-Labs\Rain\Rain\Source.cpp(65,34): warning C4244: аргумент: преобразование "float" в "int", возможна потеря данных
-D:\GitHub\-Labs\Rain\Rain\Source.cpp(65,29): warning C4244: аргумент: преобразование "float" в "int", возможна потеря данных
-D:\GitHub\-Labs\Rain\Rain\Source.cpp(65,26): warning C4244: аргумент: преобразование "float" в "int", возможна потеря данных
-D:\GitHub\-Labs\Rain\Rain\Source.cpp(72,64): warning C4244: аргумент: преобразование "double" в "float", возможна потеря данных
-D:\GitHub\-Labs\Rain\Rain\Source.cpp(78,17): warning C4244: =: преобразование "int" в "float", возможна потеря данных
-D:\GitHub\-Labs\Rain\Rain\Source.cpp(82,17): warning C4244: =: преобразование "int" в "float", возможна потеря данных
-D:\GitHub\-Labs\Rain\Rain\Source.cpp(93,23): warning C4244: =: преобразование "int" в "float", возможна потеря данных
-D:\GitHub\-Labs\Rain\Rain\Source.cpp(94,23): warning C4244: =: преобразование "int" в "float", возможна потеря данных
-D:\GitHub\-Labs\Rain\Rain\Source.cpp(95,41): warning C4244: =: преобразование "double" в "float", возможна потеря данных
-D:\GitHub\-Labs\Rain\Rain\Source.cpp(102,12): warning C4244: аргумент: преобразование "time_t" в "unsigned int", возможна потеря данных
-D:\GitHub\-Labs\Rain\Rain\Source.cpp(111,21): warning C4305: +=: усечение из "double" в "float"
-  Rain.vcxproj -> D:\GitHub\-Labs\Rain\x64\Debug\Rain.exe
+F:\desktop\игры\Проекты\C++ C# C\Git\-Labs\SDL\Rain\Rain\Source.cpp(10,26): warning C4305: инициализация: усечение из "double" в "float"
+F:\desktop\игры\Проекты\C++ C# C\Git\-Labs\SDL\Rain\Rain\Source.cpp(66,59): warning C4244: аргумент: преобразование "float" в "int", возможна потеря данных
+F:\desktop\игры\Проекты\C++ C# C\Git\-Labs\SDL\Rain\Rain\Source.cpp(66,34): warning C4244: аргумент: преобразование "float" в "int", возможна потеря данных
+F:\desktop\игры\Проекты\C++ C# C\Git\-Labs\SDL\Rain\Rain\Source.cpp(66,29): warning C4244: аргумент: преобразование "float" в "int", возможна потеря данных
+F:\desktop\игры\Проекты\C++ C# C\Git\-Labs\SDL\Rain\Rain\Source.cpp(66,26): warning C4244: аргумент: преобразование "float" в "int", возможна потеря данных
+F:\desktop\игры\Проекты\C++ C# C\Git\-Labs\SDL\Rain\Rain\Source.cpp(73,64): warning C4244: аргумент: преобразование "double" в "float", возможна потеря данных
+F:\desktop\игры\Проекты\C++ C# C\Git\-Labs\SDL\Rain\Rain\Source.cpp(80,17): warning C4244: =: преобразование "int" в "float", возможна потеря данных
+F:\desktop\игры\Проекты\C++ C# C\Git\-Labs\SDL\Rain\Rain\Source.cpp(84,17): warning C4244: =: преобразование "int" в "float", возможна потеря данных
+F:\desktop\игры\Проекты\C++ C# C\Git\-Labs\SDL\Rain\Rain\Source.cpp(95,23): warning C4244: =: преобразование "int" в "float", возможна потеря данных
+F:\desktop\игры\Проекты\C++ C# C\Git\-Labs\SDL\Rain\Rain\Source.cpp(96,23): warning C4244: =: преобразование "int" в "float", возможна потеря данных
+F:\desktop\игры\Проекты\C++ C# C\Git\-Labs\SDL\Rain\Rain\Source.cpp(97,41): warning C4244: =: преобразование "double" в "float", возможна потеря данных
+F:\desktop\игры\Проекты\C++ C# C\Git\-Labs\SDL\Rain\Rain\Source.cpp(104,12): warning C4244: аргумент: преобразование "time_t" в "unsigned int", возможна потеря данных
+F:\desktop\игры\Проекты\C++ C# C\Git\-Labs\SDL\Rain\Rain\Source.cpp(123,23): warning C4305: -=: усечение из "double" в "float"
+F:\desktop\игры\Проекты\C++ C# C\Git\-Labs\SDL\Rain\Rain\Source.cpp(124,23): warning C4305: +=: усечение из "double" в "float"
+F:\desktop\игры\Проекты\C++ C# C\Git\-Labs\SDL\Rain\Rain\Source.cpp(146,23): warning C4305: +=: усечение из "double" в "float"
+F:\desktop\игры\Проекты\C++ C# C\Git\-Labs\SDL\Rain\Rain\Source.cpp(147,23): warning C4305: -=: усечение из "double" в "float"
+  Rain.vcxproj -> F:\desktop\игры\Проекты\C++ C# C\Git\-Labs\SDL\Rain\x64\Debug\Rain.exe

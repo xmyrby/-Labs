@@ -42,7 +42,7 @@
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'" Label="Configuration">
     <ConfigurationType>Application</ConfigurationType>
     <UseDebugLibraries>true</UseDebugLibraries>
-    <PlatformToolset>v143</PlatformToolset>
+    <PlatformToolset>v142</PlatformToolset>
     <CharacterSet>Unicode</CharacterSet>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'" Label="Configuration">
@@ -78,9 +78,9 @@
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <LinkIncremental>true</LinkIncremental>
-    <IncludePath>D:\Libs\SDL2-2.0.20\include;D:\Libs\SDL2_image-2.0.5\include;$(IncludePath)</IncludePath>
-    <ReferencePath>D:\Libs\SDL2-2.0.20\lib\x64;D:\Libs\SDL2_image-2.0.5\lib\x64;$(ReferencePath)</ReferencePath>
-    <LibraryPath>D:\Libs\SDL2_image-2.0.5\lib\x64;D:\Libs\SDL2-2.0.20\lib\x64;$(LibraryPath)</LibraryPath>
+    <IncludePath>F:\Libs\SDL2_image-2.0.5\include;F:\Libs\SDL2-2.0.20\include;$(IncludePath)</IncludePath>
+    <ReferencePath>F:\Libs\SDL2_image-2.0.5\lib\x64;F:\Libs\SDL2-2.0.20\lib\x64;$(ReferencePath)</ReferencePath>
+    <LibraryPath>F:\Libs\SDL2_image-2.0.5\lib\x64;F:\Libs\SDL2-2.0.20\lib\x64;$(LibraryPath)</LibraryPath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <LinkIncremental>false</LinkIncremental>
