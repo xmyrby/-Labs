@@ -1,0 +1,6 @@
+﻿  Source.cpp
+F:\desktop\игры\Проекты\C++ C# C\Git\-Labs\SDL\Paragon Maze\Paragon Maze\Source.cpp(102,83): warning C4244: аргумент: преобразование "double" в "int", возможна потеря данных
+F:\desktop\игры\Проекты\C++ C# C\Git\-Labs\SDL\Paragon Maze\Paragon Maze\Source.cpp(103,20): warning C4244: *=: преобразование "float" в "int", возможна потеря данных
+F:\desktop\игры\Проекты\C++ C# C\Git\-Labs\SDL\Paragon Maze\Paragon Maze\Source.cpp(325,12): warning C4244: аргумент: преобразование "time_t" в "unsigned int", возможна потеря данных
+F:\desktop\игры\Проекты\C++ C# C\Git\-Labs\SDL\Paragon Maze\Paragon Maze\Source.cpp(345,36): warning C4244: аргумент: преобразование "double" в "float", возможна потеря данных
+  Paragon Maze.vcxproj -> F:\desktop\игры\Проекты\C++ C# C\Git\-Labs\SDL\Paragon Maze\x64\Debug\Paragon Maze.exe
