@@ -87,14 +87,9 @@ int Max(int a, int b)
 	return b;
 }
 
-void DrawFullMap3D(Cell map[20][20], Player player, float dist)
+void DrawMap(Cell map[20][20], Player player, float dist)
 {
 	SDL_Rect rect;
-
-	SDL_SetRenderDrawColor(ren, 80, 50, 185, 0);
-	rect = { 30 + player.x * 40,25 + player.y * 40,20,25 };
-	SDL_RenderFillRect(ren, &rect);
-
 	for (int i = 0; i < 20; i++)
 	{
 		for (int j = 0; j < 20; j++)
@@ -147,41 +142,225 @@ void DrawFullMap3D(Cell map[20][20], Player player, float dist)
 			}
 		}
 	}
+}
 
-	SDL_SetRenderDrawColor(ren, 110, 80, 255, 0);
-	rect = { 30 + player.x * 40,25 + player.y * 40,20,20 };
-	SDL_RenderFillRect(ren, &rect);
+void DrawFullMap3D(Cell map[20][20], Player player, float dist, int direction)
+{
+	SDL_Rect rect;
 
+	switch (direction)
+	{
+	case -1:
+	{
+		SDL_SetRenderDrawColor(ren, 80, 50, 185, 0);
+		rect = { 30 + player.x * 40,25 + player.y * 40,20,25 };
+		SDL_RenderFillRect(ren, &rect);
 
-	SDL_RenderPresent(ren);
+		DrawMap(map, player, dist);
+
+		SDL_SetRenderDrawColor(ren, 110, 80, 255, 0);
+		rect = { 30 + player.x * 40,25 + player.y * 40,20,20 };
+		SDL_RenderFillRect(ren, &rect);
+
+		SDL_RenderPresent(ren);
+		break;
+	}
+	case 0:
+	{
+		for (int i = 0; i <= 40; i++)
+		{
+			SDL_SetRenderDrawColor(ren, 80, 50, 185, 0);
+			rect = { 30 + (player.x + 1) * 40 - i,25 + player.y * 40,20 + i,25 };
+			SDL_RenderFillRect(ren, &rect);
+
+			DrawMap(map, player, dist);
+
+			SDL_SetRenderDrawColor(ren, 110, 80, 255, 0);
+			rect = { 30 + (player.x + 1) * 40 - i,25 + player.y * 40,20 + i,20 };
+			SDL_RenderFillRect(ren, &rect);
+
+			SDL_RenderPresent(ren);
+			SDL_Delay(1);
+		}
+
+		for (int i = 0; i <= 40; i += 2)
+		{
+			SDL_SetRenderDrawColor(ren, 35, 35, 35, 0);
+			SDL_RenderClear(ren);
+
+			SDL_SetRenderDrawColor(ren, 80, 50, 185, 0);
+			rect = { 30 + player.x * 40,25 + player.y * 40,60 - i,25 };
+			SDL_RenderFillRect(ren, &rect);
+
+			DrawMap(map, player, dist);
+
+			SDL_SetRenderDrawColor(ren, 110, 80, 255, 0);
+			rect = { 30 + player.x * 40,25 + player.y * 40,60 - i,20 };
+			SDL_RenderFillRect(ren, &rect);
+
+			SDL_RenderPresent(ren);
+			SDL_Delay(1);
+		}
+		break;
+	}
+	case 1:
+	{
+		for (int i = 0; i <= 40; i++)
+		{
+			SDL_SetRenderDrawColor(ren, 80, 50, 185, 0);
+			rect = { 30 + (player.x - 1) * 40,25 + player.y * 40,20 + i,25 };
+			SDL_RenderFillRect(ren, &rect);
+
+			DrawMap(map, player, dist);
+
+			SDL_SetRenderDrawColor(ren, 110, 80, 255, 0);
+			rect = { 30 + (player.x - 1) * 40,25 + player.y * 40,20 + i,20 };
+			SDL_RenderFillRect(ren, &rect);
+
+			SDL_RenderPresent(ren);
+			SDL_Delay(1);
+		}
+
+		for (int i = 0; i <= 40; i += 2)
+		{
+			SDL_SetRenderDrawColor(ren, 35, 35, 35, 0);
+			SDL_RenderClear(ren);
+
+			SDL_SetRenderDrawColor(ren, 80, 50, 185, 0);
+			rect = { 30 + (player.x - 1) * 40 + i,25 + player.y * 40,60 - i,25 };
+			SDL_RenderFillRect(ren, &rect);
+
+			DrawMap(map, player, dist);
+
+			SDL_SetRenderDrawColor(ren, 110, 80, 255, 0);
+			rect = { 30 + (player.x - 1) * 40 + i,25 + player.y * 40,60 - i,20 };
+			SDL_RenderFillRect(ren, &rect);
+
+			SDL_RenderPresent(ren);
+			SDL_Delay(1);
+		}
+		break;
+	}
+	case 2:
+	{
+		for (int i = 0; i <= 40; i++)
+		{
+			SDL_SetRenderDrawColor(ren, 80, 50, 185, 0);
+			rect = { 30 + player.x * 40,25 + (player.y + 1) * 40 - i,20,25 + i };
+			SDL_RenderFillRect(ren, &rect);
+
+			DrawMap(map, player, dist);
+
+			SDL_SetRenderDrawColor(ren, 110, 80, 255, 0);
+			rect = { 30 + player.x * 40,25 + (player.y + 1) * 40 - i,20,20 + i };
+			SDL_RenderFillRect(ren, &rect);
+
+			SDL_RenderPresent(ren);
+			SDL_Delay(1);
+		}
+
+		for (int i = 0; i <= 40; i += 2)
+		{
+			SDL_SetRenderDrawColor(ren, 35, 35, 35, 0);
+			SDL_RenderClear(ren);
+
+			SDL_SetRenderDrawColor(ren, 80, 50, 185, 0);
+			rect = { 30 + player.x * 40,25 + player.y * 40,20,65 - i };
+			SDL_RenderFillRect(ren, &rect);
+
+			DrawMap(map, player, dist);
+
+			SDL_SetRenderDrawColor(ren, 110, 80, 255, 0);
+			rect = { 30 + player.x * 40,25 + player.y * 40,20,60 - i };
+			SDL_RenderFillRect(ren, &rect);
+
+			SDL_RenderPresent(ren);
+			SDL_Delay(1);
+		}
+		break;
+	}
+	case 3:
+	{
+		for (int i = 0; i <= 40; i++)
+		{
+			SDL_SetRenderDrawColor(ren, 80, 50, 185, 0);
+			rect = { 30 + player.x * 40,25 + (player.y - 1) * 40,20,25 + i };
+			SDL_RenderFillRect(ren, &rect);
+
+			DrawMap(map, player, dist);
+
+			SDL_SetRenderDrawColor(ren, 110, 80, 255, 0);
+			rect = { 30 + player.x * 40,25 + (player.y - 1) * 40,20,20 + i };
+			SDL_RenderFillRect(ren, &rect);
+
+			SDL_RenderPresent(ren);
+			SDL_Delay(1);
+		}
+
+		for (int i = 0; i <= 40; i += 2)
+		{
+			SDL_SetRenderDrawColor(ren, 35, 35, 35, 0);
+			SDL_RenderClear(ren);
+
+			SDL_SetRenderDrawColor(ren, 80, 50, 185, 0);
+			rect = { 30 + player.x * 40,25 + (player.y - 1) * 40 + i,20,65 - i };
+			SDL_RenderFillRect(ren, &rect);
+
+			DrawMap(map, player, dist);
+
+			SDL_SetRenderDrawColor(ren, 110, 80, 255, 0);
+			rect = { 30 + player.x * 40,25 + (player.y - 1) * 40 + i,20,60 - i };
+			SDL_RenderFillRect(ren, &rect);
+
+			SDL_RenderPresent(ren);
+			SDL_Delay(1);
+		}
+		break;
+	}
+	default:
+		break;
+	}
 }
 
 void MovePlayer(Cell map[20][20], Player& player, int direction)
 {
+	int dir = -1;
 	switch (direction)
 	{
 	case 0:
 	{
 		if (map[player.x][player.y].left == true && player.x > 0)
+		{
 			player.x--;
+			dir = direction;
+		}
 		break;
 	}
 	case 1:
 	{
 		if (map[player.x][player.y].right == true && player.x < 19)
+		{
 			player.x++;
+			dir = direction;
+		}
 		break;
 	}
 	case 2:
 	{
 		if (map[player.x][player.y].top == true && player.y > 0)
+		{
 			player.y--;
+			dir = direction;
+		}
 		break;
 	}
 	case 3:
 	{
 		if (map[player.x][player.y].bottom == true && player.y < 19)
+		{
 			player.y++;
+			dir = direction;
+		}
 		break;
 	}
 	default:
@@ -191,7 +370,7 @@ void MovePlayer(Cell map[20][20], Player& player, int direction)
 	SDL_SetRenderDrawColor(ren, 35, 35, 35, 0);
 	SDL_RenderClear(ren);
 
-	DrawFullMap3D(map, player, 1);
+	DrawFullMap3D(map, player, 1, dir);
 }
 
 void GenerateMap(Cell map[20][20])
@@ -334,7 +513,7 @@ int main()
 	SDL_SetRenderDrawColor(ren, 35, 35, 35, 0);
 	SDL_RenderClear(ren);
 
-	DrawFullMap3D(map, player, 1);
+	DrawFullMap3D(map, player, 1, -1);
 
 	while (running)
 	{
@@ -342,7 +521,7 @@ int main()
 		{
 			for (int i = 0; i < 21; i++)
 			{
-				DrawFullMap3D(map, player, 1.0 - i * 0.05);
+				DrawFullMap3D(map, player, 1.0 - i * 0.05, -1);
 				SDL_Delay(75);
 			}
 			SDL_Delay(1000);
