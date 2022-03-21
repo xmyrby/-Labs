@@ -78,7 +78,6 @@ void DeInit(char error)
 
 void Init()
 {
-
 	if (SDL_Init(SDL_INIT_VIDEO) < 0)
 	{
 		printf("SDL couldn't init! SDL_Error: %s\n", SDL_GetError());
@@ -173,7 +172,6 @@ int Min(int a, int b)
 void DrawRect(Cell cell, int x, int y, int offset)
 {
 	SDL_Rect rect;
-
 	if (cell.left == false)
 	{
 		rect = { 10 + x * 40,10 - offset + y * 40,20,60 };
@@ -616,7 +614,7 @@ int main()
 	SDL_Event event;
 	bool running = false;
 
-	int seconds = time(NULL)-3;
+	int seconds = time(NULL) - 3;
 
 	Init();
 	bool prepare = false;
@@ -630,9 +628,9 @@ int main()
 
 			seconds = time(NULL);
 		}
-		
+
 		SDL_PollEvent(&event);
-		switch(event.type)
+		switch (event.type)
 		{
 		case SDL_KEYDOWN:
 		{
@@ -664,15 +662,22 @@ int main()
 		{
 			for (int i = 0; i < 21; i++)
 			{
-				DrawFullMap3D(map, player, 1.0 - i * 0.05, -1, 0);
+				DrawFullMap3D(map, { 0, 19 }, 1.0 - i * 0.05, -1, 1);
 				SDL_Delay(75);
 			}
 			SDL_Delay(1000);
+
+			for (int i = 0; i < 21; i++)
+			{
+				DrawFullMap3D(map, { 0,19 }, i * 0.05, -1, 1);
+				SDL_Delay(75);
+			}
+
+			RandColor();
 			GenerateMap(map, 0);
+			DrawFullMap3D(map, { 0,19 }, 1, -1, 0);
 			player.x = 0;
 			player.y = 19;
-			RandColor();
-			DrawFullMap3D(map, player, 1, -1, 0);
 		}
 		else
 		{
