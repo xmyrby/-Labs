@@ -1,0 +1,11 @@
+﻿  Source.cpp
+F:\desktop\игры\Проекты\C++ C# C\Git\-Labs\SDL\Tanks\Tanks\Source.cpp(11,29): warning C4305: инициализация: усечение из "double" в "float"
+F:\desktop\игры\Проекты\C++ C# C\Git\-Labs\SDL\Tanks\Tanks\Source.cpp(127,111): warning C4244: аргумент: преобразование "float" в "int", возможна потеря данных
+F:\desktop\игры\Проекты\C++ C# C\Git\-Labs\SDL\Tanks\Tanks\Source.cpp(127,80): warning C4244: аргумент: преобразование "float" в "int", возможна потеря данных
+F:\desktop\игры\Проекты\C++ C# C\Git\-Labs\SDL\Tanks\Tanks\Source.cpp(127,49): warning C4244: аргумент: преобразование "float" в "int", возможна потеря данных
+F:\desktop\игры\Проекты\C++ C# C\Git\-Labs\SDL\Tanks\Tanks\Source.cpp(127,36): warning C4244: аргумент: преобразование "float" в "int", возможна потеря данных
+F:\desktop\игры\Проекты\C++ C# C\Git\-Labs\SDL\Tanks\Tanks\Source.cpp(213,51): warning C4244: +=: преобразование "double" в "float", возможна потеря данных
+F:\desktop\игры\Проекты\C++ C# C\Git\-Labs\SDL\Tanks\Tanks\Source.cpp(214,51): warning C4244: +=: преобразование "double" в "float", возможна потеря данных
+F:\desktop\игры\Проекты\C++ C# C\Git\-Labs\SDL\Tanks\Tanks\Source.cpp(218,50): warning C4244: -=: преобразование "double" в "float", возможна потеря данных
+F:\desktop\игры\Проекты\C++ C# C\Git\-Labs\SDL\Tanks\Tanks\Source.cpp(219,50): warning C4244: -=: преобразование "double" в "float", возможна потеря данных
+  Tanks.vcxproj -> F:\desktop\игры\Проекты\C++ C# C\Git\-Labs\SDL\Tanks\x64\Debug\Tanks.exe
