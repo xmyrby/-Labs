@@ -1,0 +1,10 @@
+﻿  Source.cpp
+C:\Users\XMyRby\source\repos\RainBelozor\RainBelozor\Source.cpp(54,21): warning C4244: =: преобразование "int" в "float", возможна потеря данных
+C:\Users\XMyRby\source\repos\RainBelozor\RainBelozor\Source.cpp(56,25): warning C4244: =: преобразование "int" в "float", возможна потеря данных
+C:\Users\XMyRby\source\repos\RainBelozor\RainBelozor\Source.cpp(71,65): warning C4244: аргумент: преобразование "float" в "int", возможна потеря данных
+C:\Users\XMyRby\source\repos\RainBelozor\RainBelozor\Source.cpp(71,54): warning C4244: аргумент: преобразование "float" в "int", возможна потеря данных
+C:\Users\XMyRby\source\repos\RainBelozor\RainBelozor\Source.cpp(71,43): warning C4244: аргумент: преобразование "float" в "int", возможна потеря данных
+C:\Users\XMyRby\source\repos\RainBelozor\RainBelozor\Source.cpp(71,32): warning C4244: аргумент: преобразование "float" в "int", возможна потеря данных
+C:\Users\XMyRby\source\repos\RainBelozor\RainBelozor\Source.cpp(76,24): warning C4244: =: преобразование "double" в "float", возможна потеря данных
+C:\Users\XMyRby\source\repos\RainBelozor\RainBelozor\Source.cpp(89,12): warning C4244: аргумент: преобразование "time_t" в "unsigned int", возможна потеря данных
+LINK : fatal error LNK1104: не удается открыть файл "msvcprtd.lib"
