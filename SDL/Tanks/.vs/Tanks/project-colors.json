@@ -1,0 +1,11 @@
+{
+  "Version": 1,
+  "ProjectMap": {
+    "89fa3cb4-431a-4850-8339-28a2c435f326": {
+      "ProjectGuid": "89fa3cb4-431a-4850-8339-28a2c435f326",
+      "DisplayName": "Tanks",
+      "ColorIndex": 0
+    }
+  },
+  "NextColorIndex": 1
+}

@@ -58,7 +58,7 @@ struct Dot
 struct Object
 {
 	int _dotsCount;
-	Dot _dots[10];
+	Dot _dots[25];
 
 	void Init(Dot* dots, int dotsCount)
 	{
@@ -104,9 +104,12 @@ struct Tank
 		angle = inAngle;
 		health = inHealth;
 		int count = 0;
-		turret.Init(GetDots(count, "turret.dots"), count);
-		stem.Init(GetDots(count, "stem.dots"), count);
-		base.Init(GetDots(count, "base.dots"), count);
+		//turret.Init(GetDots(count, "turret.dots"), count);
+		//stem.Init(GetDots(count, "stem.dots"), count);
+		//base.Init(GetDots(count, "base.dots"), count);
+		//turret.Init(GetDots(count, "circle0.dots"), count);
+		base.Init(GetDots(count, "circle1.dots"), count);
+		//stem.Init(GetDots(count, "circle2.dots"), count);
 	}
 };
 
@@ -120,6 +123,7 @@ void Renderer(Object object, Point position, float angle)
 	{
 		Dot dot = object._dots[i];
 		points[i] = { position.x + dot.length * cos((dot.angle + angle) * RAD),position.y + dot.length * sin((dot.angle + angle) * RAD) };
+		//SDL_RenderDrawLine(ren, position.x, position.y, points[i].x, points[i].y);
 	}
 
 	for (int i = 0; i < dotsCount; i++)
@@ -133,8 +137,8 @@ void RenderTank(Tank tank)
 	SDL_SetRenderDrawColor(ren, 0, 0, 0, 0);
 	SDL_RenderClear(ren);
 	SDL_SetRenderDrawColor(ren, 225, 200, 205, 0);
-	Renderer(tank.turret, tank.position, tank.angle);
-	Renderer(tank.stem, tank.position, tank.angle);
+	//Renderer(tank.turret, tank.position, tank.angle);
+	//Renderer(tank.stem, tank.position, tank.angle);
 	Renderer(tank.base, tank.position, tank.angle);
 	SDL_RenderPresent(ren);
 }

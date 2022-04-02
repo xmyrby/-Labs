@@ -35,7 +35,6 @@ struct Cell
 
 void Open(Cell map[20][20], int direction, int x, int y)
 {
-
 	switch (direction)
 	{
 	case 0:
@@ -65,7 +64,6 @@ void Open(Cell map[20][20], int direction, int x, int y)
 	default:
 		break;
 	}
-
 }
 
 void DeInit(char error)
@@ -221,7 +219,6 @@ void Drawer(Cell map[20][20], Player player, float dist, SDL_Rect rects[2], bool
 		SDL_SetRenderDrawColor(ren, 255 - rgbFace.red, 255 - rgbFace.green, 255 - rgbFace.blue, 0);
 		SDL_RenderFillRect(ren, &rects[0]);
 	}
-
 
 	DrawMap(map, player, dist, lerp);
 
