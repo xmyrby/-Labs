@@ -1,0 +1,27 @@
+﻿  Source.cpp
+F:\desktop\игры\Проекты\C++ C# C\Git\-Labs\SDL\PlanetsPhysic\PlanetsPhysic\Source.cpp(10,25): warning C4244: инициализация: преобразование "int" в "float", возможна потеря данных
+F:\desktop\игры\Проекты\C++ C# C\Git\-Labs\SDL\PlanetsPhysic\PlanetsPhysic\Source.cpp(10,16): warning C4244: инициализация: преобразование "int" в "const float", возможна потеря данных
+F:\desktop\игры\Проекты\C++ C# C\Git\-Labs\SDL\PlanetsPhysic\PlanetsPhysic\Source.cpp(11,25): warning C4244: инициализация: преобразование "int" в "float", возможна потеря данных
+F:\desktop\игры\Проекты\C++ C# C\Git\-Labs\SDL\PlanetsPhysic\PlanetsPhysic\Source.cpp(11,16): warning C4244: инициализация: преобразование "int" в "const float", возможна потеря данных
+F:\desktop\игры\Проекты\C++ C# C\Git\-Labs\SDL\PlanetsPhysic\PlanetsPhysic\Source.cpp(62,11): warning C4244: инициализация: преобразование "float" в "int", возможна потеря данных
+F:\desktop\игры\Проекты\C++ C# C\Git\-Labs\SDL\PlanetsPhysic\PlanetsPhysic\Source.cpp(63,11): warning C4244: инициализация: преобразование "float" в "int", возможна потеря данных
+F:\desktop\игры\Проекты\C++ C# C\Git\-Labs\SDL\PlanetsPhysic\PlanetsPhysic\Source.cpp(66,54): warning C4244: аргумент: преобразование "float" в "int", возможна потеря данных
+F:\desktop\игры\Проекты\C++ C# C\Git\-Labs\SDL\PlanetsPhysic\PlanetsPhysic\Source.cpp(66,39): warning C4244: аргумент: преобразование "float" в "int", возможна потеря данных
+F:\desktop\игры\Проекты\C++ C# C\Git\-Labs\SDL\PlanetsPhysic\PlanetsPhysic\Source.cpp(81,17): warning C4305: =: усечение из "double" в "float"
+F:\desktop\игры\Проекты\C++ C# C\Git\-Labs\SDL\PlanetsPhysic\PlanetsPhysic\Source.cpp(89,11): warning C4244: =: преобразование "double" в "float", возможна потеря данных
+F:\desktop\игры\Проекты\C++ C# C\Git\-Labs\SDL\PlanetsPhysic\PlanetsPhysic\Source.cpp(91,36): warning C4244: =: преобразование "double" в "float", возможна потеря данных
+F:\desktop\игры\Проекты\C++ C# C\Git\-Labs\SDL\PlanetsPhysic\PlanetsPhysic\Source.cpp(92,36): warning C4244: =: преобразование "double" в "float", возможна потеря данных
+Source.obj : error LNK2019: ссылка на неразрешенный внешний символ _SDL_GetError в функции "void __cdecl Init(void)" (?Init@@YAXXZ).
+Source.obj : error LNK2019: ссылка на неразрешенный внешний символ _SDL_CreateWindow в функции "void __cdecl Init(void)" (?Init@@YAXXZ).
+Source.obj : error LNK2019: ссылка на неразрешенный внешний символ _SDL_DestroyWindow в функции "void __cdecl DeInit(char)" (?DeInit@@YAXD@Z).
+Source.obj : error LNK2019: ссылка на неразрешенный внешний символ _SDL_CreateRenderer в функции "void __cdecl Init(void)" (?Init@@YAXXZ).
+Source.obj : error LNK2019: ссылка на неразрешенный внешний символ _SDL_RenderDrawPoint в функции "void __cdecl DrawPlanet(struct Planet)" (?DrawPlanet@@YAXUPlanet@@@Z).
+Source.obj : error LNK2019: ссылка на неразрешенный внешний символ _SDL_RenderPresent в функции "void __cdecl DrawPlanet(struct Planet)" (?DrawPlanet@@YAXUPlanet@@@Z).
+Source.obj : error LNK2019: ссылка на неразрешенный внешний символ _SDL_DestroyRenderer в функции "void __cdecl DeInit(char)" (?DeInit@@YAXD@Z).
+Source.obj : error LNK2019: ссылка на неразрешенный внешний символ _SDL_Delay в функции _main.
+Source.obj : error LNK2019: ссылка на неразрешенный внешний символ _SDL_Init в функции "void __cdecl Init(void)" (?Init@@YAXXZ).
+Source.obj : error LNK2019: ссылка на неразрешенный внешний символ _SDL_Quit в функции "void __cdecl DeInit(char)" (?DeInit@@YAXD@Z).
+F:\Libs\SDL2-2.0.20\lib\x64\SDL2.lib : warning LNK4272: тип компьютера библиотеки "x64" конфликтует с типом целевого компьютера "x86"
+F:\Libs\SDL2-2.0.20\lib\x64\SDL2main.lib : warning LNK4272: тип компьютера библиотеки "x64" конфликтует с типом целевого компьютера "x86"
+F:\Libs\SDL2_image-2.0.5\lib\x64\SDL2_image.lib : warning LNK4272: тип компьютера библиотеки "x64" конфликтует с типом целевого компьютера "x86"
+F:\desktop\игры\Проекты\C++ C# C\Git\-Labs\SDL\PlanetsPhysic\Debug\PlanetsPhysic.exe : fatal error LNK1120: неразрешенных внешних элементов: 10

@@ -1,0 +1,31 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 16
+VisualStudioVersion = 16.0.31624.102
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "P3Maks", "P3Maks\P3Maks.vcxproj", "{899710F5-3273-45D9-9F86-758870F1EF11}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|x64 = Debug|x64
+		Debug|x86 = Debug|x86
+		Release|x64 = Release|x64
+		Release|x86 = Release|x86
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{899710F5-3273-45D9-9F86-758870F1EF11}.Debug|x64.ActiveCfg = Debug|x64
+		{899710F5-3273-45D9-9F86-758870F1EF11}.Debug|x64.Build.0 = Debug|x64
+		{899710F5-3273-45D9-9F86-758870F1EF11}.Debug|x86.ActiveCfg = Debug|Win32
+		{899710F5-3273-45D9-9F86-758870F1EF11}.Debug|x86.Build.0 = Debug|Win32
+		{899710F5-3273-45D9-9F86-758870F1EF11}.Release|x64.ActiveCfg = Release|x64
+		{899710F5-3273-45D9-9F86-758870F1EF11}.Release|x64.Build.0 = Release|x64
+		{899710F5-3273-45D9-9F86-758870F1EF11}.Release|x86.ActiveCfg = Release|Win32
+		{899710F5-3273-45D9-9F86-758870F1EF11}.Release|x86.Build.0 = Release|Win32
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {A8EFB99C-15AB-4BB9-83FF-3FFF1D135309}
+	EndGlobalSection
+EndGlobal

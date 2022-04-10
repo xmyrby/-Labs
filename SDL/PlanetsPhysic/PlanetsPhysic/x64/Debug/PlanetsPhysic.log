@@ -1,0 +1,14 @@
+﻿  Source.cpp
+F:\desktop\игры\Проекты\C++ C# C\Git\-Labs\SDL\PlanetsPhysic\PlanetsPhysic\Source.cpp(10,27): warning C4305: инициализация: усечение из "double" в "float"
+F:\desktop\игры\Проекты\C++ C# C\Git\-Labs\SDL\PlanetsPhysic\PlanetsPhysic\Source.cpp(12,23): warning C4305: инициализация: усечение из "double" в "float"
+F:\desktop\игры\Проекты\C++ C# C\Git\-Labs\SDL\PlanetsPhysic\PlanetsPhysic\Source.cpp(68,13): warning C4244: инициализация: преобразование "float" в "int", возможна потеря данных
+F:\desktop\игры\Проекты\C++ C# C\Git\-Labs\SDL\PlanetsPhysic\PlanetsPhysic\Source.cpp(70,14): warning C4244: инициализация: преобразование "float" в "int", возможна потеря данных
+F:\desktop\игры\Проекты\C++ C# C\Git\-Labs\SDL\PlanetsPhysic\PlanetsPhysic\Source.cpp(76,72): warning C4244: аргумент: преобразование "float" в "int", возможна потеря данных
+F:\desktop\игры\Проекты\C++ C# C\Git\-Labs\SDL\PlanetsPhysic\PlanetsPhysic\Source.cpp(76,48): warning C4244: аргумент: преобразование "float" в "int", возможна потеря данных
+F:\desktop\игры\Проекты\C++ C# C\Git\-Labs\SDL\PlanetsPhysic\PlanetsPhysic\Source.cpp(102,30): warning C4244: =: преобразование "int" в "float", возможна потеря данных
+F:\desktop\игры\Проекты\C++ C# C\Git\-Labs\SDL\PlanetsPhysic\PlanetsPhysic\Source.cpp(103,33): warning C4244: =: преобразование "float" в "int", возможна потеря данных
+F:\desktop\игры\Проекты\C++ C# C\Git\-Labs\SDL\PlanetsPhysic\PlanetsPhysic\Source.cpp(104,23): warning C4244: =: преобразование "double" в "float", возможна потеря данных
+F:\desktop\игры\Проекты\C++ C# C\Git\-Labs\SDL\PlanetsPhysic\PlanetsPhysic\Source.cpp(105,23): warning C4244: =: преобразование "double" в "float", возможна потеря данных
+F:\desktop\игры\Проекты\C++ C# C\Git\-Labs\SDL\PlanetsPhysic\PlanetsPhysic\Source.cpp(140,13): warning C4244: инициализация: преобразование "double" в "float", возможна потеря данных
+F:\desktop\игры\Проекты\C++ C# C\Git\-Labs\SDL\PlanetsPhysic\PlanetsPhysic\Source.cpp(159,12): warning C4244: аргумент: преобразование "time_t" в "unsigned int", возможна потеря данных
+  PlanetsPhysic.vcxproj -> F:\desktop\игры\Проекты\C++ C# C\Git\-Labs\SDL\PlanetsPhysic\x64\Debug\PlanetsPhysic.exe
