@@ -1,0 +1,11 @@
+{
+  "Version": 1,
+  "ProjectMap": {
+    "1356afc2-7352-4672-bee5-695ce2f9587b": {
+      "ProjectGuid": "1356afc2-7352-4672-bee5-695ce2f9587b",
+      "DisplayName": "Planets",
+      "ColorIndex": 0
+    }
+  },
+  "NextColorIndex": 1
+}
