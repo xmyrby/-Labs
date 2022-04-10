@@ -154,7 +154,7 @@ void Calculate(Planet* planets, int planetsCount)
 #undef main
 int main()
 {
-	const int count = 6;
+	const int count = 10;
 
 	srand(time(NULL));
 
