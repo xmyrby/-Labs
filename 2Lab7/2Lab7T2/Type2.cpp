@@ -13,13 +13,8 @@ void Inter(int& a, int& b)
 	} while (a > b || a < 0 || b < 0);
 }
 
-int main()
+void GetRC(int& n, int& m)
 {
-	system("chcp 1251 > null");
-
-	int** a;
-	int n, m, an, bn, am, bm, sum = 0, count = 0;
-
 	do
 	{
 		system("cls");
@@ -28,8 +23,11 @@ int main()
 		printf("Введите количество столбцов: ");
 		scanf_s("%d", &m);
 	} while (n <= 0 || m <= 0);
+}
 
-	a = (int**)malloc(n * sizeof(int));
+int** Mem(int n, int m)
+{
+	int** a = (int**)malloc(n * sizeof(int*));
 
 	for (int i = 0; i < n; i++)
 	{
@@ -40,13 +38,11 @@ int main()
 			scanf_s("%d", &a[i][j]);
 		}
 	}
+	return a;
+}
 
-
-	system("cls");
-
-	Inter(an, bn);
-	Inter(am, bm);
-
+void GetSumNCount(int** a, int& sum, int& count, int n, int m, int an, int bn, int am, int bm)
+{
 	for (int i = 0; i < n; i++)
 		for (int j = 0; j < m; j++)
 			if ((i<an || i>bn) && (j<am || j>bm))
@@ -54,10 +50,34 @@ int main()
 				sum += a[i][j];
 				count++;
 			}
+}
 
+void Free(int** a, int n)
+{
+	free(a);
 	for (int i = 0; i < n; i++)
 		free(a[i]);
-	//free(a);
+}
+
+int main()
+{
+	system("chcp 1251 > null");
+
+	int** a;
+	int n, m, an, bn, am, bm, sum = 0, count = 0;
+
+	GetRC(n, m);
+
+	a = Mem(n, m);
+
+	system("cls");
+
+	Inter(an, bn);
+	Inter(am, bm);
+
+	GetSumNCount(a, sum, count, n, m, an, bn, am, bm);
+
+	Free(a, n);
 
 	printf("Количество: %d\nСумма: %d\n", count, sum);
 

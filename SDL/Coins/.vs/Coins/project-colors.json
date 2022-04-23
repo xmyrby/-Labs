@@ -1,0 +1,11 @@
+{
+  "Version": 1,
+  "ProjectMap": {
+    "7850d413-4241-495e-9ea2-7ec9f44ebc20": {
+      "ProjectGuid": "7850d413-4241-495e-9ea2-7ec9f44ebc20",
+      "DisplayName": "Coins",
+      "ColorIndex": 0
+    }
+  },
+  "NextColorIndex": 1
+}

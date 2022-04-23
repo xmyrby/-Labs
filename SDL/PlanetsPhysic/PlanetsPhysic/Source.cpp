@@ -79,7 +79,7 @@ void DrawPlanet(Planet planet)
 	}
 }
 
-void GenPlanets(Planet* planets, int planetsCount)
+void GenPlanets(Planet* planets, int planetsCount, bool gen)
 {
 	planets[0].x = 100;
 	planets[0].y = 100;
@@ -88,43 +88,49 @@ void GenPlanets(Planet* planets, int planetsCount)
 	planets[0].radius = 10;
 	planets[0].mas = 1000;
 
-	int minDist = 19;
 
-	for (int i = 1; i < planetsCount; i++)
+
+	if (gen)
 	{
-		int dist = rand() % 10 + minDist + 3;
-		minDist = dist;
+		int minDist = 19;
+		for (int i = 1; i < planetsCount; i++)
+		{
+			int dist = rand() % 10 + minDist + 3;
+			minDist = dist;
 
-		float angle = rand() % 360 * K;
+			float angle = rand() % 360 * K;
 
-		planets[i].x = planets[0].x + dist * cos(angle);
-		planets[i].y = planets[0].y + dist * sin(angle);
-		planets[i].mas = dist / 10 + 1;
-		planets[i].radius = planets[i].mas;
-		planets[i].vx = 0.1 * sin(angle);
-		planets[i].vy = 0.1 * cos(angle);
+			planets[i].x = planets[0].x + dist * cos(angle);
+			planets[i].y = planets[0].y + dist * sin(angle);
+			planets[i].mas = dist / 10 + 1;
+			planets[i].radius = planets[i].mas;
+			planets[i].vx = 0.1 * sin(angle);
+			planets[i].vy = 0.1 * cos(angle);
+		}
 	}
+	else
+	{
+		planets[1].x = 130;
+		planets[1].y = 100;
+		planets[1].vx = 0;
+		planets[1].vy = -0.1;
+		planets[1].radius = 3;
+		planets[1].mas = 7;
 
-	/*planets[1].x = 130;
-	planets[1].y = 100;
-	planets[1].vx = 0;
-	planets[1].vy = -0.1;
-	planets[1].radius = 3;
-	planets[1].mas = 7;
+		planets[2].x = 30;
+		planets[2].y = 100;
+		planets[2].vx = 0;
+		planets[2].vy = 0.1;
+		planets[2].radius = 5;
+		planets[2].mas = 10;
 
-	planets[2].x = 30;
-	planets[2].y = 100;
-	planets[2].vx = 0;
-	planets[2].vy = 0.1;
-	planets[2].radius = 5;
-	planets[2].mas = 10;
-
-	planets[3].x = 25;
-	planets[3].y = 100;
-	planets[3].vx = 0;
-	planets[3].vy = 0.11;
-	planets[3].radius = 1;
-	planets[3].mas = 0.1;*/
+		planets[3].x = 25;
+		planets[3].y = 100;
+		planets[3].vx = 0;
+		planets[3].vy = 0.11;
+		planets[3].radius = 1;
+		planets[3].mas = 0.1;
+	}
 }
 
 void Calculate(Planet* planets, int planetsCount)
@@ -160,7 +166,7 @@ int main()
 
 	Planet planets[count];
 
-	GenPlanets(planets, count);
+	GenPlanets(planets, count, 1);
 
 	Init();
 

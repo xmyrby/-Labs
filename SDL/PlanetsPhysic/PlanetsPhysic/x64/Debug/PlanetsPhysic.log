@@ -1,14 +1,18 @@
 ﻿  Source.cpp
-F:\desktop\игры\Проекты\C++ C# C\Git\-Labs\SDL\PlanetsPhysic\PlanetsPhysic\Source.cpp(10,27): warning C4305: инициализация: усечение из "double" в "float"
-F:\desktop\игры\Проекты\C++ C# C\Git\-Labs\SDL\PlanetsPhysic\PlanetsPhysic\Source.cpp(12,23): warning C4305: инициализация: усечение из "double" в "float"
-F:\desktop\игры\Проекты\C++ C# C\Git\-Labs\SDL\PlanetsPhysic\PlanetsPhysic\Source.cpp(68,13): warning C4244: инициализация: преобразование "float" в "int", возможна потеря данных
-F:\desktop\игры\Проекты\C++ C# C\Git\-Labs\SDL\PlanetsPhysic\PlanetsPhysic\Source.cpp(70,14): warning C4244: инициализация: преобразование "float" в "int", возможна потеря данных
-F:\desktop\игры\Проекты\C++ C# C\Git\-Labs\SDL\PlanetsPhysic\PlanetsPhysic\Source.cpp(76,72): warning C4244: аргумент: преобразование "float" в "int", возможна потеря данных
-F:\desktop\игры\Проекты\C++ C# C\Git\-Labs\SDL\PlanetsPhysic\PlanetsPhysic\Source.cpp(76,48): warning C4244: аргумент: преобразование "float" в "int", возможна потеря данных
-F:\desktop\игры\Проекты\C++ C# C\Git\-Labs\SDL\PlanetsPhysic\PlanetsPhysic\Source.cpp(102,30): warning C4244: =: преобразование "int" в "float", возможна потеря данных
-F:\desktop\игры\Проекты\C++ C# C\Git\-Labs\SDL\PlanetsPhysic\PlanetsPhysic\Source.cpp(103,33): warning C4244: =: преобразование "float" в "int", возможна потеря данных
-F:\desktop\игры\Проекты\C++ C# C\Git\-Labs\SDL\PlanetsPhysic\PlanetsPhysic\Source.cpp(104,23): warning C4244: =: преобразование "double" в "float", возможна потеря данных
-F:\desktop\игры\Проекты\C++ C# C\Git\-Labs\SDL\PlanetsPhysic\PlanetsPhysic\Source.cpp(105,23): warning C4244: =: преобразование "double" в "float", возможна потеря данных
-F:\desktop\игры\Проекты\C++ C# C\Git\-Labs\SDL\PlanetsPhysic\PlanetsPhysic\Source.cpp(140,13): warning C4244: инициализация: преобразование "double" в "float", возможна потеря данных
-F:\desktop\игры\Проекты\C++ C# C\Git\-Labs\SDL\PlanetsPhysic\PlanetsPhysic\Source.cpp(159,12): warning C4244: аргумент: преобразование "time_t" в "unsigned int", возможна потеря данных
-  PlanetsPhysic.vcxproj -> F:\desktop\игры\Проекты\C++ C# C\Git\-Labs\SDL\PlanetsPhysic\x64\Debug\PlanetsPhysic.exe
+D:\GitHub\-Labs\SDL\PlanetsPhysic\PlanetsPhysic\Source.cpp(10,27): warning C4305: инициализация: усечение из "double" в "float"
+D:\GitHub\-Labs\SDL\PlanetsPhysic\PlanetsPhysic\Source.cpp(12,23): warning C4305: инициализация: усечение из "double" в "float"
+D:\GitHub\-Labs\SDL\PlanetsPhysic\PlanetsPhysic\Source.cpp(68,13): warning C4244: инициализация: преобразование "float" в "int", возможна потеря данных
+D:\GitHub\-Labs\SDL\PlanetsPhysic\PlanetsPhysic\Source.cpp(70,14): warning C4244: инициализация: преобразование "float" в "int", возможна потеря данных
+D:\GitHub\-Labs\SDL\PlanetsPhysic\PlanetsPhysic\Source.cpp(76,72): warning C4244: аргумент: преобразование "float" в "int", возможна потеря данных
+D:\GitHub\-Labs\SDL\PlanetsPhysic\PlanetsPhysic\Source.cpp(76,48): warning C4244: аргумент: преобразование "float" в "int", возможна потеря данных
+D:\GitHub\-Labs\SDL\PlanetsPhysic\PlanetsPhysic\Source.cpp(105,31): warning C4244: =: преобразование "int" в "float", возможна потеря данных
+D:\GitHub\-Labs\SDL\PlanetsPhysic\PlanetsPhysic\Source.cpp(106,34): warning C4244: =: преобразование "float" в "int", возможна потеря данных
+D:\GitHub\-Labs\SDL\PlanetsPhysic\PlanetsPhysic\Source.cpp(107,24): warning C4244: =: преобразование "double" в "float", возможна потеря данных
+D:\GitHub\-Labs\SDL\PlanetsPhysic\PlanetsPhysic\Source.cpp(108,24): warning C4244: =: преобразование "double" в "float", возможна потеря данных
+D:\GitHub\-Labs\SDL\PlanetsPhysic\PlanetsPhysic\Source.cpp(116,23): warning C4305: =: усечение из "double" в "float"
+D:\GitHub\-Labs\SDL\PlanetsPhysic\PlanetsPhysic\Source.cpp(123,22): warning C4305: =: усечение из "double" в "float"
+D:\GitHub\-Labs\SDL\PlanetsPhysic\PlanetsPhysic\Source.cpp(130,23): warning C4305: =: усечение из "double" в "float"
+D:\GitHub\-Labs\SDL\PlanetsPhysic\PlanetsPhysic\Source.cpp(132,23): warning C4305: =: усечение из "double" в "float"
+D:\GitHub\-Labs\SDL\PlanetsPhysic\PlanetsPhysic\Source.cpp(146,13): warning C4244: инициализация: преобразование "double" в "float", возможна потеря данных
+D:\GitHub\-Labs\SDL\PlanetsPhysic\PlanetsPhysic\Source.cpp(165,12): warning C4244: аргумент: преобразование "time_t" в "unsigned int", возможна потеря данных
+  PlanetsPhysic.vcxproj -> D:\GitHub\-Labs\SDL\PlanetsPhysic\x64\Debug\PlanetsPhysic.exe
