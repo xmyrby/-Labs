@@ -1,0 +1,4 @@
+﻿  Main.cpp
+F:\desktop\игры\Проекты\C++ C# C\Git\-Labs\SDL\RogueLike\RogueLike\Main.cpp(178,1): warning C4067: непредвиденные лексемы за директивой препроцессора, требуется newline
+F:\desktop\игры\Проекты\C++ C# C\Git\-Labs\SDL\RogueLike\RogueLike\Main.cpp(181,12): warning C4244: аргумент: преобразование "time_t" в "unsigned int", возможна потеря данных
+  RogueLike.vcxproj -> F:\desktop\игры\Проекты\C++ C# C\Git\-Labs\SDL\RogueLike\x64\Debug\RogueLike.exe
