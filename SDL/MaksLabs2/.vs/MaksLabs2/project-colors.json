@@ -1,0 +1,16 @@
+{
+  "Version": 1,
+  "ProjectMap": {
+    "dbb3126a-a6e5-43e3-b2b9-13100cbf8865": {
+      "ProjectGuid": "dbb3126a-a6e5-43e3-b2b9-13100cbf8865",
+      "DisplayName": "MaksLabs2",
+      "ColorIndex": 0
+    },
+    "3c4d9e8b-e9a6-49a3-9a7b-9e015c9d4c8a": {
+      "ProjectGuid": "3c4d9e8b-e9a6-49a3-9a7b-9e015c9d4c8a",
+      "DisplayName": "28",
+      "ColorIndex": 1
+    }
+  },
+  "NextColorIndex": 2
+}

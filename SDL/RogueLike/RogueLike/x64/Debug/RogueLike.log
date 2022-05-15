@@ -1,4 +1,8 @@
 ﻿  Main.cpp
-F:\desktop\игры\Проекты\C++ C# C\Git\-Labs\SDL\RogueLike\RogueLike\Main.cpp(178,1): warning C4067: непредвиденные лексемы за директивой препроцессора, требуется newline
-F:\desktop\игры\Проекты\C++ C# C\Git\-Labs\SDL\RogueLike\RogueLike\Main.cpp(181,12): warning C4244: аргумент: преобразование "time_t" в "unsigned int", возможна потеря данных
-  RogueLike.vcxproj -> F:\desktop\игры\Проекты\C++ C# C\Git\-Labs\SDL\RogueLike\x64\Debug\RogueLike.exe
+D:\GitHub\-Labs\SDL\RogueLike\RogueLike\Main.cpp(241,1): warning C4067: непредвиденные лексемы за директивой препроцессора, требуется newline
+D:\GitHub\-Labs\SDL\RogueLike\RogueLike\Main.cpp(244,12): warning C4244: аргумент: преобразование "time_t" в "unsigned int", возможна потеря данных
+Main.obj : error LNK2019: ссылка на неразрешенный внешний символ TTF_Init в функции "void __cdecl Init(void)" (?Init@@YAXXZ).
+Main.obj : error LNK2019: ссылка на неразрешенный внешний символ TTF_OpenFont в функции main.
+Main.obj : error LNK2019: ссылка на неразрешенный внешний символ TTF_CloseFont в функции main.
+D:\Libs\SDL_ttf-2.0.9\lib\SDL_ttf.lib : warning LNK4272: тип компьютера библиотеки "x86" конфликтует с типом целевого компьютера "x64"
+D:\GitHub\-Labs\SDL\RogueLike\x64\Debug\RogueLike.exe : fatal error LNK1120: неразрешенных внешних элементов: 3

@@ -1,0 +1,4 @@
+﻿C:\Program Files\Microsoft Visual Studio\2022\Community\MSBuild\Microsoft\VC\v170\Microsoft.CppBuild.targets(510,5): warning MSB8028: промежуточный каталог (x64\Debug\) содержит файлы, которые используются совместно с другим проектом (MaksLabs2.vcxproj).  Это может привести к ошибкам очистки и перестроения.
+  29.cpp
+D:\GitHub\-Labs\SDL\MaksLabs2\MaksLabs2\29.cpp(37,12): warning C4244: аргумент: преобразование "time_t" в "unsigned int", возможна потеря данных
+  MaksLabs2.vcxproj -> D:\GitHub\-Labs\SDL\MaksLabs2\x64\Debug\29.exe
