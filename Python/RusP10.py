@@ -1,19 +1,15 @@
-N = int(input("Введите число: "))
+tp = 0
 
-while(N<=0):
-    N = int(input("Введите число: "))
+while(tp < 1 or tp > 2):
+    tp = int(input("Выберите тип ввода\n1 - 85 цифр 9\n2 - Ручной ввод\nВыбор: "))
+s=''
+if(tp==1):
+    s = '9'*85
+else:
+    while(s.count('666') == 0 and s.count('999') == 0):
+        s = str(input("Введите строку: "))
 
-s=str(N)
-
-minimum, maximum = 9, 0
- 
-while N:
-    N, n = divmod(N, 10)
-    minimum = min(minimum, n)
-    maximum = max(maximum, n)
-
-s = s.replace(str(minimum),'m')
-s = s.replace(str(maximum),str(minimum))
-s = s.replace('m',str(maximum))
-
+while(s.count('666')>0 or s.count('999') > 0):
+    s = s.replace('666','9')
+    s = s.replace('999','6')
 print(s)

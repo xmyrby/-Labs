@@ -1,0 +1,21 @@
+x = float(input('Введите x: '))
+for i in -4,-3,-2,-5:
+    print(f'\nТочность e = 10 ^ {i}:')
+    e = 10**i
+    k = 0
+    s = 0
+    polar = -1
+    twpow = 1
+    fact = 1
+    numb = e
+    lastx = (x)**(2*k)
+    while(abs(numb)>=e):
+        den = twpow * fact * (4*k -1)
+        numb = polar * lastx / den
+        s+=numb
+        k+=1
+        twpow*=2
+        polar*=-1
+        lastx *= x**2
+        fact *= k
+    print('Сумма = ', "{:.5f}".format(s))
