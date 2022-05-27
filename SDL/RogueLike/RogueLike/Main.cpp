@@ -19,7 +19,6 @@ struct Player
 Player player = { 150,150 };
 
 const int mapSize = 300;
-
 const int cellsDensity = 12;
 const int cellsFill = 6000;
 const int antsCount = 6;
@@ -181,27 +180,40 @@ int GetTile(int map[mapSize][mapSize], int i, int j)
 	return 8;
 }
 
+int RayTracing(int map[mapSize][mapSize], int x, int y)
+{
+	float ax = x, ay = y;
+	float kx = player.x - x, ky = player.y - y;
+	int lastx = x, lasty = y;
+	int blocks = 0;
+	while (x != player.x ||y != player.y)
+	{
+		ax += kx / 40;
+		ay += ky / 40;
+		x = round(ax);
+		y = round(ay);
+		if (lastx != x || lasty != y)
+		{
+			if (map[x][y] == 1)
+				blocks += 5;
+			blocks += 1;
+			lastx = x;
+			lasty = y;
+		}
+		
+	}
+	return blocks;
+}
+
+int Max(int a, int b)
+{
+	if (a > b)
+		return a;
+	return b;
+}
+
 void Draw(int map[mapSize][mapSize])
 {
-	SDL_Texture* textures[20];
-	textures[0] = SDL_CreateTextureFromSurface(ren, IMG_Load("GFX\\Tile0.png"));
-	textures[1] = SDL_CreateTextureFromSurface(ren, IMG_Load("GFX\\Tile1.png"));
-	textures[2] = SDL_CreateTextureFromSurface(ren, IMG_Load("GFX\\Tile2.png"));
-	textures[3] = SDL_CreateTextureFromSurface(ren, IMG_Load("GFX\\Tile3.png"));
-	textures[4] = SDL_CreateTextureFromSurface(ren, IMG_Load("GFX\\Tile4.png"));
-	textures[5] = SDL_CreateTextureFromSurface(ren, IMG_Load("GFX\\Tile5.png"));
-	textures[6] = SDL_CreateTextureFromSurface(ren, IMG_Load("GFX\\Tile6.png"));
-	textures[7] = SDL_CreateTextureFromSurface(ren, IMG_Load("GFX\\Tile7.png"));
-	textures[8] = SDL_CreateTextureFromSurface(ren, IMG_Load("GFX\\Tile8.png"));
-	textures[9] = SDL_CreateTextureFromSurface(ren, IMG_Load("GFX\\Tile9.png"));
-	textures[10] = SDL_CreateTextureFromSurface(ren, IMG_Load("GFX\\Tile10.png"));
-	textures[11] = SDL_CreateTextureFromSurface(ren, IMG_Load("GFX\\Tile11.png"));
-	textures[12] = SDL_CreateTextureFromSurface(ren, IMG_Load("GFX\\Tile12.png"));
-	textures[13] = SDL_CreateTextureFromSurface(ren, IMG_Load("GFX\\Tile13.png"));
-	textures[14] = SDL_CreateTextureFromSurface(ren, IMG_Load("GFX\\Tile14.png"));
-	textures[15] = SDL_CreateTextureFromSurface(ren, IMG_Load("GFX\\Tile15.png"));
-	textures[16] = SDL_CreateTextureFromSurface(ren, IMG_Load("GFX\\Tile16.png"));
-
 	SDL_SetRenderDrawColor(ren, 0, 0, 0, 255);
 	SDL_RenderClear(ren);
 
@@ -209,24 +221,22 @@ void Draw(int map[mapSize][mapSize])
 		for (int j = player.y - 15; j < player.y + 16; j++)
 		{
 			SDL_Rect rect = { (i + 15 - player.x) * 32 - 16,(j + 15 - player.y) * 32 - 16,32,32 };
+			int blocks = RayTracing(map, i, j);
 			if (map[i][j] == 1)
 			{
-				//SDL_RenderCopy(ren, textures[GetTile(map, i, j)], NULL, &rect);
-				SDL_SetRenderDrawColor(ren, 255, 255, 255, 255);
+				SDL_SetRenderDrawColor(ren, Max(15, 138 - blocks * 16), Max(15, 22 - blocks), Max(15, 31 - blocks * 2), 255);
 				SDL_RenderFillRect(ren, &rect);
 			}
 			else
 			{
-				SDL_SetRenderDrawColor(ren, 0, 0, 0, 255);
+				SDL_SetRenderDrawColor(ren, Max(15, 30-blocks*2), Max(15, 30 - blocks * 2), Max(15, 30 - blocks * 2), 255);
 				SDL_RenderFillRect(ren, &rect);
 			}
 		}
 
 	SDL_Rect rect = { 464, 464,32,32 };
-	SDL_SetRenderDrawColor(ren, 255, 0, 0, 255);
+	SDL_SetRenderDrawColor(ren, 114, 230, 221, 255);
 	SDL_RenderFillRect(ren, &rect);
-
-	SDL_RenderPresent(ren);
 }
 
 void SpawnPlayer(int map[mapSize][mapSize])
@@ -245,11 +255,7 @@ int main()
 	int map[mapSize][mapSize];
 	Init();
 	SDL_Event event;
-	TTF_Font* font = TTF_OpenFont("Chava.ttf", 20);
-	printf("%s\n", TTF_GetError());
-	if (!font) {
-		printf("Unable to open font"); exit(1);
-	}
+	TTF_Font* font = TTF_OpenFont("Fonts\\Chava.ttf", 20);
 
 	char str[10] = "Great";
 	SDL_Surface* textSurface = TTF_RenderText_Blended(font, str, { 255, 0, 0, 255 });
@@ -292,9 +298,11 @@ int main()
 			}
 
 			Draw(map);
-			SDL_Rect rect = { 10,10,200,20 };
-			SDL_RenderCopy(ren, textTexture, NULL, &rect);
 		}
+		SDL_Rect rect = { 10,10,200,20 };
+		SDL_RenderCopy(ren, textTexture, NULL, &rect);
+		SDL_RenderPresent(ren);
+
 	}
 	TTF_CloseFont(font);
 

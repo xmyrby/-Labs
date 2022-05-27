@@ -1,8 +1,10 @@
 ﻿  Main.cpp
-D:\GitHub\-Labs\SDL\RogueLike\RogueLike\Main.cpp(241,1): warning C4067: непредвиденные лексемы за директивой препроцессора, требуется newline
-D:\GitHub\-Labs\SDL\RogueLike\RogueLike\Main.cpp(244,12): warning C4244: аргумент: преобразование "time_t" в "unsigned int", возможна потеря данных
-Main.obj : error LNK2019: ссылка на неразрешенный внешний символ TTF_Init в функции "void __cdecl Init(void)" (?Init@@YAXXZ).
-Main.obj : error LNK2019: ссылка на неразрешенный внешний символ TTF_OpenFont в функции main.
-Main.obj : error LNK2019: ссылка на неразрешенный внешний символ TTF_CloseFont в функции main.
-D:\Libs\SDL_ttf-2.0.9\lib\SDL_ttf.lib : warning LNK4272: тип компьютера библиотеки "x86" конфликтует с типом целевого компьютера "x64"
-D:\GitHub\-Labs\SDL\RogueLike\x64\Debug\RogueLike.exe : fatal error LNK1120: неразрешенных внешних элементов: 3
+D:\GitHub\-Labs\SDL\RogueLike\RogueLike\Main.cpp(185,11): warning C4244: инициализация: преобразование "int" в "float", возможна потеря данных
+D:\GitHub\-Labs\SDL\RogueLike\RogueLike\Main.cpp(185,19): warning C4244: инициализация: преобразование "int" в "float", возможна потеря данных
+D:\GitHub\-Labs\SDL\RogueLike\RogueLike\Main.cpp(186,11): warning C4244: инициализация: преобразование "int" в "float", возможна потеря данных
+D:\GitHub\-Labs\SDL\RogueLike\RogueLike\Main.cpp(186,30): warning C4244: инициализация: преобразование "int" в "float", возможна потеря данных
+D:\GitHub\-Labs\SDL\RogueLike\RogueLike\Main.cpp(193,12): warning C4244: =: преобразование "float" в "int", возможна потеря данных
+D:\GitHub\-Labs\SDL\RogueLike\RogueLike\Main.cpp(194,12): warning C4244: =: преобразование "float" в "int", возможна потеря данных
+D:\GitHub\-Labs\SDL\RogueLike\RogueLike\Main.cpp(251,1): warning C4067: непредвиденные лексемы за директивой препроцессора, требуется newline
+D:\GitHub\-Labs\SDL\RogueLike\RogueLike\Main.cpp(254,12): warning C4244: аргумент: преобразование "time_t" в "unsigned int", возможна потеря данных
+  RogueLike.vcxproj -> D:\GitHub\-Labs\SDL\RogueLike\x64\Debug\RogueLike.exe
