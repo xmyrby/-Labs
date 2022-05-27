@@ -7,7 +7,7 @@ SDL_Window* win = NULL;
 SDL_Renderer* ren = NULL;
 SDL_Surface* win_surf = NULL;
 TTF_Font* font = NULL;
-SDL_Texture* textures[2];
+SDL_Texture* textures[4];
 
 int winWdt = 960;
 int winHgt = 960;
@@ -55,6 +55,8 @@ void LoadTextures()
 {
 	textures[0] = IMG_LoadTexture(ren, "GFX\\AttackMoves.png");
 	textures[1] = IMG_LoadTexture(ren, "GFX\\MoveMoves.png");
+	textures[2] = IMG_LoadTexture(ren, "GFX\\PlayerPawn.png");
+	textures[3] = IMG_LoadTexture(ren, "GFX\\TigerPawn.png");
 }
 
 void Init()
@@ -242,6 +244,61 @@ int Max(int a, int b)
 	return b;
 }
 
+int GetSize(const char* text)
+{
+	int count = 0;
+	while (text[count] != '\0')
+		count++;
+	return count;
+}
+
+void PrintText(int var, int posx, int posy, int size)
+{
+	char text[10];
+
+	_itoa_s(var, (char*)text, 10, 10);
+
+	SDL_Surface* textSurface = TTF_RenderText_Blended(font, text, { 255, 255, 255, 255 });
+
+	SDL_Rect rect = { posx,posy, 0.75 * GetSize(text) * size,size };
+
+	SDL_Texture* textTexture = SDL_CreateTextureFromSurface(ren, textSurface);
+	SDL_RenderCopy(ren, textTexture, NULL, &rect);
+
+	SDL_FreeSurface(textSurface);
+	SDL_DestroyTexture(textTexture);
+}
+
+void PrintText(const char* text, int posx, int posy, int size)
+{
+	SDL_Surface* textSurface = TTF_RenderText_Blended(font, text, { 255, 255, 255, 255 });
+
+	SDL_Rect rect = { posx,posy, 0.75 * GetSize(text) * size,size };
+
+	SDL_Texture* textTexture = SDL_CreateTextureFromSurface(ren, textSurface);
+	SDL_RenderCopy(ren, textTexture, NULL, &rect);
+
+	SDL_FreeSurface(textSurface);
+	SDL_DestroyTexture(textTexture);
+}
+
+void RenderImage(int textureId, int x, int y, int w, int h, int alpha)
+{
+	SDL_Rect rect = { x,y,w,h };
+	SDL_SetTextureAlphaMod(textures[textureId], alpha);
+	SDL_RenderCopy(ren, textures[textureId], NULL, &rect);
+}
+
+bool CheckEntity(int x, int y)
+{
+	if (player.x == x && player.y == y)
+		return false;
+	for (int i = 0; i < ENEMIES_COUNT; i++)
+		if (enemies[i].x == x && enemies[i].y == y)
+			return false;
+	return true;
+}
+
 void Draw()
 {
 	SDL_SetRenderDrawColor(ren, 0, 0, 0, 255);
@@ -267,6 +324,7 @@ void Draw()
 	SDL_Rect rect = { 464, 464,32,32 };
 	SDL_SetRenderDrawColor(ren, 114, 230, 221, 255);
 	SDL_RenderFillRect(ren, &rect);
+	RenderImage(2, 464, 464, 32, 32, 255);
 
 	SDL_SetRenderDrawColor(ren, 114, 230, 221, 255);
 	for (int i = 0; i < ENEMIES_COUNT; i++)
@@ -275,6 +333,10 @@ void Draw()
 		rect = { (enemies[i].x + 15 - player.x) * 32 - 16, (enemies[i].y + 15 - player.y) * 32 - 16,32,32 };
 		SDL_SetRenderDrawColor(ren, Max(15, 221 - blocks * 27), Max(15, 230 - blocks * 28), Max(15, 114 - blocks * 13), 255);
 		SDL_RenderFillRect(ren, &rect);
+		if (blocks <= 5)
+		{
+			RenderImage(3, rect.x, rect.y, 32, 32, 255 - blocks * 33);
+		}
 	}
 }
 
@@ -302,57 +364,13 @@ void SpawnEnemies()
 	}
 }
 
-int GetSize(const char* text)
-{
-	int count = 0;
-	while (text[count] != '\0')
-		count++;
-	return count;
-}
-
-void PrintText(const char* text, int posx, int posy, int size)
-{
-	SDL_Surface* textSurface = TTF_RenderText_Blended(font, text, { 255, 255, 255, 255 });
-
-	SDL_Rect rect = { posx,posy, 0.75 * GetSize(text) * size,size };
-
-	SDL_Texture* textTexture = SDL_CreateTextureFromSurface(ren, textSurface);
-	SDL_RenderCopy(ren, textTexture, NULL, &rect);
-
-	SDL_FreeSurface(textSurface);
-	SDL_DestroyTexture(textTexture);
-}
-
-void PrintText(int var, int posx, int posy, int size)
-{
-	char text[10];
-
-	_itoa_s(var, (char*)text, 10, 10);
-
-	SDL_Surface* textSurface = TTF_RenderText_Blended(font, text, { 255, 255, 255, 255 });
-
-	SDL_Rect rect = { posx,posy, 0.75 * GetSize(text) * size,size };
-
-	SDL_Texture* textTexture = SDL_CreateTextureFromSurface(ren, textSurface);
-	SDL_RenderCopy(ren, textTexture, NULL, &rect);
-
-	SDL_FreeSurface(textSurface);
-	SDL_DestroyTexture(textTexture);
-}
-
-void RenderImage(int textureId, int x, int y, int w, int h)
-{
-	SDL_Rect rect = { x,y,w,h };
-	SDL_RenderCopy(ren, textures[textureId], NULL, &rect);
-}
-
 void DrawUI()
 {
 	PrintText("Move: #", 10, 18, 16);
 	PrintText(moves + 1, 96, 18, 16);
-	RenderImage(0, 10, 52, 32, 32);
+	RenderImage(0, 10, 52, 32, 32, 255);
 	PrintText(player.attacks, 52, 60, 16);
-	RenderImage(1, 10, 94, 32, 32);
+	RenderImage(1, 10, 94, 32, 32, 255);
 	PrintText(player.moves, 52, 104, 16);
 	PrintText("Health: ", 10, 926, 16);
 	PrintText(player.health, 102, 926, 16);
@@ -360,21 +378,21 @@ void DrawUI()
 
 void MakeEnemyMove(Enemy& enemy)
 {
-	if (RayTracing(player.x, player.y) <= 5)
+	if (RayTracing(enemy.x, enemy.y) <= 5)
 	{
-		if (enemy.x < player.x && map[enemy.x + 1][enemy.y] == 0)
+		if (enemy.x < player.x && map[enemy.x + 1][enemy.y] == 0 && CheckEntity(enemy.x + 1, enemy.y))
 		{
 			enemy.x++;
 		}
-		else if (enemy.x > player.x && map[enemy.x - 1][enemy.y] == 0)
+		else if (enemy.x > player.x && map[enemy.x - 1][enemy.y] == 0 && CheckEntity(enemy.x - 1, enemy.y))
 		{
 			enemy.x--;
 		}
-		else if (enemy.y < player.y && map[enemy.x][enemy.y + 1] == 0)
+		else if (enemy.y < player.y && map[enemy.x][enemy.y + 1] == 0 && CheckEntity(enemy.x, enemy.y + 1))
 		{
 			enemy.y++;
 		}
-		else if (enemy.y > player.y && map[enemy.x][enemy.y - 1] == 0)
+		else if (enemy.y > player.y && map[enemy.x][enemy.y - 1] == 0 && CheckEntity(enemy.x, enemy.y - 1))
 		{
 			enemy.y--;
 		}
@@ -419,7 +437,7 @@ int main()
 		{
 			if (state[SDL_SCANCODE_W])
 			{
-				if (map[player.x][player.y - 1] == 0 && player.moves > 0)
+				if (map[player.x][player.y - 1] == 0 && player.moves > 0 && CheckEntity(player.x, player.y - 1))
 				{
 					player.y--;
 					player.moves--;
@@ -427,7 +445,7 @@ int main()
 			}
 			else if (state[SDL_SCANCODE_S])
 			{
-				if (map[player.x][player.y + 1] == 0 && player.moves > 0)
+				if (map[player.x][player.y + 1] == 0 && player.moves > 0 && CheckEntity(player.x, player.y + 1))
 				{
 					player.y++;
 					player.moves--;
@@ -435,7 +453,7 @@ int main()
 			}
 			else if (state[SDL_SCANCODE_A])
 			{
-				if (map[player.x - 1][player.y] == 0 && player.moves > 0)
+				if (map[player.x - 1][player.y] == 0 && player.moves > 0 && CheckEntity(player.x - 1, player.y))
 				{
 					player.x--;
 					player.moves--;
@@ -443,7 +461,7 @@ int main()
 			}
 			else if (state[SDL_SCANCODE_D])
 			{
-				if (map[player.x + 1][player.y] == 0 && player.moves > 0)
+				if (map[player.x + 1][player.y] == 0 && player.moves > 0 && CheckEntity(player.x + 1, player.y))
 				{
 					player.x++;
 					player.moves--;
