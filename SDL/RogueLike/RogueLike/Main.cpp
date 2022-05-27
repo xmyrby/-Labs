@@ -6,14 +6,19 @@
 SDL_Window* win = NULL;
 SDL_Renderer* ren = NULL;
 SDL_Surface* win_surf = NULL;
+TTF_Font* font = NULL;
+SDL_Texture* textures[2];
 
 int winWdt = 960;
 int winHgt = 960;
 
+int moves = 0;
 
 struct Player
 {
 	int x, y;
+	int moves = 1;
+	int attacks = 1;
 };
 
 Player player = { 150,150 };
@@ -29,6 +34,12 @@ void DeInit(char error)
 	SDL_DestroyWindow(win);
 	SDL_Quit();
 	exit(error);
+}
+
+void LoadTextures()
+{
+	textures[0] = IMG_LoadTexture(ren, "GFX\\AttackMoves.png");
+	textures[1] = IMG_LoadTexture(ren, "GFX\\MoveMoves.png");
 }
 
 void Init()
@@ -68,6 +79,8 @@ void Init()
 	}
 
 	win_surf = SDL_GetWindowSurface(win);
+
+	LoadTextures();
 }
 
 bool CheckCell(int map[mapSize][mapSize], int x, int y)
@@ -186,7 +199,7 @@ int RayTracing(int map[mapSize][mapSize], int x, int y)
 	float kx = player.x - x, ky = player.y - y;
 	int lastx = x, lasty = y;
 	int blocks = 0;
-	while (x != player.x ||y != player.y)
+	while (x != player.x || y != player.y)
 	{
 		ax += kx / 40;
 		ay += ky / 40;
@@ -200,7 +213,7 @@ int RayTracing(int map[mapSize][mapSize], int x, int y)
 			lastx = x;
 			lasty = y;
 		}
-		
+
 	}
 	return blocks;
 }
@@ -229,7 +242,7 @@ void Draw(int map[mapSize][mapSize])
 			}
 			else
 			{
-				SDL_SetRenderDrawColor(ren, Max(15, 30-blocks*2), Max(15, 30 - blocks * 2), Max(15, 30 - blocks * 2), 255);
+				SDL_SetRenderDrawColor(ren, Max(15, 30 - blocks * 2), Max(15, 30 - blocks * 2), Max(15, 30 - blocks * 2), 255);
 				SDL_RenderFillRect(ren, &rect);
 			}
 		}
@@ -248,21 +261,86 @@ void SpawnPlayer(int map[mapSize][mapSize])
 	} while (map[player.x][player.y] != 0);
 }
 
+int GetSize(const char* text)
+{
+	int count = 0;
+	while (text[count] != '\0')
+		count++;
+	return count;
+}
+
+const char* CC(int var)
+{
+	char buff[10];
+
+	_itoa_s(var, (char*)buff, 10, 10);
+	return buff;
+}
+
+void PrintText(const char* text, int posx, int posy, int size)
+{
+	SDL_Surface* textSurface = TTF_RenderText_Blended(font, text, { 255, 255, 255, 255 });
+
+	SDL_Rect rect = { posx,posy, 0.75 * GetSize(text) * size,size };
+
+	SDL_Texture* textTexture = SDL_CreateTextureFromSurface(ren, textSurface);
+	SDL_RenderCopy(ren, textTexture, NULL, &rect);
+
+	SDL_FreeSurface(textSurface);
+	SDL_DestroyTexture(textTexture);
+}
+
+void PrintText(int var, int posx, int posy, int size)
+{
+	char text[10];
+
+	_itoa_s(var, (char*)text, 10, 10);
+
+	SDL_Surface* textSurface = TTF_RenderText_Blended(font, text, { 255, 255, 255, 255 });
+
+	SDL_Rect rect = { posx,posy, 0.75 * GetSize(text) * size,size };
+
+	SDL_Texture* textTexture = SDL_CreateTextureFromSurface(ren, textSurface);
+	SDL_RenderCopy(ren, textTexture, NULL, &rect);
+
+	SDL_FreeSurface(textSurface);
+	SDL_DestroyTexture(textTexture);
+}
+
+void RenderImage(int textureId, int x, int y, int w, int h)
+{
+	SDL_Rect rect = { x,y,w,h };
+	SDL_RenderCopy(ren, textures[textureId], NULL, &rect);
+}
+
+void DrawUI()
+{
+	PrintText("Move: #", 10, 18, 16);
+	PrintText(moves+1, 96, 18, 16);
+	RenderImage(0, 10, 52, 32, 32);
+	PrintText(player.attacks, 52, 60, 16);
+	RenderImage(1, 10, 94, 32, 32);
+	PrintText(player.moves, 52, 104, 16);
+}
+
+void CheckMove()
+{
+	if (player.moves == 0 && player.attacks == 0)
+	{
+		moves++;
+		player.moves++;
+		player.attacks++;
+	}
+}
+
 #undef main;
 int main()
 {
 	srand(time(NULL));
 	int map[mapSize][mapSize];
 	Init();
+	font = TTF_OpenFont("Fonts\\MainFont.ttf", 20);
 	SDL_Event event;
-	TTF_Font* font = TTF_OpenFont("Fonts\\Chava.ttf", 20);
-
-	char str[10] = "Great";
-	SDL_Surface* textSurface = TTF_RenderText_Blended(font, str, { 255, 0, 0, 255 });
-
-	SDL_Texture* textTexture = SDL_CreateTextureFromSurface(ren, textSurface);
-
-	SDL_FreeSurface(textSurface);
 
 	Generate(map);
 	SpawnPlayer(map);
@@ -278,31 +356,49 @@ int main()
 		{
 			if (state[SDL_SCANCODE_UP])
 			{
-				if (map[player.x][player.y - 1] == 0)
+				if (map[player.x][player.y - 1] == 0 && player.moves > 0)
+				{
 					player.y--;
+					player.moves--;
+				}
 			}
 			else if (state[SDL_SCANCODE_DOWN])
 			{
-				if (map[player.x][player.y + 1] == 0)
+				if (map[player.x][player.y + 1] == 0 && player.moves > 0)
+				{
 					player.y++;
+					player.moves--;
+				}
 			}
 			else if (state[SDL_SCANCODE_LEFT])
 			{
-				if (map[player.x - 1][player.y] == 0)
+				if (map[player.x - 1][player.y] == 0 && player.moves > 0)
+				{
 					player.x--;
+					player.moves--;
+				}
 			}
 			else if (state[SDL_SCANCODE_RIGHT])
 			{
-				if (map[player.x + 1][player.y] == 0)
+				if (map[player.x + 1][player.y] == 0 && player.moves > 0)
+				{
 					player.x++;
+					player.moves--;
+				}
 			}
+			else if (state[SDL_SCANCODE_SPACE])
+			{
+				player.moves = 0;
+				player.attacks = 0;
+			}
+
+			CheckMove();
 
 			Draw(map);
 		}
-		SDL_Rect rect = { 10,10,200,20 };
-		SDL_RenderCopy(ren, textTexture, NULL, &rect);
-		SDL_RenderPresent(ren);
+		DrawUI();
 
+		SDL_RenderPresent(ren);
 	}
 	TTF_CloseFont(font);
 
