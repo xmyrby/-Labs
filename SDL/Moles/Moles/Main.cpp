@@ -142,7 +142,7 @@ int main(int argc, char* argv[])
 		events = SDL_GetMouseState(&mouse_x, &mouse_y);
 
 		if ((events & SDL_BUTTON_LMASK) != 0 && !down)
-		{S
+		{
 			down = true;
 			KillMole(moles, mouse_x, mouse_y, count, counter);
 			system("cls");

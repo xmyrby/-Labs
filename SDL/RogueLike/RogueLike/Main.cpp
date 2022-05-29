@@ -7,7 +7,7 @@ SDL_Window* win = NULL;
 SDL_Renderer* ren = NULL;
 SDL_Surface* win_surf = NULL;
 TTF_Font* font = NULL;
-SDL_Texture* textures[4];
+SDL_Texture* textures[5];
 
 int winWdt = 960;
 int winHgt = 960;
@@ -24,12 +24,16 @@ struct Entity
 {
 	int x, y;
 	int health;
+	int moves = 1;
+	int attacks = 1;
+	int damage = 1;
+	int attackrange = 1;
 };
 
 struct Player : Entity
 {
-	int moves = 1;
-	int attacks = 1;
+	int selectedEnemy = -1;
+	int level = 1;
 };
 
 struct Enemy : Entity
@@ -57,6 +61,7 @@ void LoadTextures()
 	textures[1] = IMG_LoadTexture(ren, "GFX\\MoveMoves.png");
 	textures[2] = IMG_LoadTexture(ren, "GFX\\PlayerPawn.png");
 	textures[3] = IMG_LoadTexture(ren, "GFX\\TigerPawn.png");
+	textures[4] = IMG_LoadTexture(ren, "GFX\\Selection.png");
 }
 
 void Init()
@@ -299,6 +304,30 @@ bool CheckEntity(int x, int y)
 	return true;
 }
 
+int GetAlpha(int value, int b)
+{
+	int k = ceil((value - 15) / 7.6875);
+	return Max(15, value - b * k);
+}
+
+void DrawUI()
+{
+	PrintText("Move: #", 10, 18, 16);
+	PrintText(moves + 1, 96, 18, 16);
+	RenderImage(0, 10, 52, 32, 32, 255);
+	PrintText(player.attacks, 52, 60, 16);
+	RenderImage(1, 10, 94, 32, 32, 255);
+	PrintText(player.moves, 52, 104, 16);
+	PrintText("Health: ", 10, 926, 16);
+	PrintText(player.health, 102, 926, 16);
+
+	if (player.selectedEnemy >= 0)
+		if (RayTracing(enemies[player.selectedEnemy].x, enemies[player.selectedEnemy].y) > 5)
+			player.selectedEnemy = -1;
+		else
+			RenderImage(4, (enemies[player.selectedEnemy].x + 15 - player.x) * 32 - 16, (enemies[player.selectedEnemy].y + 15 - player.y) * 32 - 16, 32, 32, 255);
+}
+
 void Draw()
 {
 	SDL_SetRenderDrawColor(ren, 0, 0, 0, 255);
@@ -311,12 +340,12 @@ void Draw()
 			int blocks = RayTracing(i, j);
 			if (map[i][j] == 1)
 			{
-				SDL_SetRenderDrawColor(ren, Max(15, 138 - blocks * 16), Max(15, 22 - blocks), Max(15, 31 - blocks * 2), 255);
+				SDL_SetRenderDrawColor(ren, GetAlpha(138, blocks), GetAlpha(22, blocks), GetAlpha(31, blocks), 255);
 				SDL_RenderFillRect(ren, &rect);
 			}
 			else
 			{
-				SDL_SetRenderDrawColor(ren, Max(15, 30 - blocks * 2), Max(15, 30 - blocks * 2), Max(15, 30 - blocks * 2), 255);
+				SDL_SetRenderDrawColor(ren, GetAlpha(30, blocks), GetAlpha(30, blocks), GetAlpha(30, blocks), 255);
 				SDL_RenderFillRect(ren, &rect);
 			}
 		}
@@ -331,13 +360,15 @@ void Draw()
 	{
 		int blocks = RayTracing(enemies[i].x, enemies[i].y);
 		rect = { (enemies[i].x + 15 - player.x) * 32 - 16, (enemies[i].y + 15 - player.y) * 32 - 16,32,32 };
-		SDL_SetRenderDrawColor(ren, Max(15, 221 - blocks * 27), Max(15, 230 - blocks * 28), Max(15, 114 - blocks * 13), 255);
+		SDL_SetRenderDrawColor(ren, GetAlpha(198, blocks), GetAlpha(101, blocks), GetAlpha(202, blocks), 255);
 		SDL_RenderFillRect(ren, &rect);
 		if (blocks <= 5)
 		{
 			RenderImage(3, rect.x, rect.y, 32, 32, 255 - blocks * 33);
 		}
 	}
+
+	DrawUI();
 }
 
 void SpawnPlayer()
@@ -362,18 +393,6 @@ void SpawnEnemies()
 		} while (map[enemy.x][enemy.y] != 0);
 		enemies[i] = enemy;
 	}
-}
-
-void DrawUI()
-{
-	PrintText("Move: #", 10, 18, 16);
-	PrintText(moves + 1, 96, 18, 16);
-	RenderImage(0, 10, 52, 32, 32, 255);
-	PrintText(player.attacks, 52, 60, 16);
-	RenderImage(1, 10, 94, 32, 32, 255);
-	PrintText(player.moves, 52, 104, 16);
-	PrintText("Health: ", 10, 926, 16);
-	PrintText(player.health, 102, 926, 16);
 }
 
 void MakeEnemyMove(Enemy& enemy)
@@ -414,11 +433,26 @@ void CheckMove()
 	}
 }
 
+int CheckSelection(int mx, int my)
+{
+	mx = round(mx + 16) / 32 + player.x - 15;
+	my = round(my + 16) / 32 + player.y - 15;
+	for (int i = 0; i < ENEMIES_COUNT; i++)
+	{
+		if (mx == enemies[i].x && my == enemies[i].y)
+			if (RayTracing(mx, my) <= 5)
+				return i;
+	}
+	return -1;
+}
+
 #undef main;
 int main()
 {
 	srand(time(NULL));
 	Init();
+	int _mouseX = 0, _mouseY = 0;
+	bool _down = false;
 	font = TTF_OpenFont("Fonts\\MainFont.ttf", 20);
 	SDL_Event event;
 
@@ -431,6 +465,19 @@ int main()
 	while (true)
 	{
 		const Uint8* state = SDL_GetKeyboardState(NULL);
+
+		SDL_PumpEvents();
+		Uint32 events = SDL_GetMouseState(&_mouseX, &_mouseY);
+
+		if ((events & SDL_BUTTON_LMASK) != 0 && !_down)
+		{
+			_down = true;
+			player.selectedEnemy = CheckSelection(_mouseX, _mouseY);
+			Draw();
+		}
+		if ((events & SDL_BUTTON_LMASK) == 0)
+			_down = false;
+
 		SDL_PollEvent(&event);
 
 		if (event.type == SDL_KEYDOWN || event.type == SDL_KEYUP)
@@ -477,7 +524,6 @@ int main()
 
 			Draw();
 		}
-		DrawUI();
 
 		SDL_RenderPresent(ren);
 	}
