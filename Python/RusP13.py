@@ -3,7 +3,7 @@ a = [[0] * m for i in range(n)]
 b = [[0] * m for i in range(n)]
 mina = 100000
 maxb = 0
-maxbi = 0
+maxbj = 0
 for i in range(n):
     for j in range(m):
         a[i][j] = int(input(f'a[{i}][{j}] = '))
@@ -12,26 +12,26 @@ for i in range(n):
 for i in range(n):
     for j in range(m):
         if(i>j):
-            b[i][j] = mina / (i-j)
+            b[i][j] = int(mina / (i-j))
         elif(i<j):
             b[i][j] = i+j
         else:
             if(i == 0):
                 b[i][j]=0
             else:
-                b[i][j] = mina / i**2
+                b[i][j] = int(mina / i**2)
+        if(b[i][j]>=maxb):
+            maxb = b[i][j]
+            maxbj = j
         
 print('Матрица b:')
 for i in range(n):
     for j in range(m):
         print(str(b[i][j]).rjust(3),end = ' ')
     print()
-k = -1
-while(k<0 or k>=m):
-    k = int(input(f'Введите номер столбца 0-{m-1}: '))
+s = 0
 
-s=0
 for i in range(n):
-    s+=c[i][k]
+    s += b[i][maxbj]
 
 print('Сумма = ',s)
