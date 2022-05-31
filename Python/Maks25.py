@@ -24,3 +24,4 @@ for i in range(10,31,10):
     else:
         print('число',i,'не принадлежит Y')
         
+print('Мощность y =',len(y))
