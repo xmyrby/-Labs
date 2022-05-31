@@ -17,3 +17,10 @@ print('x1 =',x1)
 print('x2 =',x2)
 print('x3 =',x3)
 print('y =',y)
+
+for i in range(10,31,10):
+    if(i in y):
+        print('число',i,'принадлежит Y')
+    else:
+        print('число',i,'не принадлежит Y')
+        
