@@ -15,19 +15,44 @@ int winHgt = 960;
 int moves = 0;
 
 const int MAP_SIZE = 300;
-const int CELLS_DENSITY = 12;
+const int CELLS_DENSITY = 7;
 const int CELLS_FILL = 6000;
 const int ANTS_COUNT = 6;
 const int ENEMIES_COUNT = 20;
 
-struct Entity
+struct Position
 {
 	int x, y;
+};
+
+struct Entity
+{
+	Position position;
 	int health;
 	int moves = 1;
 	int attacks = 1;
 	int damage = 1;
 	int attackrange = 1;
+
+	int x()
+	{
+		return position.x;
+	}
+
+	void x(int x)
+	{
+		position.x = x;
+	}
+
+	int y()
+	{
+		return position.y;
+	}
+
+	void y(int y)
+	{
+		position.y = y;
+	}
 };
 
 struct Player : Entity
@@ -122,7 +147,7 @@ void Generate()
 {
 	struct Ant
 	{
-		int x, y;
+		Position position;
 	};
 
 	for (int i = 0; i < MAP_SIZE; i++)
@@ -135,7 +160,7 @@ void Generate()
 	for (int i = 0; i < ANTS_COUNT; i++)
 	{
 		ants[i] = { rand() % (MAP_SIZE / 2) + (MAP_SIZE / 4), rand() % (MAP_SIZE / 2) + (MAP_SIZE / 4) };
-		map[ants[i].x][ants[i].y] = 0;
+		map[ants[i].position.x][ants[i].position.y] = 0;
 		cells++;
 	}
 
@@ -151,27 +176,27 @@ void Generate()
 				switch (dir)
 				{
 				case 0:
-					if (ant.x > 1)
-						ant.x--;
+					if (ant.position.x > 1)
+						ant.position.x--;
 					break;
 				case 1:
-					if (ant.x < MAP_SIZE - 2)
-						ant.x++;
+					if (ant.position.x < MAP_SIZE - 2)
+						ant.position.x++;
 					break;
 				case 2:
-					if (ant.y > 1)
-						ant.y--;
+					if (ant.position.y > 1)
+						ant.position.y--;
 					break;
 				case 3:
-					if (ant.y < MAP_SIZE - 2)
-						ant.y++;
+					if (ant.position.y < MAP_SIZE - 2)
+						ant.position.y++;
 					break;
 				default:
 					break;
 				}
-				if (map[ant.x][ant.y] != 0 && CheckCell(ant.x - 2, ant.y - 2))
+				if (map[ant.position.x][ant.position.y] != 0 && CheckCell(ant.position.x - 2, ant.position.y - 2))
 				{
-					map[ant.x][ant.y] = 0;
+					map[ant.position.x][ant.position.y] = 0;
 					cells++;
 				}
 			}
@@ -215,27 +240,27 @@ void Generate()
 	return 8;
 }*/
 
-int RayTracing(int x, int y)
+int RayTracing(Position position)
 {
-	float ax = x, ay = y;
-	float kx = player.x - x, ky = player.y - y;
-	int lastx = x, lasty = y;
+	float ax = position.x, ay = position.y;
+	float kx = player.x() - position.x, ky = player.y() - position.y;
+	int lastx = position.x, lasty = position.y;
 	int blocks = 0;
 	if (abs(kx) == abs(ky))
 		blocks++;
-	while (x != player.x || y != player.y)
+	while (position.x != player.x() || position.y != player.y())
 	{
 		ax += kx / 40;
 		ay += ky / 40;
-		x = round(ax);
-		y = round(ay);
-		if (lastx != x || lasty != y)
+		position.x = round(ax);
+		position.y = round(ay);
+		if (lastx != position.x || lasty != position.y)
 		{
-			if (map[x][y] == 1)
+			if (map[position.x][position.y] == 1)
 				blocks += 5;
 			blocks += 1;
-			lastx = x;
-			lasty = y;
+			lastx = position.x;
+			lasty = position.y;
 		}
 
 	}
@@ -257,7 +282,7 @@ int GetSize(const char* text)
 	return count;
 }
 
-void PrintText(int var, int posx, int posy, int size)
+void PrintText(int var, Position position, int size)
 {
 	char text[10];
 
@@ -265,7 +290,7 @@ void PrintText(int var, int posx, int posy, int size)
 
 	SDL_Surface* textSurface = TTF_RenderText_Blended(font, text, { 255, 255, 255, 255 });
 
-	SDL_Rect rect = { posx,posy, 0.75 * GetSize(text) * size,size };
+	SDL_Rect rect = { position.x,position.y, 0.75 * GetSize(text) * size,size };
 
 	SDL_Texture* textTexture = SDL_CreateTextureFromSurface(ren, textSurface);
 	SDL_RenderCopy(ren, textTexture, NULL, &rect);
@@ -274,11 +299,11 @@ void PrintText(int var, int posx, int posy, int size)
 	SDL_DestroyTexture(textTexture);
 }
 
-void PrintText(const char* text, int posx, int posy, int size)
+void PrintText(const char* text, Position position, int size)
 {
 	SDL_Surface* textSurface = TTF_RenderText_Blended(font, text, { 255, 255, 255, 255 });
 
-	SDL_Rect rect = { posx,posy, 0.75 * GetSize(text) * size,size };
+	SDL_Rect rect = { position.x,position.y, 0.75 * GetSize(text) * size,size };
 
 	SDL_Texture* textTexture = SDL_CreateTextureFromSurface(ren, textSurface);
 	SDL_RenderCopy(ren, textTexture, NULL, &rect);
@@ -287,19 +312,19 @@ void PrintText(const char* text, int posx, int posy, int size)
 	SDL_DestroyTexture(textTexture);
 }
 
-void RenderImage(int textureId, int x, int y, int w, int h, int alpha)
+void RenderImage(int textureId, Position position, int w, int h, int alpha)
 {
-	SDL_Rect rect = { x,y,w,h };
+	SDL_Rect rect = { position.x,position.y,w,h };
 	SDL_SetTextureAlphaMod(textures[textureId], alpha);
 	SDL_RenderCopy(ren, textures[textureId], NULL, &rect);
 }
 
-bool CheckEntity(int x, int y)
+bool CheckEntity(int posx, int posy)
 {
-	if (player.x == x && player.y == y)
+	if (player.x() == posx && player.y() == posy)
 		return false;
 	for (int i = 0; i < ENEMIES_COUNT; i++)
-		if (enemies[i].x == x && enemies[i].y == y)
+		if (enemies[i].x() == posx && enemies[i].y() == posy)
 			return false;
 	return true;
 }
@@ -312,20 +337,26 @@ int GetAlpha(int value, int b)
 
 void DrawUI()
 {
-	PrintText("Move: #", 10, 18, 16);
-	PrintText(moves + 1, 96, 18, 16);
-	RenderImage(0, 10, 52, 32, 32, 255);
-	PrintText(player.attacks, 52, 60, 16);
-	RenderImage(1, 10, 94, 32, 32, 255);
-	PrintText(player.moves, 52, 104, 16);
-	PrintText("Health: ", 10, 926, 16);
-	PrintText(player.health, 102, 926, 16);
+	PrintText("Move: #", { 10,18 }, 16);
+	PrintText(moves + 1, { 96, 18 }, 16);
+	RenderImage(0, { 10, 52 }, 32, 32, 255);
+	PrintText(player.attacks, { 52, 60 }, 16);
+	RenderImage(1, { 10, 94 }, 32, 32, 255);
+	PrintText(player.moves, { 52, 104 }, 16);
+	PrintText("Health: ", { 10, 926 }, 16);
+	PrintText(player.health, { 102, 926 }, 16);
 
 	if (player.selectedEnemy >= 0)
-		if (RayTracing(enemies[player.selectedEnemy].x, enemies[player.selectedEnemy].y) > 5)
+		if (RayTracing(enemies[player.selectedEnemy].position) > 5)
 			player.selectedEnemy = -1;
 		else
-			RenderImage(4, (enemies[player.selectedEnemy].x + 15 - player.x) * 32 - 16, (enemies[player.selectedEnemy].y + 15 - player.y) * 32 - 16, 32, 32, 255);
+		{
+			Position position;
+			position.x = (enemies[player.selectedEnemy].x() + 15 - player.x()) * 32 - 16;
+			position.y = (enemies[player.selectedEnemy].y() + 15 - player.y()) * 32 - 16;
+			RenderImage(4, position, 32, 32, 255);
+		}
+
 }
 
 void Draw()
@@ -333,11 +364,11 @@ void Draw()
 	SDL_SetRenderDrawColor(ren, 0, 0, 0, 255);
 	SDL_RenderClear(ren);
 
-	for (int i = player.x - 15; i < player.x + 16; i++)
-		for (int j = player.y - 15; j < player.y + 16; j++)
+	for (int i = player.x() - 15; i < player.x() + 16; i++)
+		for (int j = player.y() - 15; j < player.y() + 16; j++)
 		{
-			SDL_Rect rect = { (i + 15 - player.x) * 32 - 16,(j + 15 - player.y) * 32 - 16,32,32 };
-			int blocks = RayTracing(i, j);
+			SDL_Rect rect = { (i + 15 - player.x()) * 32 - 16,(j + 15 - player.y()) * 32 - 16,32,32 };
+			int blocks = RayTracing({ i, j });
 			if (map[i][j] == 1)
 			{
 				SDL_SetRenderDrawColor(ren, GetAlpha(138, blocks), GetAlpha(22, blocks), GetAlpha(31, blocks), 255);
@@ -353,18 +384,18 @@ void Draw()
 	SDL_Rect rect = { 464, 464,32,32 };
 	SDL_SetRenderDrawColor(ren, 114, 230, 221, 255);
 	SDL_RenderFillRect(ren, &rect);
-	RenderImage(2, 464, 464, 32, 32, 255);
+	RenderImage(2, { 464, 464 }, 32, 32, 255);
 
 	SDL_SetRenderDrawColor(ren, 114, 230, 221, 255);
 	for (int i = 0; i < ENEMIES_COUNT; i++)
 	{
-		int blocks = RayTracing(enemies[i].x, enemies[i].y);
-		rect = { (enemies[i].x + 15 - player.x) * 32 - 16, (enemies[i].y + 15 - player.y) * 32 - 16,32,32 };
+		int blocks = RayTracing(enemies[i].position);
+		rect = { (enemies[i].x() + 15 - player.x()) * 32 - 16, (enemies[i].y() + 15 - player.y()) * 32 - 16,32,32 };
 		SDL_SetRenderDrawColor(ren, GetAlpha(198, blocks), GetAlpha(101, blocks), GetAlpha(202, blocks), 255);
 		SDL_RenderFillRect(ren, &rect);
 		if (blocks <= 5)
 		{
-			RenderImage(3, rect.x, rect.y, 32, 32, 255 - blocks * 33);
+			RenderImage(3, { rect.x, rect.y }, 32, 32, 255 - blocks * 33);
 		}
 	}
 
@@ -375,9 +406,9 @@ void SpawnPlayer()
 {
 	do
 	{
-		player.x = rand() % MAP_SIZE;
-		player.y = rand() % MAP_SIZE;
-	} while (map[player.x][player.y] != 0);
+		player.x(rand() % MAP_SIZE);
+		player.y(rand() % MAP_SIZE);
+	} while (map[player.x()][player.y()] != 0);
 	player.health = 10;
 }
 
@@ -388,32 +419,32 @@ void SpawnEnemies()
 		Enemy enemy;
 		do
 		{
-			enemy.x = rand() % MAP_SIZE;
-			enemy.y = rand() % MAP_SIZE;
-		} while (map[enemy.x][enemy.y] != 0);
+			enemy.x(rand() % MAP_SIZE);
+			enemy.y(rand() % MAP_SIZE);
+		} while (map[enemy.x()][enemy.y()] != 0);
 		enemies[i] = enemy;
 	}
 }
 
 void MakeEnemyMove(Enemy& enemy)
 {
-	if (RayTracing(enemy.x, enemy.y) <= 5)
+	if (RayTracing(enemy.position) <= 5)
 	{
-		if (enemy.x < player.x && map[enemy.x + 1][enemy.y] == 0 && CheckEntity(enemy.x + 1, enemy.y))
+		if (enemy.x() < player.x() && map[enemy.x() + 1][enemy.y()] == 0 && CheckEntity(enemy.x() + 1, enemy.y()))
 		{
-			enemy.x++;
+			enemy.position.x++;
 		}
-		else if (enemy.x > player.x && map[enemy.x - 1][enemy.y] == 0 && CheckEntity(enemy.x - 1, enemy.y))
+		else if (enemy.x() > player.x() && map[enemy.x() - 1][enemy.y()] == 0 && CheckEntity(enemy.x() - 1, enemy.y()))
 		{
-			enemy.x--;
+			enemy.position.x--;
 		}
-		else if (enemy.y < player.y && map[enemy.x][enemy.y + 1] == 0 && CheckEntity(enemy.x, enemy.y + 1))
+		else if (enemy.y() < player.y() && map[enemy.x()][enemy.y() + 1] == 0 && CheckEntity(enemy.x(), enemy.y() + 1))
 		{
-			enemy.y++;
+			enemy.position.y++;
 		}
-		else if (enemy.y > player.y && map[enemy.x][enemy.y - 1] == 0 && CheckEntity(enemy.x, enemy.y - 1))
+		else if (enemy.y() > player.y() && map[enemy.x()][enemy.y() - 1] == 0 && CheckEntity(enemy.x(), enemy.y() - 1))
 		{
-			enemy.y--;
+			enemy.position.y--;
 		}
 	}
 }
@@ -433,14 +464,14 @@ void CheckMove()
 	}
 }
 
-int CheckSelection(int mx, int my)
+int CheckSelection(Position position)
 {
-	mx = round(mx + 16) / 32 + player.x - 15;
-	my = round(my + 16) / 32 + player.y - 15;
+	position.x = round(position.x + 16) / 32 + player.x() - 15;
+	position.y = round(position.y + 16) / 32 + player.y() - 15;
 	for (int i = 0; i < ENEMIES_COUNT; i++)
 	{
-		if (mx == enemies[i].x && my == enemies[i].y)
-			if (RayTracing(mx, my) <= 5)
+		if (position.x == enemies[i].x() && position.y == enemies[i].y())
+			if (RayTracing(position) <= 5)
 				return i;
 	}
 	return -1;
@@ -451,7 +482,8 @@ int main()
 {
 	srand(time(NULL));
 	Init();
-	int _mouseX = 0, _mouseY = 0;
+	Position _mouse{ 0,0 };
+
 	bool _down = false;
 	font = TTF_OpenFont("Fonts\\MainFont.ttf", 20);
 	SDL_Event event;
@@ -467,12 +499,12 @@ int main()
 		const Uint8* state = SDL_GetKeyboardState(NULL);
 
 		SDL_PumpEvents();
-		Uint32 events = SDL_GetMouseState(&_mouseX, &_mouseY);
+		Uint32 events = SDL_GetMouseState(&_mouse.x, &_mouse.y);
 
 		if ((events & SDL_BUTTON_LMASK) != 0 && !_down)
 		{
 			_down = true;
-			player.selectedEnemy = CheckSelection(_mouseX, _mouseY);
+			player.selectedEnemy = CheckSelection(_mouse);
 			Draw();
 		}
 		if ((events & SDL_BUTTON_LMASK) == 0)
@@ -484,33 +516,33 @@ int main()
 		{
 			if (state[SDL_SCANCODE_W])
 			{
-				if (map[player.x][player.y - 1] == 0 && player.moves > 0 && CheckEntity(player.x, player.y - 1))
+				if (map[player.x()][player.y() - 1] == 0 && player.moves > 0 && CheckEntity(player.x(), player.y() - 1))
 				{
-					player.y--;
+					player.position.y--;
 					player.moves--;
 				}
 			}
 			else if (state[SDL_SCANCODE_S])
 			{
-				if (map[player.x][player.y + 1] == 0 && player.moves > 0 && CheckEntity(player.x, player.y + 1))
+				if (map[player.x()][player.y() + 1] == 0 && player.moves > 0 && CheckEntity(player.x(), player.y() + 1))
 				{
-					player.y++;
+					player.position.y++;
 					player.moves--;
 				}
 			}
 			else if (state[SDL_SCANCODE_A])
 			{
-				if (map[player.x - 1][player.y] == 0 && player.moves > 0 && CheckEntity(player.x - 1, player.y))
+				if (map[player.x() - 1][player.y()] == 0 && player.moves > 0 && CheckEntity(player.x() - 1, player.y()))
 				{
-					player.x--;
+					player.position.x--;
 					player.moves--;
 				}
 			}
 			else if (state[SDL_SCANCODE_D])
 			{
-				if (map[player.x + 1][player.y] == 0 && player.moves > 0 && CheckEntity(player.x + 1, player.y))
+				if (map[player.x() + 1][player.y()] == 0 && player.moves > 0 && CheckEntity(player.x() + 1, player.y()))
 				{
-					player.x++;
+					player.position.x++;
 					player.moves--;
 				}
 			}
