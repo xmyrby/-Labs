@@ -426,6 +426,51 @@ void SpawnEnemies()
 	}
 }
 
+int MinWd(int a, int b)
+{
+	if (a < b && a > 0)
+		return a;
+	return b;
+}
+
+bool Comp(Position position1, Position position2)
+{
+	if (position1.x == position2.x && position1.y == position2.y)
+		return true;
+	return false;
+}
+
+void SetWd(Position pos, Position end, int weights[MAP_SIZE][MAP_SIZE], int dir)
+{
+	if (map[pos.x][pos.y] == 0 && !Comp(pos, end) && weights[pos.x][pos.y] < 20)
+	{
+		weights[pos.x][pos.y] = MinWd(weights[pos.x - 1][pos.y], MinWd(weights[pos.x + 1][pos.y], MinWd(weights[pos.x][pos.y - 1], weights[pos.x][pos.y + 1]))) + 1;
+
+		printf("%d\n", weights[pos.x][pos.y]);
+		if (dir != 0)
+		SetWd({ pos.x - 1,pos.y }, end, weights,0);
+		if (dir != 1)
+		SetWd({ pos.x + 1,pos.y }, end, weights,1);
+		if (dir != 2)
+		SetWd({ pos.x,pos.y - 1 }, end, weights,2);
+		if (dir != 3)
+		SetWd({ pos.x,pos.y + 1 }, end, weights,3);
+	}
+}
+
+void FindPath(Position start, Position end)
+{
+	int weights[MAP_SIZE][MAP_SIZE];
+	for (int i = 0; i < MAP_SIZE; i++)
+		for (int j = 0; j < MAP_SIZE; j++)
+			weights[i][j] = 0;
+
+	SetWd({ start.x - 1,start.y }, end, weights,0);
+	SetWd({ start.x + 1,start.y }, end, weights,1);
+	SetWd({ start.x,start.y - 1 }, end, weights,2);
+	SetWd({ start.x,start.y + 1 }, end, weights,3);
+}
+
 void MakeEnemyMove(Enemy& enemy)
 {
 	if (RayTracing(enemy.position) <= 5)
@@ -493,6 +538,8 @@ int main()
 	SpawnEnemies();
 
 	Draw();
+
+	FindPath(player.position, { player.x() + 1,player.y() });
 
 	while (true)
 	{
