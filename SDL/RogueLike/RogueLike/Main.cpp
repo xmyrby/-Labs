@@ -440,35 +440,75 @@ bool Comp(Position position1, Position position2)
 	return false;
 }
 
-void SetWd(Position pos, Position end, int weights[MAP_SIZE][MAP_SIZE], int dir)
+void SetWd(Position pos, Position end, int weights[MAP_SIZE][MAP_SIZE], int dir, int tes)
 {
-	if (map[pos.x][pos.y] == 0 && !Comp(pos, end) && weights[pos.x][pos.y] < 20)
+	if (map[pos.x][pos.y] == 0 && !Comp(pos, end) && tes < 20)
 	{
 		weights[pos.x][pos.y] = MinWd(weights[pos.x - 1][pos.y], MinWd(weights[pos.x + 1][pos.y], MinWd(weights[pos.x][pos.y - 1], weights[pos.x][pos.y + 1]))) + 1;
 
-		printf("%d\n", weights[pos.x][pos.y]);
+		int d = weights[pos.x - 1][pos.y];
 		if (dir != 0)
-		SetWd({ pos.x - 1,pos.y }, end, weights,0);
+			SetWd({ pos.x - 1,pos.y }, end, weights, 0, tes + 1);
+		d = weights[pos.x + 1][pos.y];
 		if (dir != 1)
-		SetWd({ pos.x + 1,pos.y }, end, weights,1);
+			SetWd({ pos.x + 1,pos.y }, end, weights, 1, tes + 1);
+		d = weights[pos.x][pos.y - 1];
 		if (dir != 2)
-		SetWd({ pos.x,pos.y - 1 }, end, weights,2);
+			SetWd({ pos.x,pos.y - 1 }, end, weights, 2, tes + 1);
+		d = weights[pos.x][pos.y + 1];
 		if (dir != 3)
-		SetWd({ pos.x,pos.y + 1 }, end, weights,3);
+			SetWd({ pos.x,pos.y + 1 }, end, weights, 3, tes + 1);
 	}
 }
 
 void FindPath(Position start, Position end)
 {
+	SDL_Rect rect = { (end.x + 15 - player.x()) * 32 - 16, (end.y + 15 - player.y()) * 32 - 16,32,32 };
+	SDL_SetRenderDrawColor(ren, 0, 255, 0, 255);
+	SDL_RenderFillRect(ren, &rect);
+	SDL_RenderPresent(ren);
+
 	int weights[MAP_SIZE][MAP_SIZE];
 	for (int i = 0; i < MAP_SIZE; i++)
 		for (int j = 0; j < MAP_SIZE; j++)
 			weights[i][j] = 0;
 
-	SetWd({ start.x - 1,start.y }, end, weights,0);
-	SetWd({ start.x + 1,start.y }, end, weights,1);
-	SetWd({ start.x,start.y - 1 }, end, weights,2);
-	SetWd({ start.x,start.y + 1 }, end, weights,3);
+	SetWd({ start.x - 1,start.y }, end, weights, 0, 0);
+	SetWd({ start.x + 1,start.y }, end, weights, 1, 0);
+	SetWd({ start.x,start.y - 1 }, end, weights, 2, 0);
+	SetWd({ start.x,start.y + 1 }, end, weights, 3, 0);
+
+	Position cur = start;
+
+	while (!Comp(cur, end))
+	{
+		int md = MinWd(weights[cur.x - 1][cur.y], MinWd(weights[cur.x + 1][cur.y], MinWd(weights[cur.x][cur.y - 1], weights[cur.x][cur.y + 1]))) + 1;
+		SDL_SetRenderDrawColor(ren, 255, 0, 0, 255);
+		if (md == weights[cur.x - 1][cur.y])
+		{
+			SDL_RenderDrawLine(ren, cur.x, cur.y, cur.x - 1, cur.y);
+			SDL_RenderPresent(ren);
+			cur.x -= 1;
+		}
+		else if (md == weights[cur.x + 1][cur.y])
+		{
+			SDL_RenderDrawLine(ren, cur.x, cur.y, cur.x + 1, cur.y);
+			SDL_RenderPresent(ren);
+			cur.x += 1;
+		}
+		else if (md == weights[cur.x][cur.y - 1])
+		{
+			SDL_RenderDrawLine(ren, cur.x, cur.y, cur.x, cur.y - 1);
+			SDL_RenderPresent(ren);
+			cur.y -= 1;
+		}
+		else if (md == weights[cur.x][cur.y + 1])
+		{
+			SDL_RenderDrawLine(ren, cur.x, cur.y, cur.x, cur.y + 1);
+			SDL_RenderPresent(ren);
+			cur.y += 1;
+		}
+	}
 }
 
 void MakeEnemyMove(Enemy& enemy)
@@ -539,8 +579,6 @@ int main()
 
 	Draw();
 
-	FindPath(player.position, { player.x() + 1,player.y() });
-
 	while (true)
 	{
 		const Uint8* state = SDL_GetKeyboardState(NULL);
@@ -553,6 +591,8 @@ int main()
 			_down = true;
 			player.selectedEnemy = CheckSelection(_mouse);
 			Draw();
+			if (player.selectedEnemy == -1)
+				FindPath(player.position, { (_mouse.x + 16) / 32 + player.x() - 15,(_mouse.y + 16) / 32 + player.y() - 15 });
 		}
 		if ((events & SDL_BUTTON_LMASK) == 0)
 			_down = false;
@@ -600,7 +640,6 @@ int main()
 			}
 
 			CheckMove();
-
 			Draw();
 		}
 

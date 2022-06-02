@@ -1,0 +1,11 @@
+{
+  "Version": 1,
+  "ProjectMap": {
+    "c1df9d7c-3d05-4822-bb34-ecc2e964f238": {
+      "ProjectGuid": "c1df9d7c-3d05-4822-bb34-ecc2e964f238",
+      "DisplayName": "TestPathFinder",
+      "ColorIndex": 0
+    }
+  },
+  "NextColorIndex": 1
+}
