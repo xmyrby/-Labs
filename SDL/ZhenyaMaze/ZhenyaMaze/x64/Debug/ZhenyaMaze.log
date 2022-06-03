@@ -1,0 +1,3 @@
+﻿  Source.cpp
+D:\GitHub\-Labs\SDL\ZhenyaMaze\ZhenyaMaze\Source.cpp(104,6): warning C4101: razmass: неиспользованная локальная переменная
+  ZhenyaMaze.vcxproj -> D:\GitHub\-Labs\SDL\ZhenyaMaze\x64\Debug\ZhenyaMaze.exe
