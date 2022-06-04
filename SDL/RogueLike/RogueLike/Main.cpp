@@ -29,6 +29,7 @@ struct Path
 {
 	int len;
 	Position* path;
+	int next;
 };
 
 struct Entity
@@ -70,6 +71,24 @@ struct Player : Entity
 struct Enemy : Entity
 {
 	int type = 0;
+	Path path;
+
+	void NewPath(Path nPath)
+	{
+		path = nPath;
+		path.next = 0;
+	}
+
+	void Move()
+	{
+		if (path.len > 0)
+		{
+			position = path.path[path.next];
+			path.next++;
+			if (path.next >= path.len - 1)
+				path.len = 0;
+		}
+	}
 };
 
 Player player;
@@ -147,6 +166,11 @@ bool CheckCell(int x, int y)
 	if (weight < CELLS_DENSITY)
 		return false;
 	return true;
+}
+
+int ConvBig(int a, int b)
+{
+	return (a + 15 - b) * 32 - 16;
 }
 
 void Generate()
@@ -471,7 +495,7 @@ Path FindPath(Position start, Position end)
 			else
 				w[i][j] = 0;
 	if (w[end.x][end.y] == -1)
-		return { NULL,NULL };
+		return { 0,NULL };
 	struct Root
 	{
 		Position point;
@@ -511,22 +535,22 @@ Path FindPath(Position start, Position end)
 						break;
 					}
 					bool canConnect = false;
-					if (weights[0] != -1 && (weights[0] > wd + 1 || weights[0] == 0) && i < MAP_SIZE - 1)
+					if ((weights[0] != -1 && weights[0] > wd + 1 || weights[0] == 0) && i < MAP_SIZE - 1)
 					{
 						roots[rootCount].addBranch({ i + 1,j });
 						canConnect = true;
 					}
-					if (weights[1] != -1 && (weights[1] > wd + 1 || weights[1] == 0) && i > 0)
+					if ((weights[1] != -1 && weights[1] > wd + 1 || weights[1] == 0) && i > 0)
 					{
 						roots[rootCount].addBranch({ i - 1,j });
 						canConnect = true;
 					}
-					if (weights[2] != -1 && (weights[2] > wd + 1 || weights[2] == 0) && j < MAP_SIZE - 1)
+					if ((weights[2] != -1 && weights[2] > wd + 1 || weights[2] == 0) && j < MAP_SIZE - 1)
 					{
 						roots[rootCount].addBranch({ i,j + 1 });
 						canConnect = true;
 					}
-					if (weights[3] != -1 && (weights[3] > wd + 1 || weights[3] == 0) && j > 0)
+					if ((weights[3] != -1 && weights[3] > wd + 1 || weights[3] == 0) && j > 0)
 					{
 						roots[rootCount].addBranch({ i,j - 1 });
 						canConnect = true;
@@ -551,52 +575,83 @@ Path FindPath(Position start, Position end)
 		}
 		else
 		{
-			return { NULL,NULL };
+			return { 0,NULL };
 		}
 	}
+
 	int len = w[end.x][end.y] - 1;
 	Position* path = new Position[len];
 
 	path[len - 1] = end;
 
-	for (int i = len - 2; i > 0; i--)
+	for (int i = len - 2; i >= 0; i--)
 	{
 		Position last = path[i + 1];
 		int weights[4] = { w[last.x + 1][last.y],w[last.x - 1][last.y],w[last.x][last.y + 1],w[last.x][last.y - 1] };
-		if (w[last.x][last.y] - 1 == weights[0])
+		int id = 0, min = w[last.x][last.y];
+
+		for (int j = 0; j < 4; j++)
+		{
+			if (w[last.x][last.y] > weights[j] && weights[j] > 0)
+			{
+				id = j;
+				min = weights[j];
+			}
+		}
+
+		switch (id)
+		{
+		case 0:
 			path[i] = { last.x + 1,last.y };
-		else if (w[last.x][last.y] - 1 == weights[1])
+			break;
+		case 1:
 			path[i] = { last.x - 1,last.y };
-		else if (w[last.x][last.y] - 1 == weights[3])
+			break;
+		case 2:
 			path[i] = { last.x,last.y + 1 };
-		else if (w[last.x][last.y] - 1 == weights[2])
+			break;
+		case 3:
 			path[i] = { last.x,last.y - 1 };
+			break;
+		default:
+			break;
+		}
 	}
 
 	return { len,path };
+}
+
+bool CheckAttackDist(Entity a, Entity b)
+{
+	if (a.attackrange >= int(round(sqrt((a.x() - b.x()) * (a.x() - b.x()) + (a.y() - b.y()) * (a.y() - b.y())))))
+		return true;
+	return false;
 }
 
 void MakeEnemyMove(Enemy& enemy)
 {
 	if (RayTracing(enemy.position) <= 5)
 	{
-		if (enemy.x() < player.x() && map[enemy.x() + 1][enemy.y()] == 0 && CheckEntity(enemy.x() + 1, enemy.y()))
+		if (CheckAttackDist(enemy, player))
 		{
-			enemy.position.x++;
+			player.health--;
 		}
-		else if (enemy.x() > player.x() && map[enemy.x() - 1][enemy.y()] == 0 && CheckEntity(enemy.x() - 1, enemy.y()))
+		else
 		{
-			enemy.position.x--;
-		}
-		else if (enemy.y() < player.y() && map[enemy.x()][enemy.y() + 1] == 0 && CheckEntity(enemy.x(), enemy.y() + 1))
-		{
-			enemy.position.y++;
-		}
-		else if (enemy.y() > player.y() && map[enemy.x()][enemy.y() - 1] == 0 && CheckEntity(enemy.x(), enemy.y() - 1))
-		{
-			enemy.position.y--;
+			int atp = 0;
+			do
+			{
+				atp++;
+				enemy.NewPath(FindPath(enemy.position, player.position));
+			} while (enemy.path.len <= 0 && atp <=5);
+			enemy.Move();
 		}
 	}
+	else
+	{
+		enemy.Move();
+	}
+
 }
 
 void CheckMove()
@@ -625,11 +680,6 @@ int CheckSelection(Position position)
 				return i;
 	}
 	return -1;
-}
-
-int ConvBig(int a, int b)
-{
-	return (a + 15 - b) * 32 - 16;
 }
 
 #undef main;
@@ -664,16 +714,6 @@ int main()
 			if (player.selectedEnemy == -1)
 			{
 				Path path = FindPath(player.position, { (_mouse.x + 16) / 32 + player.x() - 15,(_mouse.y + 16) / 32 + player.y() - 15 });
-				SDL_SetRenderDrawColor(ren, 255, 0, 0, 255);
-				for (int i = 0; i < path.len; i++)
-				{
-					Position start;
-					if (i == 0)
-						start = { player.x(),player.y() };
-					else
-						start = path.path[i - 1];
-					SDL_RenderDrawLine(ren, ConvBig(start.x, player.x()) + 16, ConvBig(start.y, player.y()) + 16, ConvBig(path.path[i].x, player.x()) + 16, ConvBig(path.path[i].y, player.y()) + 16);
-				}
 			}
 		}
 		if ((events & SDL_BUTTON_LMASK) == 0)
