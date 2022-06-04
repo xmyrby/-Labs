@@ -25,6 +25,12 @@ struct Position
 	int x, y;
 };
 
+struct Path
+{
+	int len;
+	Position* path;
+};
+
 struct Entity
 {
 	Position position;
@@ -440,7 +446,20 @@ bool Comp(Position position1, Position position2)
 	return false;
 }
 
-void PathFinder(Position start, Position end)
+bool CheckWd(int weight, int* weights)
+{
+	if (weight <= 0)
+		return false;
+	for (int i = 0; i < 4; i++)
+	{
+		int wd = weights[i];
+		if (wd != -1 && (wd > weight + 1 || wd == 0))
+			return true;
+	}
+	return false;
+}
+
+Path FindPath(Position start, Position end)
 {
 	int w[MAP_SIZE][MAP_SIZE];
 	for (int i = 0; i < MAP_SIZE; i++)
@@ -451,20 +470,15 @@ void PathFinder(Position start, Position end)
 				w[i][j] = 1;
 			else
 				w[i][j] = 0;
-
-	struct Point
-	{
-		int x;
-		int y;
-	};
-
+	if (w[end.x][end.y] == -1)
+		return { NULL,NULL };
 	struct Root
 	{
-		Point point;
+		Position point;
 		int branchCount = 0;
-		Point branchPoints[100];
+		Position branchPoints[100];
 
-		void addBranch(Point branch)
+		void addBranch(Position branch)
 		{
 			branchPoints[branchCount] = branch;
 			branchCount++;
@@ -472,47 +486,47 @@ void PathFinder(Position start, Position end)
 
 		void Connect(int branchId, int w[MAP_SIZE][MAP_SIZE])
 		{
-			Point branch = branchPoints[branchId];
+			Position branch = branchPoints[branchId];
 
 			w[branch.x][branch.y] = w[point.x][point.y] + 1;
 		}
 	};
 
-	bool end = false;
-	while (!end)
+	bool find = false;
+	while (!find)
 	{
 		Root roots[100];
 		int rootCount = 0;
 
-		for (int i = 0; i < 10; i++)
-			for (int j = 0; j < 10; j++)
+		for (int i = 0; i < MAP_SIZE; i++)
+			for (int j = 0; j < MAP_SIZE; j++)
 			{
-
-				if (w[i][j] > 0)
+				int wd = w[i][j];
+				int weights[4] = { w[i + 1][j],w[i - 1][j],w[i][j + 1],w[i][j - 1] };
+				if (CheckWd(wd, weights))
 				{
-					if (i == endx && j == endy)
+					if (Comp({ i,j }, end))
 					{
-						end = true;
+						find = true;
 						break;
 					}
-					int weights[4] = { w[i + 1][j],w[i - 1][j],w[i][j + 1],w[i][j - 1] };
 					bool canConnect = false;
-					if ((weights[0] != -1 && weights[0] >= w[i][j] + 1 || weights[0] == 0) && i < 9)
+					if (weights[0] != -1 && (weights[0] > wd + 1 || weights[0] == 0) && i < MAP_SIZE - 1)
 					{
 						roots[rootCount].addBranch({ i + 1,j });
 						canConnect = true;
 					}
-					if ((weights[1] != -1 && weights[1] >= w[i][j] + 1 || weights[1] == 0) && i > 0)
+					if (weights[1] != -1 && (weights[1] > wd + 1 || weights[1] == 0) && i > 0)
 					{
 						roots[rootCount].addBranch({ i - 1,j });
 						canConnect = true;
 					}
-					if ((weights[2] != -1 && weights[2] >= w[i][j] + 1 || weights[2] == 0) && j < 9)
+					if (weights[2] != -1 && (weights[2] > wd + 1 || weights[2] == 0) && j < MAP_SIZE - 1)
 					{
 						roots[rootCount].addBranch({ i,j + 1 });
 						canConnect = true;
 					}
-					if ((weights[3] != -1 && weights[3] >= w[i][j] + 1 || weights[3] == 0) && j > 0)
+					if (weights[3] != -1 && (weights[3] > wd + 1 || weights[3] == 0) && j > 0)
 					{
 						roots[rootCount].addBranch({ i,j - 1 });
 						canConnect = true;
@@ -537,9 +551,29 @@ void PathFinder(Position start, Position end)
 		}
 		else
 		{
-			break;
+			return { NULL,NULL };
 		}
 	}
+	int len = w[end.x][end.y] - 1;
+	Position* path = new Position[len];
+
+	path[len - 1] = end;
+
+	for (int i = len - 2; i > 0; i--)
+	{
+		Position last = path[i + 1];
+		int weights[4] = { w[last.x + 1][last.y],w[last.x - 1][last.y],w[last.x][last.y + 1],w[last.x][last.y - 1] };
+		if (w[last.x][last.y] - 1 == weights[0])
+			path[i] = { last.x + 1,last.y };
+		else if (w[last.x][last.y] - 1 == weights[1])
+			path[i] = { last.x - 1,last.y };
+		else if (w[last.x][last.y] - 1 == weights[3])
+			path[i] = { last.x,last.y + 1 };
+		else if (w[last.x][last.y] - 1 == weights[2])
+			path[i] = { last.x,last.y - 1 };
+	}
+
+	return { len,path };
 }
 
 void MakeEnemyMove(Enemy& enemy)
@@ -593,6 +627,11 @@ int CheckSelection(Position position)
 	return -1;
 }
 
+int ConvBig(int a, int b)
+{
+	return (a + 15 - b) * 32 - 16;
+}
+
 #undef main;
 int main()
 {
@@ -623,7 +662,19 @@ int main()
 			player.selectedEnemy = CheckSelection(_mouse);
 			Draw();
 			if (player.selectedEnemy == -1)
-				FindPath(player.position, { (_mouse.x + 16) / 32 + player.x() - 15,(_mouse.y + 16) / 32 + player.y() - 15 });
+			{
+				Path path = FindPath(player.position, { (_mouse.x + 16) / 32 + player.x() - 15,(_mouse.y + 16) / 32 + player.y() - 15 });
+				SDL_SetRenderDrawColor(ren, 255, 0, 0, 255);
+				for (int i = 0; i < path.len; i++)
+				{
+					Position start;
+					if (i == 0)
+						start = { player.x(),player.y() };
+					else
+						start = path.path[i - 1];
+					SDL_RenderDrawLine(ren, ConvBig(start.x, player.x()) + 16, ConvBig(start.y, player.y()) + 16, ConvBig(path.path[i].x, player.x()) + 16, ConvBig(path.path[i].y, player.y()) + 16);
+				}
+			}
 		}
 		if ((events & SDL_BUTTON_LMASK) == 0)
 			_down = false;
