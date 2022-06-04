@@ -440,73 +440,104 @@ bool Comp(Position position1, Position position2)
 	return false;
 }
 
-void SetWd(Position pos, Position end, int weights[MAP_SIZE][MAP_SIZE], int dir, int tes)
+void PathFinder(Position start, Position end)
 {
-	if (map[pos.x][pos.y] == 0 && !Comp(pos, end) && tes < 20)
-	{
-		weights[pos.x][pos.y] = MinWd(weights[pos.x - 1][pos.y], MinWd(weights[pos.x + 1][pos.y], MinWd(weights[pos.x][pos.y - 1], weights[pos.x][pos.y + 1]))) + 1;
-
-		int d = weights[pos.x - 1][pos.y];
-		if (dir != 0)
-			SetWd({ pos.x - 1,pos.y }, end, weights, 0, tes + 1);
-		d = weights[pos.x + 1][pos.y];
-		if (dir != 1)
-			SetWd({ pos.x + 1,pos.y }, end, weights, 1, tes + 1);
-		d = weights[pos.x][pos.y - 1];
-		if (dir != 2)
-			SetWd({ pos.x,pos.y - 1 }, end, weights, 2, tes + 1);
-		d = weights[pos.x][pos.y + 1];
-		if (dir != 3)
-			SetWd({ pos.x,pos.y + 1 }, end, weights, 3, tes + 1);
-	}
-}
-
-void FindPath(Position start, Position end)
-{
-	SDL_Rect rect = { (end.x + 15 - player.x()) * 32 - 16, (end.y + 15 - player.y()) * 32 - 16,32,32 };
-	SDL_SetRenderDrawColor(ren, 0, 255, 0, 255);
-	SDL_RenderFillRect(ren, &rect);
-	SDL_RenderPresent(ren);
-
-	int weights[MAP_SIZE][MAP_SIZE];
+	int w[MAP_SIZE][MAP_SIZE];
 	for (int i = 0; i < MAP_SIZE; i++)
 		for (int j = 0; j < MAP_SIZE; j++)
-			weights[i][j] = 0;
+			if (map[i][j] == 1)
+				w[i][j] = -1;
+			else if (i == start.x && j == start.y)
+				w[i][j] = 1;
+			else
+				w[i][j] = 0;
 
-	SetWd({ start.x - 1,start.y }, end, weights, 0, 0);
-	SetWd({ start.x + 1,start.y }, end, weights, 1, 0);
-	SetWd({ start.x,start.y - 1 }, end, weights, 2, 0);
-	SetWd({ start.x,start.y + 1 }, end, weights, 3, 0);
-
-	Position cur = start;
-
-	while (!Comp(cur, end))
+	struct Point
 	{
-		int md = MinWd(weights[cur.x - 1][cur.y], MinWd(weights[cur.x + 1][cur.y], MinWd(weights[cur.x][cur.y - 1], weights[cur.x][cur.y + 1]))) + 1;
-		SDL_SetRenderDrawColor(ren, 255, 0, 0, 255);
-		if (md == weights[cur.x - 1][cur.y])
+		int x;
+		int y;
+	};
+
+	struct Root
+	{
+		Point point;
+		int branchCount = 0;
+		Point branchPoints[100];
+
+		void addBranch(Point branch)
 		{
-			SDL_RenderDrawLine(ren, cur.x, cur.y, cur.x - 1, cur.y);
-			SDL_RenderPresent(ren);
-			cur.x -= 1;
+			branchPoints[branchCount] = branch;
+			branchCount++;
 		}
-		else if (md == weights[cur.x + 1][cur.y])
+
+		void Connect(int branchId, int w[MAP_SIZE][MAP_SIZE])
 		{
-			SDL_RenderDrawLine(ren, cur.x, cur.y, cur.x + 1, cur.y);
-			SDL_RenderPresent(ren);
-			cur.x += 1;
+			Point branch = branchPoints[branchId];
+
+			w[branch.x][branch.y] = w[point.x][point.y] + 1;
 		}
-		else if (md == weights[cur.x][cur.y - 1])
+	};
+
+	bool end = false;
+	while (!end)
+	{
+		Root roots[100];
+		int rootCount = 0;
+
+		for (int i = 0; i < 10; i++)
+			for (int j = 0; j < 10; j++)
+			{
+
+				if (w[i][j] > 0)
+				{
+					if (i == endx && j == endy)
+					{
+						end = true;
+						break;
+					}
+					int weights[4] = { w[i + 1][j],w[i - 1][j],w[i][j + 1],w[i][j - 1] };
+					bool canConnect = false;
+					if ((weights[0] != -1 && weights[0] >= w[i][j] + 1 || weights[0] == 0) && i < 9)
+					{
+						roots[rootCount].addBranch({ i + 1,j });
+						canConnect = true;
+					}
+					if ((weights[1] != -1 && weights[1] >= w[i][j] + 1 || weights[1] == 0) && i > 0)
+					{
+						roots[rootCount].addBranch({ i - 1,j });
+						canConnect = true;
+					}
+					if ((weights[2] != -1 && weights[2] >= w[i][j] + 1 || weights[2] == 0) && j < 9)
+					{
+						roots[rootCount].addBranch({ i,j + 1 });
+						canConnect = true;
+					}
+					if ((weights[3] != -1 && weights[3] >= w[i][j] + 1 || weights[3] == 0) && j > 0)
+					{
+						roots[rootCount].addBranch({ i,j - 1 });
+						canConnect = true;
+					}
+
+					if (canConnect)
+					{
+						roots[rootCount].point.x = i;
+						roots[rootCount].point.y = j;
+						rootCount++;
+					}
+				}
+			}
+
+		if (rootCount)
 		{
-			SDL_RenderDrawLine(ren, cur.x, cur.y, cur.x, cur.y - 1);
-			SDL_RenderPresent(ren);
-			cur.y -= 1;
+			int rootId = rand() % rootCount;
+
+			int branchId = rand() % roots[rootId].branchCount;
+
+			roots[rootId].Connect(branchId, w);
 		}
-		else if (md == weights[cur.x][cur.y + 1])
+		else
 		{
-			SDL_RenderDrawLine(ren, cur.x, cur.y, cur.x, cur.y + 1);
-			SDL_RenderPresent(ren);
-			cur.y += 1;
+			break;
 		}
 	}
 }

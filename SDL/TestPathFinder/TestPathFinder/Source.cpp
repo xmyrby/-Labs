@@ -57,7 +57,6 @@ void PathFinder(int startx, int starty, int endx, int endy)
 	bool end = false;
 	while (!end)
 	{
-		//iters++;
 		Root roots[100];
 		int rootCount = 0;
 

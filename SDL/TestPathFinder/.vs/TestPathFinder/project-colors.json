@@ -5,6 +5,11 @@
       "ProjectGuid": "c1df9d7c-3d05-4822-bb34-ecc2e964f238",
       "DisplayName": "TestPathFinder",
       "ColorIndex": 0
+    },
+    "a2fe74e1-b743-11d0-ae1a-00a0c90fffc3": {
+      "ProjectGuid": "a2fe74e1-b743-11d0-ae1a-00a0c90fffc3",
+      "DisplayName": "Прочие файлы",
+      "ColorIndex": -1
     }
   },
   "NextColorIndex": 1
