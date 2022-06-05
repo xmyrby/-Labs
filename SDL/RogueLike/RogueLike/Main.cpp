@@ -15,10 +15,10 @@ int winHgt = 960;
 int moves = 0;
 
 const int MAP_SIZE = 300;
-const int CELLS_DENSITY = 7;
+const int CELLS_DENSITY = 2;
 const int CELLS_FILL = 10000;
 const int ANTS_COUNT = 6;
-const int ENEMIES_COUNT = 20;
+const int ENEMIES_COUNT = 30;
 
 struct Position
 {
