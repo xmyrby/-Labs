@@ -16,9 +16,9 @@ int moves = 0;
 
 const int MAP_SIZE = 300;
 const int CELLS_DENSITY = 7;
-const int CELLS_FILL = 6000;
+const int CELLS_FILL = 10000;
 const int ANTS_COUNT = 6;
-const int ENEMIES_COUNT = 100;
+const int ENEMIES_COUNT = 20;
 
 struct Position
 {
@@ -197,7 +197,7 @@ void Generate()
 		cells++;
 	}
 
-	while (cells < CELLS_DENSITY)
+	while (cells < CELLS_FILL)
 		for (int j = 0; j < ANTS_COUNT; j++)
 		{
 			Ant ant = ants[j];
