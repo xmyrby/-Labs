@@ -18,7 +18,7 @@ const int MAP_SIZE = 300;
 const int CELLS_DENSITY = 7;
 const int CELLS_FILL = 6000;
 const int ANTS_COUNT = 6;
-const int ENEMIES_COUNT = 20;
+const int ENEMIES_COUNT = 100;
 
 struct Position
 {
@@ -31,7 +31,7 @@ struct Path
 	Position* path;
 	int next;
 };
-
+bool CheckEntity(Position pos);
 struct Entity
 {
 	Position position;
@@ -83,10 +83,13 @@ struct Enemy : Entity
 	{
 		if (path.len > 0)
 		{
-			position = path.path[path.next];
-			path.next++;
-			if (path.next >= path.len - 1)
-				path.len = 0;
+			if (CheckEntity(path.path[path.next]))
+			{
+				position = path.path[path.next];
+				path.next++;
+				if (path.next >= path.len - 1)
+					path.len = 0;
+			}
 		}
 	}
 };
@@ -349,12 +352,12 @@ void RenderImage(int textureId, Position position, int w, int h, int alpha)
 	SDL_RenderCopy(ren, textures[textureId], NULL, &rect);
 }
 
-bool CheckEntity(int posx, int posy)
+bool CheckEntity(Position pos)
 {
-	if (player.x() == posx && player.y() == posy)
+	if (player.x() == pos.x && player.y() == pos.y)
 		return false;
 	for (int i = 0; i < ENEMIES_COUNT; i++)
-		if (enemies[i].x() == posx && enemies[i].y() == posy)
+		if (enemies[i].x() == pos.x && enemies[i].y() == pos.y)
 			return false;
 	return true;
 }
@@ -488,7 +491,7 @@ Path FindPath(Position start, Position end)
 	int w[MAP_SIZE][MAP_SIZE];
 	for (int i = 0; i < MAP_SIZE; i++)
 		for (int j = 0; j < MAP_SIZE; j++)
-			if (map[i][j] == 1)
+			if (map[i][j] == 1 || !CheckEntity({ i,j }) && !Comp(end, { i,j }) && !Comp(start, { i,j }))
 				w[i][j] = -1;
 			else if (i == start.x && j == start.y)
 				w[i][j] = 1;
@@ -511,8 +514,10 @@ Path FindPath(Position start, Position end)
 		void Connect(int branchId, int w[MAP_SIZE][MAP_SIZE])
 		{
 			Position branch = branchPoints[branchId];
-
-			w[branch.x][branch.y] = w[point.x][point.y] + 1;
+			int wb = w[branch.x][branch.y];
+			int wp = w[point.x][point.y];
+			if (wb != -1 && wb > wp + 1 || wb == 0)
+				w[branch.x][branch.y] = wp + 1;
 		}
 	};
 
@@ -567,19 +572,19 @@ Path FindPath(Position start, Position end)
 
 		if (rootCount)
 		{
-			int rootId = rand() % rootCount;
-
-			int branchId = rand() % roots[rootId].branchCount;
-
-			roots[rootId].Connect(branchId, w);
+			for (int i = 0; i < rootCount; i++)
+				for (int j = 0; j < roots[i].branchCount; j++)
+					roots[i].Connect(j, w);
 		}
 		else
 		{
-			return { 0,NULL };
+			find = true;
 		}
 	}
 
 	int len = w[end.x][end.y] - 1;
+	if (len < 0)
+		return { 0,NULL };
 	Position* path = new Position[len];
 
 	path[len - 1] = end;
@@ -632,18 +637,14 @@ void MakeEnemyMove(Enemy& enemy)
 {
 	if (RayTracing(enemy.position) <= 5)
 	{
+		enemy.NewPath(FindPath(enemy.position, player.position));
+
 		if (CheckAttackDist(enemy, player))
 		{
 			player.health--;
 		}
 		else
 		{
-			int atp = 0;
-			do
-			{
-				atp++;
-				enemy.NewPath(FindPath(enemy.position, player.position));
-			} while (enemy.path.len <= 0 && atp <=5);
 			enemy.Move();
 		}
 	}
@@ -711,10 +712,6 @@ int main()
 			_down = true;
 			player.selectedEnemy = CheckSelection(_mouse);
 			Draw();
-			if (player.selectedEnemy == -1)
-			{
-				Path path = FindPath(player.position, { (_mouse.x + 16) / 32 + player.x() - 15,(_mouse.y + 16) / 32 + player.y() - 15 });
-			}
 		}
 		if ((events & SDL_BUTTON_LMASK) == 0)
 			_down = false;
@@ -725,7 +722,7 @@ int main()
 		{
 			if (state[SDL_SCANCODE_W])
 			{
-				if (map[player.x()][player.y() - 1] == 0 && player.moves > 0 && CheckEntity(player.x(), player.y() - 1))
+				if (map[player.x()][player.y() - 1] == 0 && player.moves > 0 && CheckEntity({ player.x(), player.y() - 1 }))
 				{
 					player.position.y--;
 					player.moves--;
@@ -733,7 +730,7 @@ int main()
 			}
 			else if (state[SDL_SCANCODE_S])
 			{
-				if (map[player.x()][player.y() + 1] == 0 && player.moves > 0 && CheckEntity(player.x(), player.y() + 1))
+				if (map[player.x()][player.y() + 1] == 0 && player.moves > 0 && CheckEntity({ player.x(), player.y() + 1 }))
 				{
 					player.position.y++;
 					player.moves--;
@@ -741,7 +738,7 @@ int main()
 			}
 			else if (state[SDL_SCANCODE_A])
 			{
-				if (map[player.x() - 1][player.y()] == 0 && player.moves > 0 && CheckEntity(player.x() - 1, player.y()))
+				if (map[player.x() - 1][player.y()] == 0 && player.moves > 0 && CheckEntity({ player.x() - 1, player.y() }))
 				{
 					player.position.x--;
 					player.moves--;
@@ -749,7 +746,7 @@ int main()
 			}
 			else if (state[SDL_SCANCODE_D])
 			{
-				if (map[player.x() + 1][player.y()] == 0 && player.moves > 0 && CheckEntity(player.x() + 1, player.y()))
+				if (map[player.x() + 1][player.y()] == 0 && player.moves > 0 && CheckEntity({ player.x() + 1, player.y() }))
 				{
 					player.position.x++;
 					player.moves--;
