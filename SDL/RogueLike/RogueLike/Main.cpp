@@ -15,7 +15,7 @@ int winHgt = 960;
 int moves = 0;
 
 const int MAP_SIZE = 300;
-const int CELLS_DENSITY = 2;
+const int CELLS_DENSITY = 7;
 const int CELLS_FILL = 10000;
 const int ANTS_COUNT = 6;
 const int ENEMIES_COUNT = 30;
@@ -174,6 +174,11 @@ bool CheckCell(int x, int y)
 int ConvBig(int a, int b)
 {
 	return (a + 15 - b) * 32 - 16;
+}
+
+int ConvSmall(int a, int b)
+{
+	return round(a + 16) / 32 + b - 15;
 }
 
 void Generate()
@@ -385,8 +390,8 @@ void DrawUI()
 		else
 		{
 			Position position;
-			position.x = (enemies[player.selectedEnemy].x() + 15 - player.x()) * 32 - 16;
-			position.y = (enemies[player.selectedEnemy].y() + 15 - player.y()) * 32 - 16;
+			position.x = ConvBig(enemies[player.selectedEnemy].x(), player.x());
+			position.y = ConvBig(enemies[player.selectedEnemy].y(), player.y());
 			RenderImage(4, position, 32, 32, 255);
 		}
 
@@ -400,7 +405,7 @@ void Draw()
 	for (int i = player.x() - 15; i < player.x() + 16; i++)
 		for (int j = player.y() - 15; j < player.y() + 16; j++)
 		{
-			SDL_Rect rect = { (i + 15 - player.x()) * 32 - 16,(j + 15 - player.y()) * 32 - 16,32,32 };
+			SDL_Rect rect = { ConvBig(i, player.x()),ConvBig(j, player.y()),32,32 };
 			int blocks = RayTracing({ i, j });
 			if (map[i][j] == 1)
 			{
@@ -423,7 +428,7 @@ void Draw()
 	for (int i = 0; i < ENEMIES_COUNT; i++)
 	{
 		int blocks = RayTracing(enemies[i].position);
-		rect = { (enemies[i].x() + 15 - player.x()) * 32 - 16, (enemies[i].y() + 15 - player.y()) * 32 - 16,32,32 };
+		rect = { ConvBig(enemies[i].x(), player.x()) ,ConvBig(enemies[i].y(), player.y()),32,32 };
 		SDL_SetRenderDrawColor(ren, GetAlpha(198, blocks), GetAlpha(101, blocks), GetAlpha(202, blocks), 255);
 		SDL_RenderFillRect(ren, &rect);
 		if (blocks <= 5)
@@ -637,15 +642,19 @@ void MakeEnemyMove(Enemy& enemy)
 {
 	if (RayTracing(enemy.position) <= 5)
 	{
-		enemy.NewPath(FindPath(enemy.position, player.position));
+		if (enemy.moves > 0)
+		{
+			enemy.NewPath(FindPath(enemy.position, player.position));
 
-		if (CheckAttackDist(enemy, player))
-		{
-			player.health--;
-		}
-		else
-		{
 			enemy.Move();
+		}
+
+		if (enemy.attacks > 0)
+		{
+			if (CheckAttackDist(enemy, player))
+			{
+				player.health -= enemy.damage;
+			}
 		}
 	}
 	else
@@ -672,8 +681,8 @@ void CheckMove()
 
 int CheckSelection(Position position)
 {
-	position.x = round(position.x + 16) / 32 + player.x() - 15;
-	position.y = round(position.y + 16) / 32 + player.y() - 15;
+	position.x = ConvSmall(position.x, player.x());
+	position.y = ConvSmall(position.y, player.y());
 	for (int i = 0; i < ENEMIES_COUNT; i++)
 	{
 		if (position.x == enemies[i].x() && position.y == enemies[i].y())
