@@ -42,3 +42,25 @@ C:\Users\User\Desktop\VK BOT Sectum\VK BOT Sectum\obj\Debug\VK BOT Sectum.csproj
 C:\Users\User\Desktop\VK BOT Sectum\VK BOT Sectum\obj\Debug\VK BOT Sectum.csproj.CopyComplete
 C:\Users\User\Desktop\VK BOT Sectum\VK BOT Sectum\obj\Debug\VK BOT Sectum.exe
 C:\Users\User\Desktop\VK BOT Sectum\VK BOT Sectum\obj\Debug\VK BOT Sectum.pdb
+D:\GitHub\-Labs\Sharp\VK BOT Sectum\VK BOT Sectum\bin\Debug\VK BOT Sectum.exe.config
+D:\GitHub\-Labs\Sharp\VK BOT Sectum\VK BOT Sectum\bin\Debug\VK BOT Sectum.exe
+D:\GitHub\-Labs\Sharp\VK BOT Sectum\VK BOT Sectum\bin\Debug\VK BOT Sectum.pdb
+D:\GitHub\-Labs\Sharp\VK BOT Sectum\VK BOT Sectum\bin\Debug\HtmlAgilityPack.dll
+D:\GitHub\-Labs\Sharp\VK BOT Sectum\VK BOT Sectum\bin\Debug\Microsoft.Extensions.DependencyInjection.Abstractions.dll
+D:\GitHub\-Labs\Sharp\VK BOT Sectum\VK BOT Sectum\bin\Debug\Microsoft.Extensions.DependencyInjection.dll
+D:\GitHub\-Labs\Sharp\VK BOT Sectum\VK BOT Sectum\bin\Debug\Microsoft.Extensions.Logging.Abstractions.dll
+D:\GitHub\-Labs\Sharp\VK BOT Sectum\VK BOT Sectum\bin\Debug\Newtonsoft.Json.dll
+D:\GitHub\-Labs\Sharp\VK BOT Sectum\VK BOT Sectum\bin\Debug\VkNet.dll
+D:\GitHub\-Labs\Sharp\VK BOT Sectum\VK BOT Sectum\bin\Debug\HtmlAgilityPack.pdb
+D:\GitHub\-Labs\Sharp\VK BOT Sectum\VK BOT Sectum\bin\Debug\HtmlAgilityPack.xml
+D:\GitHub\-Labs\Sharp\VK BOT Sectum\VK BOT Sectum\bin\Debug\Microsoft.Extensions.DependencyInjection.xml
+D:\GitHub\-Labs\Sharp\VK BOT Sectum\VK BOT Sectum\bin\Debug\Microsoft.Extensions.DependencyInjection.Abstractions.xml
+D:\GitHub\-Labs\Sharp\VK BOT Sectum\VK BOT Sectum\bin\Debug\Microsoft.Extensions.Logging.Abstractions.xml
+D:\GitHub\-Labs\Sharp\VK BOT Sectum\VK BOT Sectum\bin\Debug\Newtonsoft.Json.xml
+D:\GitHub\-Labs\Sharp\VK BOT Sectum\VK BOT Sectum\bin\Debug\VkNet.xml
+D:\GitHub\-Labs\Sharp\VK BOT Sectum\VK BOT Sectum\obj\Debug\VK BOT Sectum.csproj.AssemblyReference.cache
+D:\GitHub\-Labs\Sharp\VK BOT Sectum\VK BOT Sectum\obj\Debug\VK BOT Sectum.csproj.SuggestedBindingRedirects.cache
+D:\GitHub\-Labs\Sharp\VK BOT Sectum\VK BOT Sectum\obj\Debug\VK BOT Sectum.csproj.CoreCompileInputs.cache
+D:\GitHub\-Labs\Sharp\VK BOT Sectum\VK BOT Sectum\obj\Debug\VK BOT Sectum.csproj.CopyComplete
+D:\GitHub\-Labs\Sharp\VK BOT Sectum\VK BOT Sectum\obj\Debug\VK BOT Sectum.exe
+D:\GitHub\-Labs\Sharp\VK BOT Sectum\VK BOT Sectum\obj\Debug\VK BOT Sectum.pdb
