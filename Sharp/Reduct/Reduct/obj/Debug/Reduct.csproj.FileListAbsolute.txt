@@ -1,0 +1,11 @@
+C:\Users\Gim_Laptop\Desktop\КП червяк аркадион\Прога\Reduct\Reduct\bin\Debug\Reduct.exe.config
+C:\Users\Gim_Laptop\Desktop\КП червяк аркадион\Прога\Reduct\Reduct\bin\Debug\Reduct.exe
+C:\Users\Gim_Laptop\Desktop\КП червяк аркадион\Прога\Reduct\Reduct\bin\Debug\Reduct.pdb
+C:\Users\Gim_Laptop\Desktop\КП червяк аркадион\Прога\Reduct\Reduct\obj\Debug\Reduct.csproj.AssemblyReference.cache
+C:\Users\Gim_Laptop\Desktop\КП червяк аркадион\Прога\Reduct\Reduct\obj\Debug\Reduct.csproj.SuggestedBindingRedirects.cache
+C:\Users\Gim_Laptop\Desktop\КП червяк аркадион\Прога\Reduct\Reduct\obj\Debug\Reduct.Properties.Resources.resources
+C:\Users\Gim_Laptop\Desktop\КП червяк аркадион\Прога\Reduct\Reduct\obj\Debug\Reduct.csproj.GenerateResource.cache
+C:\Users\Gim_Laptop\Desktop\КП червяк аркадион\Прога\Reduct\Reduct\obj\Debug\Reduct.csproj.CoreCompileInputs.cache
+C:\Users\Gim_Laptop\Desktop\КП червяк аркадион\Прога\Reduct\Reduct\obj\Debug\Reduct.exe
+C:\Users\Gim_Laptop\Desktop\КП червяк аркадион\Прога\Reduct\Reduct\obj\Debug\Reduct.pdb
+C:\Users\Gim_Laptop\Desktop\КП червяк аркадион\Прога\Reduct\Reduct\obj\Debug\Reduct.FormMain.resources
