@@ -1,0 +1,44 @@
+C:\Users\XMyRby\source\repos\VK BOT Sectum\VK BOT Sectum\bin\Debug\VK BOT Sectum.exe.config
+C:\Users\XMyRby\source\repos\VK BOT Sectum\VK BOT Sectum\bin\Debug\VK BOT Sectum.exe
+C:\Users\XMyRby\source\repos\VK BOT Sectum\VK BOT Sectum\bin\Debug\VK BOT Sectum.pdb
+C:\Users\XMyRby\source\repos\VK BOT Sectum\VK BOT Sectum\bin\Debug\HtmlAgilityPack.dll
+C:\Users\XMyRby\source\repos\VK BOT Sectum\VK BOT Sectum\bin\Debug\Microsoft.Extensions.DependencyInjection.Abstractions.dll
+C:\Users\XMyRby\source\repos\VK BOT Sectum\VK BOT Sectum\bin\Debug\Microsoft.Extensions.DependencyInjection.dll
+C:\Users\XMyRby\source\repos\VK BOT Sectum\VK BOT Sectum\bin\Debug\Microsoft.Extensions.Logging.Abstractions.dll
+C:\Users\XMyRby\source\repos\VK BOT Sectum\VK BOT Sectum\bin\Debug\MySql.Data.dll
+C:\Users\XMyRby\source\repos\VK BOT Sectum\VK BOT Sectum\bin\Debug\Newtonsoft.Json.dll
+C:\Users\XMyRby\source\repos\VK BOT Sectum\VK BOT Sectum\bin\Debug\VkNet.dll
+C:\Users\XMyRby\source\repos\VK BOT Sectum\VK BOT Sectum\bin\Debug\HtmlAgilityPack.pdb
+C:\Users\XMyRby\source\repos\VK BOT Sectum\VK BOT Sectum\bin\Debug\HtmlAgilityPack.xml
+C:\Users\XMyRby\source\repos\VK BOT Sectum\VK BOT Sectum\bin\Debug\Microsoft.Extensions.DependencyInjection.xml
+C:\Users\XMyRby\source\repos\VK BOT Sectum\VK BOT Sectum\bin\Debug\Microsoft.Extensions.DependencyInjection.Abstractions.xml
+C:\Users\XMyRby\source\repos\VK BOT Sectum\VK BOT Sectum\bin\Debug\Microsoft.Extensions.Logging.Abstractions.xml
+C:\Users\XMyRby\source\repos\VK BOT Sectum\VK BOT Sectum\bin\Debug\Newtonsoft.Json.xml
+C:\Users\XMyRby\source\repos\VK BOT Sectum\VK BOT Sectum\bin\Debug\VkNet.xml
+C:\Users\XMyRby\source\repos\VK BOT Sectum\VK BOT Sectum\obj\Debug\VK BOT Sectum.csprojAssemblyReference.cache
+C:\Users\XMyRby\source\repos\VK BOT Sectum\VK BOT Sectum\obj\Debug\VK BOT Sectum.csproj.CoreCompileInputs.cache
+C:\Users\XMyRby\source\repos\VK BOT Sectum\VK BOT Sectum\obj\Debug\VK BOT Sectum.csproj.CopyComplete
+C:\Users\XMyRby\source\repos\VK BOT Sectum\VK BOT Sectum\obj\Debug\VK BOT Sectum.exe
+C:\Users\XMyRby\source\repos\VK BOT Sectum\VK BOT Sectum\obj\Debug\VK BOT Sectum.pdb
+C:\Users\User\Desktop\VK BOT Sectum\VK BOT Sectum\bin\Debug\VK BOT Sectum.exe.config
+C:\Users\User\Desktop\VK BOT Sectum\VK BOT Sectum\bin\Debug\VK BOT Sectum.exe
+C:\Users\User\Desktop\VK BOT Sectum\VK BOT Sectum\bin\Debug\VK BOT Sectum.pdb
+C:\Users\User\Desktop\VK BOT Sectum\VK BOT Sectum\bin\Debug\HtmlAgilityPack.dll
+C:\Users\User\Desktop\VK BOT Sectum\VK BOT Sectum\bin\Debug\Microsoft.Extensions.DependencyInjection.Abstractions.dll
+C:\Users\User\Desktop\VK BOT Sectum\VK BOT Sectum\bin\Debug\Microsoft.Extensions.DependencyInjection.dll
+C:\Users\User\Desktop\VK BOT Sectum\VK BOT Sectum\bin\Debug\Microsoft.Extensions.Logging.Abstractions.dll
+C:\Users\User\Desktop\VK BOT Sectum\VK BOT Sectum\bin\Debug\Newtonsoft.Json.dll
+C:\Users\User\Desktop\VK BOT Sectum\VK BOT Sectum\bin\Debug\VkNet.dll
+C:\Users\User\Desktop\VK BOT Sectum\VK BOT Sectum\bin\Debug\HtmlAgilityPack.pdb
+C:\Users\User\Desktop\VK BOT Sectum\VK BOT Sectum\bin\Debug\HtmlAgilityPack.xml
+C:\Users\User\Desktop\VK BOT Sectum\VK BOT Sectum\bin\Debug\Microsoft.Extensions.DependencyInjection.xml
+C:\Users\User\Desktop\VK BOT Sectum\VK BOT Sectum\bin\Debug\Microsoft.Extensions.DependencyInjection.Abstractions.xml
+C:\Users\User\Desktop\VK BOT Sectum\VK BOT Sectum\bin\Debug\Microsoft.Extensions.Logging.Abstractions.xml
+C:\Users\User\Desktop\VK BOT Sectum\VK BOT Sectum\bin\Debug\Newtonsoft.Json.xml
+C:\Users\User\Desktop\VK BOT Sectum\VK BOT Sectum\bin\Debug\VkNet.xml
+C:\Users\User\Desktop\VK BOT Sectum\VK BOT Sectum\obj\Debug\VK BOT Sectum.csproj.AssemblyReference.cache
+C:\Users\User\Desktop\VK BOT Sectum\VK BOT Sectum\obj\Debug\VK BOT Sectum.csproj.SuggestedBindingRedirects.cache
+C:\Users\User\Desktop\VK BOT Sectum\VK BOT Sectum\obj\Debug\VK BOT Sectum.csproj.CoreCompileInputs.cache
+C:\Users\User\Desktop\VK BOT Sectum\VK BOT Sectum\obj\Debug\VK BOT Sectum.csproj.CopyComplete
+C:\Users\User\Desktop\VK BOT Sectum\VK BOT Sectum\obj\Debug\VK BOT Sectum.exe
+C:\Users\User\Desktop\VK BOT Sectum\VK BOT Sectum\obj\Debug\VK BOT Sectum.pdb
