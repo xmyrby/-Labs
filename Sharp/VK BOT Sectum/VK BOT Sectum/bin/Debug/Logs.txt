@@ -32,3 +32,602 @@
 09.06.2022 2:12:12 Павел Жуков asked question #2
 09.06.2022 2:13:54 Павел Жуков asked question #2
 09.06.2022 2:15:20 Павел Жуков asked question #2
+09.06.2022 2:31:50 Алина Чеботкова asked question #2
+09.06.2022 3:06:45 Максим Пенашкин asked question #2
+System.Net.Http.HttpRequestException: Произошла ошибка при отправке запроса. ---> System.Net.WebException: Невозможно разрешить удаленное имя: 'api.vk.com'
+   в System.Net.HttpWebRequest.EndGetRequestStream(IAsyncResult asyncResult, TransportContext& context)
+   в System.Net.Http.HttpClientHandler.GetRequestStreamCallback(IAsyncResult ar)
+   --- Конец трассировки внутреннего стека исключений ---
+   в System.Runtime.CompilerServices.TaskAwaiter.ThrowForNonSuccess(Task task)
+   в System.Runtime.CompilerServices.TaskAwaiter.HandleNonSuccessAndDebuggerNotification(Task task)
+   в VkNet.Utils.RestClient.<CallAsync>d__16.MoveNext()
+--- Конец трассировка стека из предыдущего расположения, где возникло исключение ---
+   в System.Runtime.CompilerServices.TaskAwaiter.ThrowForNonSuccess(Task task)
+   в System.Runtime.CompilerServices.TaskAwaiter.HandleNonSuccessAndDebuggerNotification(Task task)
+   в VkNet.VkApi.<>c__DisplayClass261_0.<InvokeBase>g__SendRequest|0()
+   в VkNet.Utils.RateLimiter.<>c__DisplayClass11_0.<Transform>b__0()
+   в VkNet.Utils.RateLimiter.<Perform>d__4.MoveNext()
+--- Конец трассировка стека из предыдущего расположения, где возникло исключение ---
+   в System.Runtime.CompilerServices.TaskAwaiter.ThrowForNonSuccess(Task task)
+   в System.Runtime.CompilerServices.TaskAwaiter.HandleNonSuccessAndDebuggerNotification(Task task)
+   в VkNet.VkApi.InvokeBase(String url, IDictionary`2 params)
+   в VkNet.VkApi.Invoke(String methodName, IDictionary`2 parameters, Boolean skipAuthorization)
+   в VkNet.VkApi.CallBase(String methodName, VkParameters parameters, Boolean skipAuthorization)
+   в VkNet.VkApi.Call[T](String methodName, VkParameters parameters, Boolean skipAuthorization, JsonConverter[] jsonConverters)
+   в VkNet.Categories.MessagesCategory.GetConversations(GetConversationsParams getConversationsParams)
+   в VK_BOT_Sectum.Program.Main() в D:\GitHub\-Labs\Sharp\VK BOT Sectum\VK BOT Sectum\Program.cs:строка 58
+System.Net.Http.HttpRequestException: Произошла ошибка при отправке запроса. ---> System.Net.WebException: Невозможно разрешить удаленное имя: 'api.vk.com'
+   в System.Net.HttpWebRequest.EndGetRequestStream(IAsyncResult asyncResult, TransportContext& context)
+   в System.Net.Http.HttpClientHandler.GetRequestStreamCallback(IAsyncResult ar)
+   --- Конец трассировки внутреннего стека исключений ---
+   в System.Runtime.CompilerServices.TaskAwaiter.ThrowForNonSuccess(Task task)
+   в System.Runtime.CompilerServices.TaskAwaiter.HandleNonSuccessAndDebuggerNotification(Task task)
+   в VkNet.Utils.RestClient.<CallAsync>d__16.MoveNext()
+--- Конец трассировка стека из предыдущего расположения, где возникло исключение ---
+   в System.Runtime.CompilerServices.TaskAwaiter.ThrowForNonSuccess(Task task)
+   в System.Runtime.CompilerServices.TaskAwaiter.HandleNonSuccessAndDebuggerNotification(Task task)
+   в VkNet.VkApi.<>c__DisplayClass261_0.<InvokeBase>g__SendRequest|0()
+   в VkNet.Utils.RateLimiter.<>c__DisplayClass11_0.<Transform>b__0()
+   в VkNet.Utils.RateLimiter.<Perform>d__4.MoveNext()
+--- Конец трассировка стека из предыдущего расположения, где возникло исключение ---
+   в System.Runtime.CompilerServices.TaskAwaiter.ThrowForNonSuccess(Task task)
+   в System.Runtime.CompilerServices.TaskAwaiter.HandleNonSuccessAndDebuggerNotification(Task task)
+   в VkNet.VkApi.InvokeBase(String url, IDictionary`2 params)
+   в VkNet.VkApi.Invoke(String methodName, IDictionary`2 parameters, Boolean skipAuthorization)
+   в VkNet.VkApi.CallBase(String methodName, VkParameters parameters, Boolean skipAuthorization)
+   в VkNet.VkApi.Call[T](String methodName, VkParameters parameters, Boolean skipAuthorization, JsonConverter[] jsonConverters)
+   в VkNet.Categories.MessagesCategory.GetConversations(GetConversationsParams getConversationsParams)
+   в VK_BOT_Sectum.Program.Main() в D:\GitHub\-Labs\Sharp\VK BOT Sectum\VK BOT Sectum\Program.cs:строка 58
+System.Net.Http.HttpRequestException: Произошла ошибка при отправке запроса. ---> System.Net.WebException: Невозможно разрешить удаленное имя: 'api.vk.com'
+   в System.Net.HttpWebRequest.EndGetRequestStream(IAsyncResult asyncResult, TransportContext& context)
+   в System.Net.Http.HttpClientHandler.GetRequestStreamCallback(IAsyncResult ar)
+   --- Конец трассировки внутреннего стека исключений ---
+   в System.Runtime.CompilerServices.TaskAwaiter.ThrowForNonSuccess(Task task)
+   в System.Runtime.CompilerServices.TaskAwaiter.HandleNonSuccessAndDebuggerNotification(Task task)
+   в VkNet.Utils.RestClient.<CallAsync>d__16.MoveNext()
+--- Конец трассировка стека из предыдущего расположения, где возникло исключение ---
+   в System.Runtime.CompilerServices.TaskAwaiter.ThrowForNonSuccess(Task task)
+   в System.Runtime.CompilerServices.TaskAwaiter.HandleNonSuccessAndDebuggerNotification(Task task)
+   в VkNet.VkApi.<>c__DisplayClass261_0.<InvokeBase>g__SendRequest|0()
+   в VkNet.Utils.RateLimiter.<>c__DisplayClass11_0.<Transform>b__0()
+   в VkNet.Utils.RateLimiter.<Perform>d__4.MoveNext()
+--- Конец трассировка стека из предыдущего расположения, где возникло исключение ---
+   в System.Runtime.CompilerServices.TaskAwaiter.ThrowForNonSuccess(Task task)
+   в System.Runtime.CompilerServices.TaskAwaiter.HandleNonSuccessAndDebuggerNotification(Task task)
+   в VkNet.VkApi.InvokeBase(String url, IDictionary`2 params)
+   в VkNet.VkApi.Invoke(String methodName, IDictionary`2 parameters, Boolean skipAuthorization)
+   в VkNet.VkApi.CallBase(String methodName, VkParameters parameters, Boolean skipAuthorization)
+   в VkNet.VkApi.Call[T](String methodName, VkParameters parameters, Boolean skipAuthorization, JsonConverter[] jsonConverters)
+   в VkNet.Categories.MessagesCategory.GetConversations(GetConversationsParams getConversationsParams)
+   в VK_BOT_Sectum.Program.Main() в D:\GitHub\-Labs\Sharp\VK BOT Sectum\VK BOT Sectum\Program.cs:строка 58
+System.Net.Http.HttpRequestException: Произошла ошибка при отправке запроса. ---> System.Net.WebException: Невозможно разрешить удаленное имя: 'api.vk.com'
+   в System.Net.HttpWebRequest.EndGetRequestStream(IAsyncResult asyncResult, TransportContext& context)
+   в System.Net.Http.HttpClientHandler.GetRequestStreamCallback(IAsyncResult ar)
+   --- Конец трассировки внутреннего стека исключений ---
+   в System.Runtime.CompilerServices.TaskAwaiter.ThrowForNonSuccess(Task task)
+   в System.Runtime.CompilerServices.TaskAwaiter.HandleNonSuccessAndDebuggerNotification(Task task)
+   в VkNet.Utils.RestClient.<CallAsync>d__16.MoveNext()
+--- Конец трассировка стека из предыдущего расположения, где возникло исключение ---
+   в System.Runtime.CompilerServices.TaskAwaiter.ThrowForNonSuccess(Task task)
+   в System.Runtime.CompilerServices.TaskAwaiter.HandleNonSuccessAndDebuggerNotification(Task task)
+   в VkNet.VkApi.<>c__DisplayClass261_0.<InvokeBase>g__SendRequest|0()
+   в VkNet.Utils.RateLimiter.<>c__DisplayClass11_0.<Transform>b__0()
+   в VkNet.Utils.RateLimiter.<Perform>d__4.MoveNext()
+--- Конец трассировка стека из предыдущего расположения, где возникло исключение ---
+   в System.Runtime.CompilerServices.TaskAwaiter.ThrowForNonSuccess(Task task)
+   в System.Runtime.CompilerServices.TaskAwaiter.HandleNonSuccessAndDebuggerNotification(Task task)
+   в VkNet.VkApi.InvokeBase(String url, IDictionary`2 params)
+   в VkNet.VkApi.Invoke(String methodName, IDictionary`2 parameters, Boolean skipAuthorization)
+   в VkNet.VkApi.CallBase(String methodName, VkParameters parameters, Boolean skipAuthorization)
+   в VkNet.VkApi.Call[T](String methodName, VkParameters parameters, Boolean skipAuthorization, JsonConverter[] jsonConverters)
+   в VkNet.Categories.MessagesCategory.GetConversations(GetConversationsParams getConversationsParams)
+   в VK_BOT_Sectum.Program.Main() в D:\GitHub\-Labs\Sharp\VK BOT Sectum\VK BOT Sectum\Program.cs:строка 58
+System.Net.Http.HttpRequestException: Произошла ошибка при отправке запроса. ---> System.Net.WebException: Невозможно разрешить удаленное имя: 'api.vk.com'
+   в System.Net.HttpWebRequest.EndGetRequestStream(IAsyncResult asyncResult, TransportContext& context)
+   в System.Net.Http.HttpClientHandler.GetRequestStreamCallback(IAsyncResult ar)
+   --- Конец трассировки внутреннего стека исключений ---
+   в System.Runtime.CompilerServices.TaskAwaiter.ThrowForNonSuccess(Task task)
+   в System.Runtime.CompilerServices.TaskAwaiter.HandleNonSuccessAndDebuggerNotification(Task task)
+   в VkNet.Utils.RestClient.<CallAsync>d__16.MoveNext()
+--- Конец трассировка стека из предыдущего расположения, где возникло исключение ---
+   в System.Runtime.CompilerServices.TaskAwaiter.ThrowForNonSuccess(Task task)
+   в System.Runtime.CompilerServices.TaskAwaiter.HandleNonSuccessAndDebuggerNotification(Task task)
+   в VkNet.VkApi.<>c__DisplayClass261_0.<InvokeBase>g__SendRequest|0()
+   в VkNet.Utils.RateLimiter.<>c__DisplayClass11_0.<Transform>b__0()
+   в VkNet.Utils.RateLimiter.<Perform>d__4.MoveNext()
+--- Конец трассировка стека из предыдущего расположения, где возникло исключение ---
+   в System.Runtime.CompilerServices.TaskAwaiter.ThrowForNonSuccess(Task task)
+   в System.Runtime.CompilerServices.TaskAwaiter.HandleNonSuccessAndDebuggerNotification(Task task)
+   в VkNet.VkApi.InvokeBase(String url, IDictionary`2 params)
+   в VkNet.VkApi.Invoke(String methodName, IDictionary`2 parameters, Boolean skipAuthorization)
+   в VkNet.VkApi.CallBase(String methodName, VkParameters parameters, Boolean skipAuthorization)
+   в VkNet.VkApi.Call[T](String methodName, VkParameters parameters, Boolean skipAuthorization, JsonConverter[] jsonConverters)
+   в VkNet.Categories.MessagesCategory.GetConversations(GetConversationsParams getConversationsParams)
+   в VK_BOT_Sectum.Program.Main() в D:\GitHub\-Labs\Sharp\VK BOT Sectum\VK BOT Sectum\Program.cs:строка 58
+System.Net.Http.HttpRequestException: Произошла ошибка при отправке запроса. ---> System.Net.WebException: Невозможно разрешить удаленное имя: 'api.vk.com'
+   в System.Net.HttpWebRequest.EndGetRequestStream(IAsyncResult asyncResult, TransportContext& context)
+   в System.Net.Http.HttpClientHandler.GetRequestStreamCallback(IAsyncResult ar)
+   --- Конец трассировки внутреннего стека исключений ---
+   в System.Runtime.CompilerServices.TaskAwaiter.ThrowForNonSuccess(Task task)
+   в System.Runtime.CompilerServices.TaskAwaiter.HandleNonSuccessAndDebuggerNotification(Task task)
+   в VkNet.Utils.RestClient.<CallAsync>d__16.MoveNext()
+--- Конец трассировка стека из предыдущего расположения, где возникло исключение ---
+   в System.Runtime.CompilerServices.TaskAwaiter.ThrowForNonSuccess(Task task)
+   в System.Runtime.CompilerServices.TaskAwaiter.HandleNonSuccessAndDebuggerNotification(Task task)
+   в VkNet.VkApi.<>c__DisplayClass261_0.<InvokeBase>g__SendRequest|0()
+   в VkNet.Utils.RateLimiter.<>c__DisplayClass11_0.<Transform>b__0()
+   в VkNet.Utils.RateLimiter.<Perform>d__4.MoveNext()
+--- Конец трассировка стека из предыдущего расположения, где возникло исключение ---
+   в System.Runtime.CompilerServices.TaskAwaiter.ThrowForNonSuccess(Task task)
+   в System.Runtime.CompilerServices.TaskAwaiter.HandleNonSuccessAndDebuggerNotification(Task task)
+   в VkNet.VkApi.InvokeBase(String url, IDictionary`2 params)
+   в VkNet.VkApi.Invoke(String methodName, IDictionary`2 parameters, Boolean skipAuthorization)
+   в VkNet.VkApi.CallBase(String methodName, VkParameters parameters, Boolean skipAuthorization)
+   в VkNet.VkApi.Call[T](String methodName, VkParameters parameters, Boolean skipAuthorization, JsonConverter[] jsonConverters)
+   в VkNet.Categories.MessagesCategory.GetConversations(GetConversationsParams getConversationsParams)
+   в VK_BOT_Sectum.Program.Main() в D:\GitHub\-Labs\Sharp\VK BOT Sectum\VK BOT Sectum\Program.cs:строка 58
+System.Net.Http.HttpRequestException: Произошла ошибка при отправке запроса. ---> System.Net.WebException: Невозможно разрешить удаленное имя: 'api.vk.com'
+   в System.Net.HttpWebRequest.EndGetRequestStream(IAsyncResult asyncResult, TransportContext& context)
+   в System.Net.Http.HttpClientHandler.GetRequestStreamCallback(IAsyncResult ar)
+   --- Конец трассировки внутреннего стека исключений ---
+   в System.Runtime.CompilerServices.TaskAwaiter.ThrowForNonSuccess(Task task)
+   в System.Runtime.CompilerServices.TaskAwaiter.HandleNonSuccessAndDebuggerNotification(Task task)
+   в VkNet.Utils.RestClient.<CallAsync>d__16.MoveNext()
+--- Конец трассировка стека из предыдущего расположения, где возникло исключение ---
+   в System.Runtime.CompilerServices.TaskAwaiter.ThrowForNonSuccess(Task task)
+   в System.Runtime.CompilerServices.TaskAwaiter.HandleNonSuccessAndDebuggerNotification(Task task)
+   в VkNet.VkApi.<>c__DisplayClass261_0.<InvokeBase>g__SendRequest|0()
+   в VkNet.Utils.RateLimiter.<>c__DisplayClass11_0.<Transform>b__0()
+   в VkNet.Utils.RateLimiter.<Perform>d__4.MoveNext()
+--- Конец трассировка стека из предыдущего расположения, где возникло исключение ---
+   в System.Runtime.CompilerServices.TaskAwaiter.ThrowForNonSuccess(Task task)
+   в System.Runtime.CompilerServices.TaskAwaiter.HandleNonSuccessAndDebuggerNotification(Task task)
+   в VkNet.VkApi.InvokeBase(String url, IDictionary`2 params)
+   в VkNet.VkApi.Invoke(String methodName, IDictionary`2 parameters, Boolean skipAuthorization)
+   в VkNet.VkApi.CallBase(String methodName, VkParameters parameters, Boolean skipAuthorization)
+   в VkNet.VkApi.Call[T](String methodName, VkParameters parameters, Boolean skipAuthorization, JsonConverter[] jsonConverters)
+   в VkNet.Categories.MessagesCategory.GetConversations(GetConversationsParams getConversationsParams)
+   в VK_BOT_Sectum.Program.Main() в D:\GitHub\-Labs\Sharp\VK BOT Sectum\VK BOT Sectum\Program.cs:строка 58
+System.Net.Http.HttpRequestException: Произошла ошибка при отправке запроса. ---> System.Net.WebException: Невозможно разрешить удаленное имя: 'api.vk.com'
+   в System.Net.HttpWebRequest.EndGetRequestStream(IAsyncResult asyncResult, TransportContext& context)
+   в System.Net.Http.HttpClientHandler.GetRequestStreamCallback(IAsyncResult ar)
+   --- Конец трассировки внутреннего стека исключений ---
+   в System.Runtime.CompilerServices.TaskAwaiter.ThrowForNonSuccess(Task task)
+   в System.Runtime.CompilerServices.TaskAwaiter.HandleNonSuccessAndDebuggerNotification(Task task)
+   в VkNet.Utils.RestClient.<CallAsync>d__16.MoveNext()
+--- Конец трассировка стека из предыдущего расположения, где возникло исключение ---
+   в System.Runtime.CompilerServices.TaskAwaiter.ThrowForNonSuccess(Task task)
+   в System.Runtime.CompilerServices.TaskAwaiter.HandleNonSuccessAndDebuggerNotification(Task task)
+   в VkNet.VkApi.<>c__DisplayClass261_0.<InvokeBase>g__SendRequest|0()
+   в VkNet.Utils.RateLimiter.<>c__DisplayClass11_0.<Transform>b__0()
+   в VkNet.Utils.RateLimiter.<Perform>d__4.MoveNext()
+--- Конец трассировка стека из предыдущего расположения, где возникло исключение ---
+   в System.Runtime.CompilerServices.TaskAwaiter.ThrowForNonSuccess(Task task)
+   в System.Runtime.CompilerServices.TaskAwaiter.HandleNonSuccessAndDebuggerNotification(Task task)
+   в VkNet.VkApi.InvokeBase(String url, IDictionary`2 params)
+   в VkNet.VkApi.Invoke(String methodName, IDictionary`2 parameters, Boolean skipAuthorization)
+   в VkNet.VkApi.CallBase(String methodName, VkParameters parameters, Boolean skipAuthorization)
+   в VkNet.VkApi.Call[T](String methodName, VkParameters parameters, Boolean skipAuthorization, JsonConverter[] jsonConverters)
+   в VkNet.Categories.MessagesCategory.GetConversations(GetConversationsParams getConversationsParams)
+   в VK_BOT_Sectum.Program.Main() в D:\GitHub\-Labs\Sharp\VK BOT Sectum\VK BOT Sectum\Program.cs:строка 58
+System.Net.Http.HttpRequestException: Произошла ошибка при отправке запроса. ---> System.Net.WebException: Невозможно разрешить удаленное имя: 'api.vk.com'
+   в System.Net.HttpWebRequest.EndGetRequestStream(IAsyncResult asyncResult, TransportContext& context)
+   в System.Net.Http.HttpClientHandler.GetRequestStreamCallback(IAsyncResult ar)
+   --- Конец трассировки внутреннего стека исключений ---
+   в System.Runtime.CompilerServices.TaskAwaiter.ThrowForNonSuccess(Task task)
+   в System.Runtime.CompilerServices.TaskAwaiter.HandleNonSuccessAndDebuggerNotification(Task task)
+   в VkNet.Utils.RestClient.<CallAsync>d__16.MoveNext()
+--- Конец трассировка стека из предыдущего расположения, где возникло исключение ---
+   в System.Runtime.CompilerServices.TaskAwaiter.ThrowForNonSuccess(Task task)
+   в System.Runtime.CompilerServices.TaskAwaiter.HandleNonSuccessAndDebuggerNotification(Task task)
+   в VkNet.VkApi.<>c__DisplayClass261_0.<InvokeBase>g__SendRequest|0()
+   в VkNet.Utils.RateLimiter.<>c__DisplayClass11_0.<Transform>b__0()
+   в VkNet.Utils.RateLimiter.<Perform>d__4.MoveNext()
+--- Конец трассировка стека из предыдущего расположения, где возникло исключение ---
+   в System.Runtime.CompilerServices.TaskAwaiter.ThrowForNonSuccess(Task task)
+   в System.Runtime.CompilerServices.TaskAwaiter.HandleNonSuccessAndDebuggerNotification(Task task)
+   в VkNet.VkApi.InvokeBase(String url, IDictionary`2 params)
+   в VkNet.VkApi.Invoke(String methodName, IDictionary`2 parameters, Boolean skipAuthorization)
+   в VkNet.VkApi.CallBase(String methodName, VkParameters parameters, Boolean skipAuthorization)
+   в VkNet.VkApi.Call[T](String methodName, VkParameters parameters, Boolean skipAuthorization, JsonConverter[] jsonConverters)
+   в VkNet.Categories.MessagesCategory.GetConversations(GetConversationsParams getConversationsParams)
+   в VK_BOT_Sectum.Program.Main() в D:\GitHub\-Labs\Sharp\VK BOT Sectum\VK BOT Sectum\Program.cs:строка 58
+System.Net.Http.HttpRequestException: Произошла ошибка при отправке запроса. ---> System.Net.WebException: Невозможно разрешить удаленное имя: 'api.vk.com'
+   в System.Net.HttpWebRequest.EndGetRequestStream(IAsyncResult asyncResult, TransportContext& context)
+   в System.Net.Http.HttpClientHandler.GetRequestStreamCallback(IAsyncResult ar)
+   --- Конец трассировки внутреннего стека исключений ---
+   в System.Runtime.CompilerServices.TaskAwaiter.ThrowForNonSuccess(Task task)
+   в System.Runtime.CompilerServices.TaskAwaiter.HandleNonSuccessAndDebuggerNotification(Task task)
+   в VkNet.Utils.RestClient.<CallAsync>d__16.MoveNext()
+--- Конец трассировка стека из предыдущего расположения, где возникло исключение ---
+   в System.Runtime.CompilerServices.TaskAwaiter.ThrowForNonSuccess(Task task)
+   в System.Runtime.CompilerServices.TaskAwaiter.HandleNonSuccessAndDebuggerNotification(Task task)
+   в VkNet.VkApi.<>c__DisplayClass261_0.<InvokeBase>g__SendRequest|0()
+   в VkNet.Utils.RateLimiter.<>c__DisplayClass11_0.<Transform>b__0()
+   в VkNet.Utils.RateLimiter.<Perform>d__4.MoveNext()
+--- Конец трассировка стека из предыдущего расположения, где возникло исключение ---
+   в System.Runtime.CompilerServices.TaskAwaiter.ThrowForNonSuccess(Task task)
+   в System.Runtime.CompilerServices.TaskAwaiter.HandleNonSuccessAndDebuggerNotification(Task task)
+   в VkNet.VkApi.InvokeBase(String url, IDictionary`2 params)
+   в VkNet.VkApi.Invoke(String methodName, IDictionary`2 parameters, Boolean skipAuthorization)
+   в VkNet.VkApi.CallBase(String methodName, VkParameters parameters, Boolean skipAuthorization)
+   в VkNet.VkApi.Call[T](String methodName, VkParameters parameters, Boolean skipAuthorization, JsonConverter[] jsonConverters)
+   в VkNet.Categories.MessagesCategory.GetConversations(GetConversationsParams getConversationsParams)
+   в VK_BOT_Sectum.Program.Main() в D:\GitHub\-Labs\Sharp\VK BOT Sectum\VK BOT Sectum\Program.cs:строка 58
+System.Net.Http.HttpRequestException: Произошла ошибка при отправке запроса. ---> System.Net.WebException: Невозможно разрешить удаленное имя: 'api.vk.com'
+   в System.Net.HttpWebRequest.EndGetRequestStream(IAsyncResult asyncResult, TransportContext& context)
+   в System.Net.Http.HttpClientHandler.GetRequestStreamCallback(IAsyncResult ar)
+   --- Конец трассировки внутреннего стека исключений ---
+   в System.Runtime.CompilerServices.TaskAwaiter.ThrowForNonSuccess(Task task)
+   в System.Runtime.CompilerServices.TaskAwaiter.HandleNonSuccessAndDebuggerNotification(Task task)
+   в VkNet.Utils.RestClient.<CallAsync>d__16.MoveNext()
+--- Конец трассировка стека из предыдущего расположения, где возникло исключение ---
+   в System.Runtime.CompilerServices.TaskAwaiter.ThrowForNonSuccess(Task task)
+   в System.Runtime.CompilerServices.TaskAwaiter.HandleNonSuccessAndDebuggerNotification(Task task)
+   в VkNet.VkApi.<>c__DisplayClass261_0.<InvokeBase>g__SendRequest|0()
+   в VkNet.Utils.RateLimiter.<>c__DisplayClass11_0.<Transform>b__0()
+   в VkNet.Utils.RateLimiter.<Perform>d__4.MoveNext()
+--- Конец трассировка стека из предыдущего расположения, где возникло исключение ---
+   в System.Runtime.CompilerServices.TaskAwaiter.ThrowForNonSuccess(Task task)
+   в System.Runtime.CompilerServices.TaskAwaiter.HandleNonSuccessAndDebuggerNotification(Task task)
+   в VkNet.VkApi.InvokeBase(String url, IDictionary`2 params)
+   в VkNet.VkApi.Invoke(String methodName, IDictionary`2 parameters, Boolean skipAuthorization)
+   в VkNet.VkApi.CallBase(String methodName, VkParameters parameters, Boolean skipAuthorization)
+   в VkNet.VkApi.Call[T](String methodName, VkParameters parameters, Boolean skipAuthorization, JsonConverter[] jsonConverters)
+   в VkNet.Categories.MessagesCategory.GetConversations(GetConversationsParams getConversationsParams)
+   в VK_BOT_Sectum.Program.Main() в D:\GitHub\-Labs\Sharp\VK BOT Sectum\VK BOT Sectum\Program.cs:строка 58
+System.Net.Http.HttpRequestException: Произошла ошибка при отправке запроса. ---> System.Net.WebException: Невозможно разрешить удаленное имя: 'api.vk.com'
+   в System.Net.HttpWebRequest.EndGetRequestStream(IAsyncResult asyncResult, TransportContext& context)
+   в System.Net.Http.HttpClientHandler.GetRequestStreamCallback(IAsyncResult ar)
+   --- Конец трассировки внутреннего стека исключений ---
+   в System.Runtime.CompilerServices.TaskAwaiter.ThrowForNonSuccess(Task task)
+   в System.Runtime.CompilerServices.TaskAwaiter.HandleNonSuccessAndDebuggerNotification(Task task)
+   в VkNet.Utils.RestClient.<CallAsync>d__16.MoveNext()
+--- Конец трассировка стека из предыдущего расположения, где возникло исключение ---
+   в System.Runtime.CompilerServices.TaskAwaiter.ThrowForNonSuccess(Task task)
+   в System.Runtime.CompilerServices.TaskAwaiter.HandleNonSuccessAndDebuggerNotification(Task task)
+   в VkNet.VkApi.<>c__DisplayClass261_0.<InvokeBase>g__SendRequest|0()
+   в VkNet.Utils.RateLimiter.<>c__DisplayClass11_0.<Transform>b__0()
+   в VkNet.Utils.RateLimiter.<Perform>d__4.MoveNext()
+--- Конец трассировка стека из предыдущего расположения, где возникло исключение ---
+   в System.Runtime.CompilerServices.TaskAwaiter.ThrowForNonSuccess(Task task)
+   в System.Runtime.CompilerServices.TaskAwaiter.HandleNonSuccessAndDebuggerNotification(Task task)
+   в VkNet.VkApi.InvokeBase(String url, IDictionary`2 params)
+   в VkNet.VkApi.Invoke(String methodName, IDictionary`2 parameters, Boolean skipAuthorization)
+   в VkNet.VkApi.CallBase(String methodName, VkParameters parameters, Boolean skipAuthorization)
+   в VkNet.VkApi.Call[T](String methodName, VkParameters parameters, Boolean skipAuthorization, JsonConverter[] jsonConverters)
+   в VkNet.Categories.MessagesCategory.GetConversations(GetConversationsParams getConversationsParams)
+   в VK_BOT_Sectum.Program.Main() в D:\GitHub\-Labs\Sharp\VK BOT Sectum\VK BOT Sectum\Program.cs:строка 58
+System.Net.Http.HttpRequestException: Произошла ошибка при отправке запроса. ---> System.Net.WebException: Невозможно разрешить удаленное имя: 'api.vk.com'
+   в System.Net.HttpWebRequest.EndGetRequestStream(IAsyncResult asyncResult, TransportContext& context)
+   в System.Net.Http.HttpClientHandler.GetRequestStreamCallback(IAsyncResult ar)
+   --- Конец трассировки внутреннего стека исключений ---
+   в System.Runtime.CompilerServices.TaskAwaiter.ThrowForNonSuccess(Task task)
+   в System.Runtime.CompilerServices.TaskAwaiter.HandleNonSuccessAndDebuggerNotification(Task task)
+   в VkNet.Utils.RestClient.<CallAsync>d__16.MoveNext()
+--- Конец трассировка стека из предыдущего расположения, где возникло исключение ---
+   в System.Runtime.CompilerServices.TaskAwaiter.ThrowForNonSuccess(Task task)
+   в System.Runtime.CompilerServices.TaskAwaiter.HandleNonSuccessAndDebuggerNotification(Task task)
+   в VkNet.VkApi.<>c__DisplayClass261_0.<InvokeBase>g__SendRequest|0()
+   в VkNet.Utils.RateLimiter.<>c__DisplayClass11_0.<Transform>b__0()
+   в VkNet.Utils.RateLimiter.<Perform>d__4.MoveNext()
+--- Конец трассировка стека из предыдущего расположения, где возникло исключение ---
+   в System.Runtime.CompilerServices.TaskAwaiter.ThrowForNonSuccess(Task task)
+   в System.Runtime.CompilerServices.TaskAwaiter.HandleNonSuccessAndDebuggerNotification(Task task)
+   в VkNet.VkApi.InvokeBase(String url, IDictionary`2 params)
+   в VkNet.VkApi.Invoke(String methodName, IDictionary`2 parameters, Boolean skipAuthorization)
+   в VkNet.VkApi.CallBase(String methodName, VkParameters parameters, Boolean skipAuthorization)
+   в VkNet.VkApi.Call[T](String methodName, VkParameters parameters, Boolean skipAuthorization, JsonConverter[] jsonConverters)
+   в VkNet.Categories.MessagesCategory.GetConversations(GetConversationsParams getConversationsParams)
+   в VK_BOT_Sectum.Program.Main() в D:\GitHub\-Labs\Sharp\VK BOT Sectum\VK BOT Sectum\Program.cs:строка 58
+System.Net.Http.HttpRequestException: Произошла ошибка при отправке запроса. ---> System.Net.WebException: Невозможно разрешить удаленное имя: 'api.vk.com'
+   в System.Net.HttpWebRequest.EndGetRequestStream(IAsyncResult asyncResult, TransportContext& context)
+   в System.Net.Http.HttpClientHandler.GetRequestStreamCallback(IAsyncResult ar)
+   --- Конец трассировки внутреннего стека исключений ---
+   в System.Runtime.CompilerServices.TaskAwaiter.ThrowForNonSuccess(Task task)
+   в System.Runtime.CompilerServices.TaskAwaiter.HandleNonSuccessAndDebuggerNotification(Task task)
+   в VkNet.Utils.RestClient.<CallAsync>d__16.MoveNext()
+--- Конец трассировка стека из предыдущего расположения, где возникло исключение ---
+   в System.Runtime.CompilerServices.TaskAwaiter.ThrowForNonSuccess(Task task)
+   в System.Runtime.CompilerServices.TaskAwaiter.HandleNonSuccessAndDebuggerNotification(Task task)
+   в VkNet.VkApi.<>c__DisplayClass261_0.<InvokeBase>g__SendRequest|0()
+   в VkNet.Utils.RateLimiter.<>c__DisplayClass11_0.<Transform>b__0()
+   в VkNet.Utils.RateLimiter.<Perform>d__4.MoveNext()
+--- Конец трассировка стека из предыдущего расположения, где возникло исключение ---
+   в System.Runtime.CompilerServices.TaskAwaiter.ThrowForNonSuccess(Task task)
+   в System.Runtime.CompilerServices.TaskAwaiter.HandleNonSuccessAndDebuggerNotification(Task task)
+   в VkNet.VkApi.InvokeBase(String url, IDictionary`2 params)
+   в VkNet.VkApi.Invoke(String methodName, IDictionary`2 parameters, Boolean skipAuthorization)
+   в VkNet.VkApi.CallBase(String methodName, VkParameters parameters, Boolean skipAuthorization)
+   в VkNet.VkApi.Call[T](String methodName, VkParameters parameters, Boolean skipAuthorization, JsonConverter[] jsonConverters)
+   в VkNet.Categories.MessagesCategory.GetConversations(GetConversationsParams getConversationsParams)
+   в VK_BOT_Sectum.Program.Main() в D:\GitHub\-Labs\Sharp\VK BOT Sectum\VK BOT Sectum\Program.cs:строка 58
+System.Net.Http.HttpRequestException: Произошла ошибка при отправке запроса. ---> System.Net.WebException: Невозможно разрешить удаленное имя: 'api.vk.com'
+   в System.Net.HttpWebRequest.EndGetRequestStream(IAsyncResult asyncResult, TransportContext& context)
+   в System.Net.Http.HttpClientHandler.GetRequestStreamCallback(IAsyncResult ar)
+   --- Конец трассировки внутреннего стека исключений ---
+   в System.Runtime.CompilerServices.TaskAwaiter.ThrowForNonSuccess(Task task)
+   в System.Runtime.CompilerServices.TaskAwaiter.HandleNonSuccessAndDebuggerNotification(Task task)
+   в VkNet.Utils.RestClient.<CallAsync>d__16.MoveNext()
+--- Конец трассировка стека из предыдущего расположения, где возникло исключение ---
+   в System.Runtime.CompilerServices.TaskAwaiter.ThrowForNonSuccess(Task task)
+   в System.Runtime.CompilerServices.TaskAwaiter.HandleNonSuccessAndDebuggerNotification(Task task)
+   в VkNet.VkApi.<>c__DisplayClass261_0.<InvokeBase>g__SendRequest|0()
+   в VkNet.Utils.RateLimiter.<>c__DisplayClass11_0.<Transform>b__0()
+   в VkNet.Utils.RateLimiter.<Perform>d__4.MoveNext()
+--- Конец трассировка стека из предыдущего расположения, где возникло исключение ---
+   в System.Runtime.CompilerServices.TaskAwaiter.ThrowForNonSuccess(Task task)
+   в System.Runtime.CompilerServices.TaskAwaiter.HandleNonSuccessAndDebuggerNotification(Task task)
+   в VkNet.VkApi.InvokeBase(String url, IDictionary`2 params)
+   в VkNet.VkApi.Invoke(String methodName, IDictionary`2 parameters, Boolean skipAuthorization)
+   в VkNet.VkApi.CallBase(String methodName, VkParameters parameters, Boolean skipAuthorization)
+   в VkNet.VkApi.Call[T](String methodName, VkParameters parameters, Boolean skipAuthorization, JsonConverter[] jsonConverters)
+   в VkNet.Categories.MessagesCategory.GetConversations(GetConversationsParams getConversationsParams)
+   в VK_BOT_Sectum.Program.Main() в D:\GitHub\-Labs\Sharp\VK BOT Sectum\VK BOT Sectum\Program.cs:строка 58
+System.Net.Http.HttpRequestException: Произошла ошибка при отправке запроса. ---> System.Net.WebException: Невозможно разрешить удаленное имя: 'api.vk.com'
+   в System.Net.HttpWebRequest.EndGetRequestStream(IAsyncResult asyncResult, TransportContext& context)
+   в System.Net.Http.HttpClientHandler.GetRequestStreamCallback(IAsyncResult ar)
+   --- Конец трассировки внутреннего стека исключений ---
+   в System.Runtime.CompilerServices.TaskAwaiter.ThrowForNonSuccess(Task task)
+   в System.Runtime.CompilerServices.TaskAwaiter.HandleNonSuccessAndDebuggerNotification(Task task)
+   в VkNet.Utils.RestClient.<CallAsync>d__16.MoveNext()
+--- Конец трассировка стека из предыдущего расположения, где возникло исключение ---
+   в System.Runtime.CompilerServices.TaskAwaiter.ThrowForNonSuccess(Task task)
+   в System.Runtime.CompilerServices.TaskAwaiter.HandleNonSuccessAndDebuggerNotification(Task task)
+   в VkNet.VkApi.<>c__DisplayClass261_0.<InvokeBase>g__SendRequest|0()
+   в VkNet.Utils.RateLimiter.<>c__DisplayClass11_0.<Transform>b__0()
+   в VkNet.Utils.RateLimiter.<Perform>d__4.MoveNext()
+--- Конец трассировка стека из предыдущего расположения, где возникло исключение ---
+   в System.Runtime.CompilerServices.TaskAwaiter.ThrowForNonSuccess(Task task)
+   в System.Runtime.CompilerServices.TaskAwaiter.HandleNonSuccessAndDebuggerNotification(Task task)
+   в VkNet.VkApi.InvokeBase(String url, IDictionary`2 params)
+   в VkNet.VkApi.Invoke(String methodName, IDictionary`2 parameters, Boolean skipAuthorization)
+   в VkNet.VkApi.CallBase(String methodName, VkParameters parameters, Boolean skipAuthorization)
+   в VkNet.VkApi.Call[T](String methodName, VkParameters parameters, Boolean skipAuthorization, JsonConverter[] jsonConverters)
+   в VkNet.Categories.MessagesCategory.GetConversations(GetConversationsParams getConversationsParams)
+   в VK_BOT_Sectum.Program.Main() в D:\GitHub\-Labs\Sharp\VK BOT Sectum\VK BOT Sectum\Program.cs:строка 58
+System.Net.Http.HttpRequestException: Произошла ошибка при отправке запроса. ---> System.Net.WebException: Невозможно разрешить удаленное имя: 'api.vk.com'
+   в System.Net.HttpWebRequest.EndGetRequestStream(IAsyncResult asyncResult, TransportContext& context)
+   в System.Net.Http.HttpClientHandler.GetRequestStreamCallback(IAsyncResult ar)
+   --- Конец трассировки внутреннего стека исключений ---
+   в System.Runtime.CompilerServices.TaskAwaiter.ThrowForNonSuccess(Task task)
+   в System.Runtime.CompilerServices.TaskAwaiter.HandleNonSuccessAndDebuggerNotification(Task task)
+   в VkNet.Utils.RestClient.<CallAsync>d__16.MoveNext()
+--- Конец трассировка стека из предыдущего расположения, где возникло исключение ---
+   в System.Runtime.CompilerServices.TaskAwaiter.ThrowForNonSuccess(Task task)
+   в System.Runtime.CompilerServices.TaskAwaiter.HandleNonSuccessAndDebuggerNotification(Task task)
+   в VkNet.VkApi.<>c__DisplayClass261_0.<InvokeBase>g__SendRequest|0()
+   в VkNet.Utils.RateLimiter.<>c__DisplayClass11_0.<Transform>b__0()
+   в VkNet.Utils.RateLimiter.<Perform>d__4.MoveNext()
+--- Конец трассировка стека из предыдущего расположения, где возникло исключение ---
+   в System.Runtime.CompilerServices.TaskAwaiter.ThrowForNonSuccess(Task task)
+   в System.Runtime.CompilerServices.TaskAwaiter.HandleNonSuccessAndDebuggerNotification(Task task)
+   в VkNet.VkApi.InvokeBase(String url, IDictionary`2 params)
+   в VkNet.VkApi.Invoke(String methodName, IDictionary`2 parameters, Boolean skipAuthorization)
+   в VkNet.VkApi.CallBase(String methodName, VkParameters parameters, Boolean skipAuthorization)
+   в VkNet.VkApi.Call[T](String methodName, VkParameters parameters, Boolean skipAuthorization, JsonConverter[] jsonConverters)
+   в VkNet.Categories.MessagesCategory.GetConversations(GetConversationsParams getConversationsParams)
+   в VK_BOT_Sectum.Program.Main() в D:\GitHub\-Labs\Sharp\VK BOT Sectum\VK BOT Sectum\Program.cs:строка 58
+System.Net.Http.HttpRequestException: Произошла ошибка при отправке запроса. ---> System.Net.WebException: Невозможно разрешить удаленное имя: 'api.vk.com'
+   в System.Net.HttpWebRequest.EndGetRequestStream(IAsyncResult asyncResult, TransportContext& context)
+   в System.Net.Http.HttpClientHandler.GetRequestStreamCallback(IAsyncResult ar)
+   --- Конец трассировки внутреннего стека исключений ---
+   в System.Runtime.CompilerServices.TaskAwaiter.ThrowForNonSuccess(Task task)
+   в System.Runtime.CompilerServices.TaskAwaiter.HandleNonSuccessAndDebuggerNotification(Task task)
+   в VkNet.Utils.RestClient.<CallAsync>d__16.MoveNext()
+--- Конец трассировка стека из предыдущего расположения, где возникло исключение ---
+   в System.Runtime.CompilerServices.TaskAwaiter.ThrowForNonSuccess(Task task)
+   в System.Runtime.CompilerServices.TaskAwaiter.HandleNonSuccessAndDebuggerNotification(Task task)
+   в VkNet.VkApi.<>c__DisplayClass261_0.<InvokeBase>g__SendRequest|0()
+   в VkNet.Utils.RateLimiter.<>c__DisplayClass11_0.<Transform>b__0()
+   в VkNet.Utils.RateLimiter.<Perform>d__4.MoveNext()
+--- Конец трассировка стека из предыдущего расположения, где возникло исключение ---
+   в System.Runtime.CompilerServices.TaskAwaiter.ThrowForNonSuccess(Task task)
+   в System.Runtime.CompilerServices.TaskAwaiter.HandleNonSuccessAndDebuggerNotification(Task task)
+   в VkNet.VkApi.InvokeBase(String url, IDictionary`2 params)
+   в VkNet.VkApi.Invoke(String methodName, IDictionary`2 parameters, Boolean skipAuthorization)
+   в VkNet.VkApi.CallBase(String methodName, VkParameters parameters, Boolean skipAuthorization)
+   в VkNet.VkApi.Call[T](String methodName, VkParameters parameters, Boolean skipAuthorization, JsonConverter[] jsonConverters)
+   в VkNet.Categories.MessagesCategory.GetConversations(GetConversationsParams getConversationsParams)
+   в VK_BOT_Sectum.Program.Main() в D:\GitHub\-Labs\Sharp\VK BOT Sectum\VK BOT Sectum\Program.cs:строка 58
+System.Net.Http.HttpRequestException: Произошла ошибка при отправке запроса. ---> System.Net.WebException: Невозможно разрешить удаленное имя: 'api.vk.com'
+   в System.Net.HttpWebRequest.EndGetRequestStream(IAsyncResult asyncResult, TransportContext& context)
+   в System.Net.Http.HttpClientHandler.GetRequestStreamCallback(IAsyncResult ar)
+   --- Конец трассировки внутреннего стека исключений ---
+   в System.Runtime.CompilerServices.TaskAwaiter.ThrowForNonSuccess(Task task)
+   в System.Runtime.CompilerServices.TaskAwaiter.HandleNonSuccessAndDebuggerNotification(Task task)
+   в VkNet.Utils.RestClient.<CallAsync>d__16.MoveNext()
+--- Конец трассировка стека из предыдущего расположения, где возникло исключение ---
+   в System.Runtime.CompilerServices.TaskAwaiter.ThrowForNonSuccess(Task task)
+   в System.Runtime.CompilerServices.TaskAwaiter.HandleNonSuccessAndDebuggerNotification(Task task)
+   в VkNet.VkApi.<>c__DisplayClass261_0.<InvokeBase>g__SendRequest|0()
+   в VkNet.Utils.RateLimiter.<>c__DisplayClass11_0.<Transform>b__0()
+   в VkNet.Utils.RateLimiter.<Perform>d__4.MoveNext()
+--- Конец трассировка стека из предыдущего расположения, где возникло исключение ---
+   в System.Runtime.CompilerServices.TaskAwaiter.ThrowForNonSuccess(Task task)
+   в System.Runtime.CompilerServices.TaskAwaiter.HandleNonSuccessAndDebuggerNotification(Task task)
+   в VkNet.VkApi.InvokeBase(String url, IDictionary`2 params)
+   в VkNet.VkApi.Invoke(String methodName, IDictionary`2 parameters, Boolean skipAuthorization)
+   в VkNet.VkApi.CallBase(String methodName, VkParameters parameters, Boolean skipAuthorization)
+   в VkNet.VkApi.Call[T](String methodName, VkParameters parameters, Boolean skipAuthorization, JsonConverter[] jsonConverters)
+   в VkNet.Categories.MessagesCategory.GetConversations(GetConversationsParams getConversationsParams)
+   в VK_BOT_Sectum.Program.Main() в D:\GitHub\-Labs\Sharp\VK BOT Sectum\VK BOT Sectum\Program.cs:строка 58
+System.Net.Http.HttpRequestException: Произошла ошибка при отправке запроса. ---> System.Net.WebException: Невозможно разрешить удаленное имя: 'api.vk.com'
+   в System.Net.HttpWebRequest.EndGetRequestStream(IAsyncResult asyncResult, TransportContext& context)
+   в System.Net.Http.HttpClientHandler.GetRequestStreamCallback(IAsyncResult ar)
+   --- Конец трассировки внутреннего стека исключений ---
+   в System.Runtime.CompilerServices.TaskAwaiter.ThrowForNonSuccess(Task task)
+   в System.Runtime.CompilerServices.TaskAwaiter.HandleNonSuccessAndDebuggerNotification(Task task)
+   в VkNet.Utils.RestClient.<CallAsync>d__16.MoveNext()
+--- Конец трассировка стека из предыдущего расположения, где возникло исключение ---
+   в System.Runtime.CompilerServices.TaskAwaiter.ThrowForNonSuccess(Task task)
+   в System.Runtime.CompilerServices.TaskAwaiter.HandleNonSuccessAndDebuggerNotification(Task task)
+   в VkNet.VkApi.<>c__DisplayClass261_0.<InvokeBase>g__SendRequest|0()
+   в VkNet.Utils.RateLimiter.<>c__DisplayClass11_0.<Transform>b__0()
+   в VkNet.Utils.RateLimiter.<Perform>d__4.MoveNext()
+--- Конец трассировка стека из предыдущего расположения, где возникло исключение ---
+   в System.Runtime.CompilerServices.TaskAwaiter.ThrowForNonSuccess(Task task)
+   в System.Runtime.CompilerServices.TaskAwaiter.HandleNonSuccessAndDebuggerNotification(Task task)
+   в VkNet.VkApi.InvokeBase(String url, IDictionary`2 params)
+   в VkNet.VkApi.Invoke(String methodName, IDictionary`2 parameters, Boolean skipAuthorization)
+   в VkNet.VkApi.CallBase(String methodName, VkParameters parameters, Boolean skipAuthorization)
+   в VkNet.VkApi.Call[T](String methodName, VkParameters parameters, Boolean skipAuthorization, JsonConverter[] jsonConverters)
+   в VkNet.Categories.MessagesCategory.GetConversations(GetConversationsParams getConversationsParams)
+   в VK_BOT_Sectum.Program.Main() в D:\GitHub\-Labs\Sharp\VK BOT Sectum\VK BOT Sectum\Program.cs:строка 58
+System.Net.Http.HttpRequestException: Произошла ошибка при отправке запроса. ---> System.Net.WebException: Невозможно разрешить удаленное имя: 'api.vk.com'
+   в System.Net.HttpWebRequest.EndGetRequestStream(IAsyncResult asyncResult, TransportContext& context)
+   в System.Net.Http.HttpClientHandler.GetRequestStreamCallback(IAsyncResult ar)
+   --- Конец трассировки внутреннего стека исключений ---
+   в System.Runtime.CompilerServices.TaskAwaiter.ThrowForNonSuccess(Task task)
+   в System.Runtime.CompilerServices.TaskAwaiter.HandleNonSuccessAndDebuggerNotification(Task task)
+   в VkNet.Utils.RestClient.<CallAsync>d__16.MoveNext()
+--- Конец трассировка стека из предыдущего расположения, где возникло исключение ---
+   в System.Runtime.CompilerServices.TaskAwaiter.ThrowForNonSuccess(Task task)
+   в System.Runtime.CompilerServices.TaskAwaiter.HandleNonSuccessAndDebuggerNotification(Task task)
+   в VkNet.VkApi.<>c__DisplayClass261_0.<InvokeBase>g__SendRequest|0()
+   в VkNet.Utils.RateLimiter.<>c__DisplayClass11_0.<Transform>b__0()
+   в VkNet.Utils.RateLimiter.<Perform>d__4.MoveNext()
+--- Конец трассировка стека из предыдущего расположения, где возникло исключение ---
+   в System.Runtime.CompilerServices.TaskAwaiter.ThrowForNonSuccess(Task task)
+   в System.Runtime.CompilerServices.TaskAwaiter.HandleNonSuccessAndDebuggerNotification(Task task)
+   в VkNet.VkApi.InvokeBase(String url, IDictionary`2 params)
+   в VkNet.VkApi.Invoke(String methodName, IDictionary`2 parameters, Boolean skipAuthorization)
+   в VkNet.VkApi.CallBase(String methodName, VkParameters parameters, Boolean skipAuthorization)
+   в VkNet.VkApi.Call[T](String methodName, VkParameters parameters, Boolean skipAuthorization, JsonConverter[] jsonConverters)
+   в VkNet.Categories.MessagesCategory.GetConversations(GetConversationsParams getConversationsParams)
+   в VK_BOT_Sectum.Program.Main() в D:\GitHub\-Labs\Sharp\VK BOT Sectum\VK BOT Sectum\Program.cs:строка 58
+System.Net.Http.HttpRequestException: Произошла ошибка при отправке запроса. ---> System.Net.WebException: Невозможно разрешить удаленное имя: 'api.vk.com'
+   в System.Net.HttpWebRequest.EndGetRequestStream(IAsyncResult asyncResult, TransportContext& context)
+   в System.Net.Http.HttpClientHandler.GetRequestStreamCallback(IAsyncResult ar)
+   --- Конец трассировки внутреннего стека исключений ---
+   в System.Runtime.CompilerServices.TaskAwaiter.ThrowForNonSuccess(Task task)
+   в System.Runtime.CompilerServices.TaskAwaiter.HandleNonSuccessAndDebuggerNotification(Task task)
+   в VkNet.Utils.RestClient.<CallAsync>d__16.MoveNext()
+--- Конец трассировка стека из предыдущего расположения, где возникло исключение ---
+   в System.Runtime.CompilerServices.TaskAwaiter.ThrowForNonSuccess(Task task)
+   в System.Runtime.CompilerServices.TaskAwaiter.HandleNonSuccessAndDebuggerNotification(Task task)
+   в VkNet.VkApi.<>c__DisplayClass261_0.<InvokeBase>g__SendRequest|0()
+   в VkNet.Utils.RateLimiter.<>c__DisplayClass11_0.<Transform>b__0()
+   в VkNet.Utils.RateLimiter.<Perform>d__4.MoveNext()
+--- Конец трассировка стека из предыдущего расположения, где возникло исключение ---
+   в System.Runtime.CompilerServices.TaskAwaiter.ThrowForNonSuccess(Task task)
+   в System.Runtime.CompilerServices.TaskAwaiter.HandleNonSuccessAndDebuggerNotification(Task task)
+   в VkNet.VkApi.InvokeBase(String url, IDictionary`2 params)
+   в VkNet.VkApi.Invoke(String methodName, IDictionary`2 parameters, Boolean skipAuthorization)
+   в VkNet.VkApi.CallBase(String methodName, VkParameters parameters, Boolean skipAuthorization)
+   в VkNet.VkApi.Call[T](String methodName, VkParameters parameters, Boolean skipAuthorization, JsonConverter[] jsonConverters)
+   в VkNet.Categories.MessagesCategory.GetConversations(GetConversationsParams getConversationsParams)
+   в VK_BOT_Sectum.Program.Main() в D:\GitHub\-Labs\Sharp\VK BOT Sectum\VK BOT Sectum\Program.cs:строка 58
+System.Net.Http.HttpRequestException: Произошла ошибка при отправке запроса. ---> System.Net.WebException: Невозможно разрешить удаленное имя: 'api.vk.com'
+   в System.Net.HttpWebRequest.EndGetRequestStream(IAsyncResult asyncResult, TransportContext& context)
+   в System.Net.Http.HttpClientHandler.GetRequestStreamCallback(IAsyncResult ar)
+   --- Конец трассировки внутреннего стека исключений ---
+   в System.Runtime.CompilerServices.TaskAwaiter.ThrowForNonSuccess(Task task)
+   в System.Runtime.CompilerServices.TaskAwaiter.HandleNonSuccessAndDebuggerNotification(Task task)
+   в VkNet.Utils.RestClient.<CallAsync>d__16.MoveNext()
+--- Конец трассировка стека из предыдущего расположения, где возникло исключение ---
+   в System.Runtime.CompilerServices.TaskAwaiter.ThrowForNonSuccess(Task task)
+   в System.Runtime.CompilerServices.TaskAwaiter.HandleNonSuccessAndDebuggerNotification(Task task)
+   в VkNet.VkApi.<>c__DisplayClass261_0.<InvokeBase>g__SendRequest|0()
+   в VkNet.Utils.RateLimiter.<>c__DisplayClass11_0.<Transform>b__0()
+   в VkNet.Utils.RateLimiter.<Perform>d__4.MoveNext()
+--- Конец трассировка стека из предыдущего расположения, где возникло исключение ---
+   в System.Runtime.CompilerServices.TaskAwaiter.ThrowForNonSuccess(Task task)
+   в System.Runtime.CompilerServices.TaskAwaiter.HandleNonSuccessAndDebuggerNotification(Task task)
+   в VkNet.VkApi.InvokeBase(String url, IDictionary`2 params)
+   в VkNet.VkApi.Invoke(String methodName, IDictionary`2 parameters, Boolean skipAuthorization)
+   в VkNet.VkApi.CallBase(String methodName, VkParameters parameters, Boolean skipAuthorization)
+   в VkNet.VkApi.Call[T](String methodName, VkParameters parameters, Boolean skipAuthorization, JsonConverter[] jsonConverters)
+   в VkNet.Categories.MessagesCategory.GetConversations(GetConversationsParams getConversationsParams)
+   в VK_BOT_Sectum.Program.Main() в D:\GitHub\-Labs\Sharp\VK BOT Sectum\VK BOT Sectum\Program.cs:строка 58
+System.Net.Http.HttpRequestException: Произошла ошибка при отправке запроса. ---> System.Net.WebException: Невозможно разрешить удаленное имя: 'api.vk.com'
+   в System.Net.HttpWebRequest.EndGetRequestStream(IAsyncResult asyncResult, TransportContext& context)
+   в System.Net.Http.HttpClientHandler.GetRequestStreamCallback(IAsyncResult ar)
+   --- Конец трассировки внутреннего стека исключений ---
+   в System.Runtime.CompilerServices.TaskAwaiter.ThrowForNonSuccess(Task task)
+   в System.Runtime.CompilerServices.TaskAwaiter.HandleNonSuccessAndDebuggerNotification(Task task)
+   в VkNet.Utils.RestClient.<CallAsync>d__16.MoveNext()
+--- Конец трассировка стека из предыдущего расположения, где возникло исключение ---
+   в System.Runtime.CompilerServices.TaskAwaiter.ThrowForNonSuccess(Task task)
+   в System.Runtime.CompilerServices.TaskAwaiter.HandleNonSuccessAndDebuggerNotification(Task task)
+   в VkNet.VkApi.<>c__DisplayClass261_0.<InvokeBase>g__SendRequest|0()
+   в VkNet.Utils.RateLimiter.<>c__DisplayClass11_0.<Transform>b__0()
+   в VkNet.Utils.RateLimiter.<Perform>d__4.MoveNext()
+--- Конец трассировка стека из предыдущего расположения, где возникло исключение ---
+   в System.Runtime.CompilerServices.TaskAwaiter.ThrowForNonSuccess(Task task)
+   в System.Runtime.CompilerServices.TaskAwaiter.HandleNonSuccessAndDebuggerNotification(Task task)
+   в VkNet.VkApi.InvokeBase(String url, IDictionary`2 params)
+   в VkNet.VkApi.Invoke(String methodName, IDictionary`2 parameters, Boolean skipAuthorization)
+   в VkNet.VkApi.CallBase(String methodName, VkParameters parameters, Boolean skipAuthorization)
+   в VkNet.VkApi.Call[T](String methodName, VkParameters parameters, Boolean skipAuthorization, JsonConverter[] jsonConverters)
+   в VkNet.Categories.MessagesCategory.GetConversations(GetConversationsParams getConversationsParams)
+   в VK_BOT_Sectum.Program.Main() в D:\GitHub\-Labs\Sharp\VK BOT Sectum\VK BOT Sectum\Program.cs:строка 58
+09.06.2022 9:11:48 Павел Данюков asked question #9
+09.06.2022 9:11:49 Даниил Трондин asked question #1
+09.06.2022 9:11:50 Максим Пенашкин asked question #2
+09.06.2022 9:11:51 Ixmal Monk asked question #5
+09.06.2022 9:12:04 Евгений Бурый asked question #2
+09.06.2022 9:12:12 Илья Крылов asked question #1
+09.06.2022 9:14:15 Евгений Бурый asked question #1
+09.06.2022 9:14:26 Евгений Бурый asked question #3
+09.06.2022 9:14:29 Евгений Бурый asked question #4
+09.06.2022 9:14:31 Евгений Бурый asked question #5
+09.06.2022 9:14:35 Евгений Бурый asked question #6
+09.06.2022 9:14:39 Евгений Бурый asked question #7
+09.06.2022 9:14:47 Евгений Бурый asked question #8
+09.06.2022 9:14:54 Евгений Бурый asked question #9
+09.06.2022 9:14:59 Евгений Бурый asked question #10
+09.06.2022 9:15:02 Евгений Бурый asked question #11
+09.06.2022 9:15:05 Евгений Бурый asked question #12
+09.06.2022 9:15:10 Евгений Бурый asked question #13
+09.06.2022 9:15:13 Евгений Бурый asked question #14
+09.06.2022 9:15:16 Евгений Бурый asked question #15
+09.06.2022 9:15:19 Евгений Бурый asked question #16
+09.06.2022 9:15:23 Евгений Бурый asked question #17
+09.06.2022 9:15:26 Евгений Бурый asked question #18
+09.06.2022 9:15:28 Евгений Бурый asked question #19
+09.06.2022 9:15:30 Евгений Бурый asked question #20
+09.06.2022 9:15:32 Евгений Бурый asked question #21
+09.06.2022 9:15:35 Евгений Бурый asked question #22
+09.06.2022 9:15:39 Евгений Бурый asked question #23
+09.06.2022 9:15:42 Евгений Бурый asked question #24
+09.06.2022 9:15:45 Евгений Бурый asked question #25
+09.06.2022 9:15:48 Евгений Бурый asked question #26
+09.06.2022 9:21:57 Евгений Бурый asked question #1
+09.06.2022 9:22:43 Игорь Семикин asked question #1
+09.06.2022 9:22:51 Игорь Семикин asked question #15
+09.06.2022 9:24:52 Павел Жуков asked question #8
+09.06.2022 9:26:23 Евгений Бурый asked question #2
+09.06.2022 9:27:36 Ixmal Monk asked question #11
+09.06.2022 9:28:51 Евгений Бурый asked question #3
+09.06.2022 9:31:37 Евгений Бурый asked question #4
+09.06.2022 9:36:10 Алина Чеботкова asked question #19
+09.06.2022 9:36:50 Алина Чеботкова asked question #10
+09.06.2022 9:36:51 Илья Крылов asked question #18
+09.06.2022 9:40:13 Илья Семёнов asked question #1
+09.06.2022 9:40:32 Илья Семёнов asked question #20
+09.06.2022 9:40:41 Илья Семёнов asked question #25
+09.06.2022 9:40:45 Илья Семёнов asked question #26
+09.06.2022 9:43:20 Марк Марченков asked question #2
+09.06.2022 9:51:48 Павел Жуков asked question #6
+09.06.2022 9:51:50 Павел Жуков asked question #7
+09.06.2022 9:51:52 Павел Жуков asked question #8
+09.06.2022 9:52:26 Павел Жуков asked question #6
+09.06.2022 10:00:11 Руслан Восходов asked question #17
+09.06.2022 10:10:27 Павел Данюков asked question #23
+09.06.2022 10:26:03 Павел Жуков asked question #24
+09.06.2022 10:27:36 Nikolai Loctyshin asked question #23
+09.06.2022 10:29:24 Nikolai Loctyshin asked question #14
+09.06.2022 10:42:58 Павел Жуков asked question #3
+09.06.2022 11:13:54 Роман Морозов asked question #9
+09.06.2022 11:14:12 Роман Морозов asked question #10
+09.06.2022 11:14:17 Роман Морозов asked question #9
+09.06.2022 11:14:42 Роман Морозов asked question #20
+09.06.2022 11:29:06 Евгений Бурый asked question #13
+09.06.2022 11:36:26 Павел Жуков asked question #13
+09.06.2022 11:42:05 Павел Жуков asked question #6
+09.06.2022 12:07:36 Игорь Семикин asked question #16
+09.06.2022 12:08:48 Евгений Бурый asked question #18
+09.06.2022 12:20:08 Игорь Семикин asked question #12
+09.06.2022 12:29:06 Руслан Восходов asked question #21
+09.06.2022 14:39:33 Егор Че asked question #3

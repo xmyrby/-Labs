@@ -29,19 +29,19 @@
         private void InitializeComponent()
         {
             this.groupBoxEngine = new System.Windows.Forms.GroupBox();
-            this.label1 = new System.Windows.Forms.Label();
-            this.label2 = new System.Windows.Forms.Label();
-            this.numericUpDownPower = new System.Windows.Forms.NumericUpDown();
-            this.label3 = new System.Windows.Forms.Label();
-            this.numericUpDownSpeed = new System.Windows.Forms.NumericUpDown();
-            this.label4 = new System.Windows.Forms.Label();
-            this.textBoxInitialParams = new System.Windows.Forms.TextBox();
-            this.label5 = new System.Windows.Forms.Label();
-            this.textBoxCalc = new System.Windows.Forms.TextBox();
             this.buttonCalc = new System.Windows.Forms.Button();
+            this.textBoxCalc = new System.Windows.Forms.TextBox();
+            this.label5 = new System.Windows.Forms.Label();
+            this.textBoxInitialParams = new System.Windows.Forms.TextBox();
+            this.label4 = new System.Windows.Forms.Label();
+            this.numericUpDownSpeed = new System.Windows.Forms.NumericUpDown();
+            this.label3 = new System.Windows.Forms.Label();
+            this.numericUpDownPower = new System.Windows.Forms.NumericUpDown();
+            this.label2 = new System.Windows.Forms.Label();
+            this.label1 = new System.Windows.Forms.Label();
             this.groupBoxEngine.SuspendLayout();
-            ((System.ComponentModel.ISupportInitialize)(this.numericUpDownPower)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.numericUpDownSpeed)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.numericUpDownPower)).BeginInit();
             this.SuspendLayout();
             // 
             // groupBoxEngine
@@ -63,23 +63,90 @@
             this.groupBoxEngine.TabStop = false;
             this.groupBoxEngine.Text = "1. Выбор двигателя";
             // 
-            // label1
+            // buttonCalc
             // 
-            this.label1.AutoSize = true;
-            this.label1.Location = new System.Drawing.Point(15, 28);
-            this.label1.Name = "label1";
-            this.label1.Size = new System.Drawing.Size(159, 13);
-            this.label1.TabIndex = 1;
-            this.label1.Text = "Требуемая мощность на валу";
+            this.buttonCalc.Location = new System.Drawing.Point(18, 295);
+            this.buttonCalc.Name = "buttonCalc";
+            this.buttonCalc.Size = new System.Drawing.Size(341, 33);
+            this.buttonCalc.TabIndex = 10;
+            this.buttonCalc.Text = "Сделать расчёт двигателя";
+            this.buttonCalc.UseVisualStyleBackColor = true;
+            this.buttonCalc.Click += new System.EventHandler(this.buttonCalc_Click);
             // 
-            // label2
+            // textBoxCalc
             // 
-            this.label2.AutoSize = true;
-            this.label2.Location = new System.Drawing.Point(306, 28);
-            this.label2.Name = "label2";
-            this.label2.Size = new System.Drawing.Size(26, 13);
-            this.label2.TabIndex = 2;
-            this.label2.Text = "КВт";
+            this.textBoxCalc.Location = new System.Drawing.Point(18, 235);
+            this.textBoxCalc.Multiline = true;
+            this.textBoxCalc.Name = "textBoxCalc";
+            this.textBoxCalc.ReadOnly = true;
+            this.textBoxCalc.ScrollBars = System.Windows.Forms.ScrollBars.Horizontal;
+            this.textBoxCalc.Size = new System.Drawing.Size(341, 54);
+            this.textBoxCalc.TabIndex = 9;
+            // 
+            // label5
+            // 
+            this.label5.AutoSize = true;
+            this.label5.Location = new System.Drawing.Point(15, 219);
+            this.label5.Name = "label5";
+            this.label5.Size = new System.Drawing.Size(184, 13);
+            this.label5.TabIndex = 8;
+            this.label5.Text = "Кинематический расчёт двигателя";
+            // 
+            // textBoxInitialParams
+            // 
+            this.textBoxInitialParams.Location = new System.Drawing.Point(18, 83);
+            this.textBoxInitialParams.Multiline = true;
+            this.textBoxInitialParams.Name = "textBoxInitialParams";
+            this.textBoxInitialParams.ReadOnly = true;
+            this.textBoxInitialParams.ScrollBars = System.Windows.Forms.ScrollBars.Both;
+            this.textBoxInitialParams.Size = new System.Drawing.Size(341, 124);
+            this.textBoxInitialParams.TabIndex = 7;
+            // 
+            // label4
+            // 
+            this.label4.AutoSize = true;
+            this.label4.Location = new System.Drawing.Point(306, 59);
+            this.label4.Name = "label4";
+            this.label4.Size = new System.Drawing.Size(53, 13);
+            this.label4.TabIndex = 6;
+            this.label4.Text = "Об / Мин";
+            // 
+            // numericUpDownSpeed
+            // 
+            this.numericUpDownSpeed.Increment = new decimal(new int[] {
+            100,
+            0,
+            0,
+            0});
+            this.numericUpDownSpeed.Location = new System.Drawing.Point(197, 57);
+            this.numericUpDownSpeed.Maximum = new decimal(new int[] {
+            10000,
+            0,
+            0,
+            0});
+            this.numericUpDownSpeed.Minimum = new decimal(new int[] {
+            100,
+            0,
+            0,
+            0});
+            this.numericUpDownSpeed.Name = "numericUpDownSpeed";
+            this.numericUpDownSpeed.Size = new System.Drawing.Size(103, 20);
+            this.numericUpDownSpeed.TabIndex = 5;
+            this.numericUpDownSpeed.ThousandsSeparator = true;
+            this.numericUpDownSpeed.Value = new decimal(new int[] {
+            150,
+            0,
+            0,
+            0});
+            // 
+            // label3
+            // 
+            this.label3.AutoSize = true;
+            this.label3.Location = new System.Drawing.Point(15, 59);
+            this.label3.Name = "label3";
+            this.label3.Size = new System.Drawing.Size(172, 13);
+            this.label3.TabIndex = 4;
+            this.label3.Text = "Необходимая частота вращения";
             // 
             // numericUpDownPower
             // 
@@ -105,95 +172,28 @@
             this.numericUpDownPower.TabIndex = 3;
             this.numericUpDownPower.ThousandsSeparator = true;
             this.numericUpDownPower.Value = new decimal(new int[] {
-            1,
+            120,
             0,
             0,
-            131072});
+            65536});
             // 
-            // label3
+            // label2
             // 
-            this.label3.AutoSize = true;
-            this.label3.Location = new System.Drawing.Point(15, 59);
-            this.label3.Name = "label3";
-            this.label3.Size = new System.Drawing.Size(172, 13);
-            this.label3.TabIndex = 4;
-            this.label3.Text = "Необходимая частота вращения";
+            this.label2.AutoSize = true;
+            this.label2.Location = new System.Drawing.Point(306, 28);
+            this.label2.Name = "label2";
+            this.label2.Size = new System.Drawing.Size(26, 13);
+            this.label2.TabIndex = 2;
+            this.label2.Text = "КВт";
             // 
-            // numericUpDownSpeed
+            // label1
             // 
-            this.numericUpDownSpeed.Increment = new decimal(new int[] {
-            100,
-            0,
-            0,
-            0});
-            this.numericUpDownSpeed.Location = new System.Drawing.Point(197, 57);
-            this.numericUpDownSpeed.Maximum = new decimal(new int[] {
-            10000,
-            0,
-            0,
-            0});
-            this.numericUpDownSpeed.Minimum = new decimal(new int[] {
-            100,
-            0,
-            0,
-            0});
-            this.numericUpDownSpeed.Name = "numericUpDownSpeed";
-            this.numericUpDownSpeed.Size = new System.Drawing.Size(103, 20);
-            this.numericUpDownSpeed.TabIndex = 5;
-            this.numericUpDownSpeed.ThousandsSeparator = true;
-            this.numericUpDownSpeed.Value = new decimal(new int[] {
-            100,
-            0,
-            0,
-            0});
-            // 
-            // label4
-            // 
-            this.label4.AutoSize = true;
-            this.label4.Location = new System.Drawing.Point(306, 59);
-            this.label4.Name = "label4";
-            this.label4.Size = new System.Drawing.Size(53, 13);
-            this.label4.TabIndex = 6;
-            this.label4.Text = "Об / Мин";
-            // 
-            // textBoxInitialParams
-            // 
-            this.textBoxInitialParams.Location = new System.Drawing.Point(18, 83);
-            this.textBoxInitialParams.Multiline = true;
-            this.textBoxInitialParams.Name = "textBoxInitialParams";
-            this.textBoxInitialParams.ReadOnly = true;
-            this.textBoxInitialParams.ScrollBars = System.Windows.Forms.ScrollBars.Both;
-            this.textBoxInitialParams.Size = new System.Drawing.Size(341, 124);
-            this.textBoxInitialParams.TabIndex = 7;
-            // 
-            // label5
-            // 
-            this.label5.AutoSize = true;
-            this.label5.Location = new System.Drawing.Point(15, 219);
-            this.label5.Name = "label5";
-            this.label5.Size = new System.Drawing.Size(184, 13);
-            this.label5.TabIndex = 8;
-            this.label5.Text = "Кинематический расчёт двигателя";
-            // 
-            // textBoxCalc
-            // 
-            this.textBoxCalc.Location = new System.Drawing.Point(18, 235);
-            this.textBoxCalc.Multiline = true;
-            this.textBoxCalc.Name = "textBoxCalc";
-            this.textBoxCalc.ReadOnly = true;
-            this.textBoxCalc.ScrollBars = System.Windows.Forms.ScrollBars.Horizontal;
-            this.textBoxCalc.Size = new System.Drawing.Size(341, 54);
-            this.textBoxCalc.TabIndex = 9;
-            // 
-            // buttonCalc
-            // 
-            this.buttonCalc.Location = new System.Drawing.Point(18, 295);
-            this.buttonCalc.Name = "buttonCalc";
-            this.buttonCalc.Size = new System.Drawing.Size(341, 33);
-            this.buttonCalc.TabIndex = 10;
-            this.buttonCalc.Text = "Сделать расчёт двигателя";
-            this.buttonCalc.UseVisualStyleBackColor = true;
-            this.buttonCalc.Click += new System.EventHandler(this.buttonCalc_Click);
+            this.label1.AutoSize = true;
+            this.label1.Location = new System.Drawing.Point(15, 28);
+            this.label1.Name = "label1";
+            this.label1.Size = new System.Drawing.Size(159, 13);
+            this.label1.TabIndex = 1;
+            this.label1.Text = "Требуемая мощность на валу";
             // 
             // FormMain
             // 
@@ -210,8 +210,8 @@
             this.Load += new System.EventHandler(this.FormMain_Load);
             this.groupBoxEngine.ResumeLayout(false);
             this.groupBoxEngine.PerformLayout();
-            ((System.ComponentModel.ISupportInitialize)(this.numericUpDownPower)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.numericUpDownSpeed)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.numericUpDownPower)).EndInit();
             this.ResumeLayout(false);
 
         }

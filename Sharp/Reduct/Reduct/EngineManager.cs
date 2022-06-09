@@ -13,15 +13,15 @@ namespace Reduct
         public List<Engine> InitEngines()
         {
             List<Engine> engines = new List<Engine>();
-            while (reader.ReadLine() != null)
+            while (reader.Peek() > -1)
             {
                 string[] Line = reader.ReadLine().Split(' ');
                 engines.Add(new Engine()
                 {
                     Name = Line[0],
-                    Power = float.Parse(Line[3]),
-                    RotorSpeed = int.Parse(Line[6]),
-                    SpeedRange = int.Parse(Line[9])
+                    Power = float.Parse(Line[2]),
+                    RotorSpeed = int.Parse(Line[4]),
+                    SpeedRange = int.Parse(Line[6])
                 });
             }
             return engines;
@@ -30,8 +30,11 @@ namespace Reduct
         public Engine GetEngineByParams(List<Engine> engines, Engine engine)
         {
             for (int i = 0; i < engines.Count; i++)
-                if (engine.Power <= engines[i].Power && engine.SpeedRange * 5 >= engines[i].SpeedRange)
+            {
+                if (engine.Power <= engines[i].Power && engine.SpeedRange >= engines[i].SpeedRange)
                     return engines[i];
+            }
+
             return null;
         }
     }

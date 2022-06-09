@@ -19,6 +19,7 @@ namespace Reduct
 
         EngineManager eManager = new EngineManager();
         List<Engine> engines = new List<Engine>();
+        public double inputShaftSpeed = 0;
 
         private void FormMain_Load(object sender, EventArgs e)
         {
@@ -27,11 +28,24 @@ namespace Reduct
 
         private void buttonCalc_Click(object sender, EventArgs e)
         {
-            Engine engine = eManager.GetEngineByParams(engines,new Engine()
+            Engine engine = eManager.GetEngineByParams(engines, new Engine()
             {
-                Power = (float)numericUpDownPower.Value,
-                SpeedRange = (int)numericUpDownSpeed.Value
-            }) ;
+                Power = (float)((double)numericUpDownPower.Value / 0.91),
+                SpeedRange = (int)numericUpDownSpeed.Value * 5
+            });
+
+            if (engine != null)
+            {
+                inputShaftSpeed = Math.Round(((double)engine.RotorSpeed / 5), 2);
+
+                textBoxInitialParams.Text = $"Требуемая мощность электродвигателя: {(float)numericUpDownPower.Value}, Квт{Environment.NewLine}Максимальная частота вращения ротора: {engine.SpeedRange} об/мин{Environment.NewLine}{Environment.NewLine}Выбираем электродвигатель: АИР{engine.Name}{Environment.NewLine}{Environment.NewLine}Его характеристики:{Environment.NewLine}Мощность: {engine.Power}, Квт{Environment.NewLine}Номинальная частота вращения ротора: {engine.RotorSpeed} об/мин";
+
+                textBoxCalc.Text = $"Частота вращения на входном валу редуктора = {Math.Round(((double)engine.RotorSpeed / 2), 2) } об/мин\nЧастота вращения на выходном валу редуктора = {inputShaftSpeed} об/мин";
+            }
+            else
+            {
+                MessageBox.Show("Нет подходящего по параметрам двигателя");
+            }
         }
     }
 }
