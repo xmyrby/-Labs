@@ -167,7 +167,7 @@ namespace Reduct
         {
             Engine engine = eManager.GetEngineByParams(engines, new Engine()
             {
-                Power = (float)numericUpDownPower.Value,
+                Power = (double)numericUpDownPower.Value,
                 SpeedRange = (int)numericUpDownSpeed.Value
             });
             if (engine != null)

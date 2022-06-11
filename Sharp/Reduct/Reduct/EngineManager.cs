@@ -24,6 +24,7 @@ namespace Reduct
                     SpeedRange = int.Parse(Line[6])
                 });
             }
+            reader.Close();
             return engines;
         }
 
