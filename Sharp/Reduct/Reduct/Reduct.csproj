@@ -33,6 +33,34 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="Interop.Kompas6API2D5COM">
+      <HintPath>C:\Users\User\Desktop\САПР пример\KursovayaRazrabotrfSAPR\obj\Debug\Interop.Kompas6API2D5COM.dll</HintPath>
+      <EmbedInteropTypes>True</EmbedInteropTypes>
+    </Reference>
+    <Reference Include="Interop.Kompas6API3D5COM">
+      <HintPath>C:\Users\User\Desktop\САПР пример\KursovayaRazrabotrfSAPR\obj\Debug\Interop.Kompas6API3D5COM.dll</HintPath>
+      <EmbedInteropTypes>True</EmbedInteropTypes>
+    </Reference>
+    <Reference Include="Interop.Kompas6API5">
+      <HintPath>C:\Users\User\Desktop\САПР пример\KursovayaRazrabotrfSAPR\obj\Debug\Interop.Kompas6API5.dll</HintPath>
+      <EmbedInteropTypes>True</EmbedInteropTypes>
+    </Reference>
+    <Reference Include="Interop.Kompas6Constants">
+      <HintPath>C:\Users\User\Desktop\САПР пример\KursovayaRazrabotrfSAPR\obj\Debug\Interop.Kompas6Constants.dll</HintPath>
+      <EmbedInteropTypes>True</EmbedInteropTypes>
+    </Reference>
+    <Reference Include="Interop.Kompas6Constants3D">
+      <HintPath>C:\Users\User\Desktop\САПР пример\KursovayaRazrabotrfSAPR\obj\Debug\Interop.Kompas6Constants3D.dll</HintPath>
+      <EmbedInteropTypes>True</EmbedInteropTypes>
+    </Reference>
+    <Reference Include="Interop.KompasAPI7">
+      <HintPath>C:\Users\User\Desktop\САПР пример\KursovayaRazrabotrfSAPR\obj\Debug\Interop.KompasAPI7.dll</HintPath>
+      <EmbedInteropTypes>True</EmbedInteropTypes>
+    </Reference>
+    <Reference Include="Interop.KompasLibrary">
+      <HintPath>C:\Users\User\Desktop\САПР пример\KursovayaRazrabotrfSAPR\obj\Debug\Interop.KompasLibrary.dll</HintPath>
+      <EmbedInteropTypes>True</EmbedInteropTypes>
+    </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
     <Reference Include="System.Xml.Linq" />
@@ -44,6 +72,10 @@
     <Reference Include="System.Net.Http" />
     <Reference Include="System.Windows.Forms" />
     <Reference Include="System.Xml" />
+    <Reference Include="VCHATCHLib">
+      <HintPath>..\..\..\..\C# for KOMPAS\Common\VCHATCHLib.dll</HintPath>
+      <EmbedInteropTypes>True</EmbedInteropTypes>
+    </Reference>
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Engine.cs" />
@@ -67,6 +99,7 @@
     <Compile Include="Properties\Resources.Designer.cs">
       <AutoGen>True</AutoGen>
       <DependentUpon>Resources.resx</DependentUpon>
+      <DesignTime>True</DesignTime>
     </Compile>
     <None Include="Properties\Settings.settings">
       <Generator>SettingsSingleFileGenerator</Generator>
@@ -80,6 +113,15 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="App.config" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="bin\Debug\img_Gear.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="bin\Debug\img_Wheel.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="bin\Debug\img_WormShaft.png" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

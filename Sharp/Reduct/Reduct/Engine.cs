@@ -9,7 +9,7 @@ namespace Reduct
     internal class Engine
     {
         public string Name { get; set; }
-        public float Power { get; set; }
+        public double Power { get; set; }
         public int RotorSpeed { get; set; }
         public int SpeedRange { get; set; }
     }

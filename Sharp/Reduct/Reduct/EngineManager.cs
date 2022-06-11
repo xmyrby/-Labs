@@ -19,7 +19,7 @@ namespace Reduct
                 engines.Add(new Engine()
                 {
                     Name = Line[0],
-                    Power = float.Parse(Line[2]),
+                    Power = double.Parse(Line[2]),
                     RotorSpeed = int.Parse(Line[4]),
                     SpeedRange = int.Parse(Line[6])
                 });
@@ -30,11 +30,8 @@ namespace Reduct
         public Engine GetEngineByParams(List<Engine> engines, Engine engine)
         {
             for (int i = 0; i < engines.Count; i++)
-            {
-                if (engine.Power <= engines[i].Power && engine.SpeedRange >= engines[i].SpeedRange)
+                if (engine.Power <= engines[i].Power && engine.SpeedRange * 5 >= engines[i].SpeedRange)
                     return engines[i];
-            }
-
             return null;
         }
     }

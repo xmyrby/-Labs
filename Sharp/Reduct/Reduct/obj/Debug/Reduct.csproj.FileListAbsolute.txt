@@ -9,9 +9,8 @@ C:\Users\Gim_Laptop\Desktop\КП червяк аркадион\Прога\Reduct
 C:\Users\Gim_Laptop\Desktop\КП червяк аркадион\Прога\Reduct\Reduct\obj\Debug\Reduct.exe
 C:\Users\Gim_Laptop\Desktop\КП червяк аркадион\Прога\Reduct\Reduct\obj\Debug\Reduct.pdb
 C:\Users\Gim_Laptop\Desktop\КП червяк аркадион\Прога\Reduct\Reduct\obj\Debug\Reduct.FormMain.resources
-D:\GitHub\-Labs\Sharp\Reduct\Reduct\bin\Debug\Reduct.exe.config
-D:\GitHub\-Labs\Sharp\Reduct\Reduct\bin\Debug\Reduct.exe
-D:\GitHub\-Labs\Sharp\Reduct\Reduct\bin\Debug\Reduct.pdb
+C:\Users\Gim_Laptop\Desktop\КП червяк аркадион\Прога\Reduct\Reduct\bin\Debug\KAPITypes.dll
+C:\Users\Gim_Laptop\Desktop\КП червяк аркадион\Прога\Reduct\Reduct\obj\Debug\Reduct.csproj.CopyComplete
 D:\GitHub\-Labs\Sharp\Reduct\Reduct\obj\Debug\Reduct.csproj.AssemblyReference.cache
 D:\GitHub\-Labs\Sharp\Reduct\Reduct\obj\Debug\Reduct.csproj.SuggestedBindingRedirects.cache
 D:\GitHub\-Labs\Sharp\Reduct\Reduct\obj\Debug\Reduct.FormMain.resources
@@ -20,3 +19,6 @@ D:\GitHub\-Labs\Sharp\Reduct\Reduct\obj\Debug\Reduct.csproj.GenerateResource.cac
 D:\GitHub\-Labs\Sharp\Reduct\Reduct\obj\Debug\Reduct.csproj.CoreCompileInputs.cache
 D:\GitHub\-Labs\Sharp\Reduct\Reduct\obj\Debug\Reduct.exe
 D:\GitHub\-Labs\Sharp\Reduct\Reduct\obj\Debug\Reduct.pdb
+D:\GitHub\-Labs\Sharp\Reduct\Reduct\bin\Debug\Reduct.exe.config
+D:\GitHub\-Labs\Sharp\Reduct\Reduct\bin\Debug\Reduct.exe
+D:\GitHub\-Labs\Sharp\Reduct\Reduct\bin\Debug\Reduct.pdb
