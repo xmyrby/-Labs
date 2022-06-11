@@ -22,3 +22,4 @@ D:\GitHub\-Labs\Sharp\Reduct\Reduct\obj\Debug\Reduct.pdb
 D:\GitHub\-Labs\Sharp\Reduct\Reduct\bin\Debug\Reduct.exe.config
 D:\GitHub\-Labs\Sharp\Reduct\Reduct\bin\Debug\Reduct.exe
 D:\GitHub\-Labs\Sharp\Reduct\Reduct\bin\Debug\Reduct.pdb
+D:\GitHub\-Labs\Sharp\Reduct\Reduct\obj\Debug\Reduct.FormEngineData.resources

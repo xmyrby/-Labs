@@ -88,7 +88,8 @@ namespace Reduct
 
         private void buttonEditEngines_Click(object sender, EventArgs e)
         {
-
+            FormEngineData form = new FormEngineData();
+            form.Show();
         }
 
         private void button2_Z1UMOb_Click(object sender, EventArgs e)
