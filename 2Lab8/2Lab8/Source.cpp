@@ -185,7 +185,7 @@ void Switcher(int choose, RaggedArray& mas)
 
 int main()
 {
-	system("chcp 1251");
+	system("chcp 1251 > nul");
 	system("cls");
 	srand(time(NULL));
 
