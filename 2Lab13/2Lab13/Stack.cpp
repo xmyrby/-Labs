@@ -8,7 +8,8 @@ void InitStack(Stack* stack, int length)
 		stack->data = (int*)malloc(sizeof(int) * length);
 		stack->length = length;
 	}
-	else printf("\n\tСтек инициализирован\n");
+	else
+		printf("\n\tСтек инициализирован\n");
 }
 
 void PushStack(Stack* stack, int number)
@@ -26,13 +27,16 @@ void PushStack(Stack* stack, int number)
 
 int PopStack(Stack* stack)
 {
-	if (stack->top >= 0) return stack->data[stack->top--];
-	else return NULL;
+	if (stack->top >= 0)
+		return stack->data[stack->top--];
+	else
+		return NULL;
 }
 
 void PrintStack(Stack const* stack)
 {
-	printf("\nСтек:\n");
+	system("cls");
+	printf("Стек:\n");
 	for (int i = 0; i <= stack->top; i++)
 		printf("[%i] - %i\n", i + 1, (stack->data)[i]);
 	printf("\n");
@@ -40,7 +44,8 @@ void PrintStack(Stack const* stack)
 
 void FreeStack(Stack* stack)
 {
-	if (stack->data) free(stack->data);
+	if (stack->data)
+		free(stack->data);
 
 	stack->data = NULL;
 	stack->length = 0;

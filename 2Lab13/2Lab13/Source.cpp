@@ -1,7 +1,8 @@
 ﻿#include<iostream>
 #include"Stack.h"
+#include <conio.h>
 
-int NumberLength(int number)
+int Length(int number)
 {
 	int length = 0;
 
@@ -37,15 +38,15 @@ int main()
 		scanf_s("%i", &number);
 	} while (number < 10);
 
-	InitStack(&stack, NumberLength(number));
+	InitStack(&stack, Length(number));
 
 	while (number != 0)
 	{
 		PushStack(&stack, number % 10);
 		number /= 10;
+		PrintStack(&stack);
+		_getch();
 	}
-
-	PrintStack(&stack);
 
 	printf("%i\n", ReverseNumber(&stack));
 
