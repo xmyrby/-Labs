@@ -11,19 +11,26 @@ struct RaggedArray
 	int rows;
 };
 
+int AskSize()
+{
+	int size = 0;
+	do
+	{
+		scanf_s("%d", &size);
+	} while (size<=0 || size>15);
+	return size;
+}
+
 //—оздание массива
 void CreateArraySelf(RaggedArray& mas)
 {
-	int count_rows = 0;
 	printf("\n¬ведите кол-во строк массива: \n");
-	scanf_s("%d", &count_rows);
-	mas.rows = count_rows;
+	mas.rows = AskSize();
 	mas.data = (int**)malloc(sizeof(int*) * mas.rows);
 	for (int i = 0; i < mas.rows; i++)
 	{
-		int count_el_str;
 		printf("¬ведите кол-во элементов строки: \n");
-		scanf_s("%d", &count_el_str);
+		int count_el_str = AskSize();
 		mas.data[i] = (int*)malloc(sizeof(int) * (count_el_str + 1));
 		mas.data[i][0] = count_el_str;
 	}
@@ -87,9 +94,7 @@ void ReadTxt(RaggedArray& mas)
 		mas.data[i] = (int*)malloc(sizeof(int) * (count_el_str + 1));
 		mas.data[i][0] = count_el_str;
 		for (int j = 1; j <= mas.data[i][0]; j++)
-		{
 			fscanf_s(f, "%i", &mas.data[i][j]);
-		}
 	}
 	fclose(f);
 }
@@ -105,9 +110,7 @@ void SaveBin(RaggedArray& mas)
 	}
 	fwrite(&mas.rows, sizeof(int), 1, f);
 	for (int i = 0; i < mas.rows; i++)
-	{
 		fwrite(mas.data[i], sizeof(int), mas.data[i][0] + 1, f);
-	}
 
 	fclose(f);
 }
@@ -139,11 +142,10 @@ void ReadBin(RaggedArray& mas)
 void FreeMas(RaggedArray& mas)
 {
 	for (int i = 0; i < mas.rows; i++)
-	{
 		free(mas.data[i]);
-	}
-
 	free(mas.data);
+
+	mas.rows = NULL;
 
 	mas.data = NULL;
 }

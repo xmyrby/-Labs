@@ -1,18 +1,25 @@
 #include<Windows.h>
 #include"Rager.h"
 
+int AskSize()
+{
+	int size = 0;
+	do
+	{
+		scanf_s("%d", &size);
+	} while (size <= 0 || size > 15);
+	return size;
+}
+
 void CreateArraySelf(RaggedArray& mas)
 {
-	int count_rows = 0;
 	printf("\n¬ведите кол-во строк массива: \n");
-	scanf_s("%d", &count_rows);
-	mas.rows = count_rows;
+	mas.rows = AskSize();
 	mas.data = (int**)malloc(sizeof(int*) * mas.rows);
 	for (int i = 0; i < mas.rows; i++)
 	{
-		int count_el_str;
 		printf("¬ведите кол-во элементов строки: \n");
-		scanf_s("%d", &count_el_str);
+		int count_el_str = AskSize();
 		mas.data[i] = (int*)malloc(sizeof(int) * (count_el_str + 1));
 		mas.data[i][0] = count_el_str;
 	}

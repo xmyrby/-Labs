@@ -8,6 +8,8 @@ struct RaggedArray
 	int rows;
 };
 
+int AskSize();
+
 void CreateArraySelf(RaggedArray& mas);
 
 void FillArray(RaggedArray& mas);

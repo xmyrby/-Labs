@@ -9,11 +9,9 @@ char* RemoveNumbers(char* str)
 	int dcount = 0;
 	for (int i = 0; str[i] != '\0'; i++)
 	{
-		int symb = int(str[i]);
-		if (symb < 48 || symb > 57)
+		if (str[i] < '0' || str[i] > '9')
 		{
-			newStr[ln] = str[i];
-			ln++;
+			newStr[ln++] = str[i];
 		}
 		else
 			dcount++;

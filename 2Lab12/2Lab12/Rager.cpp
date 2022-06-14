@@ -1,18 +1,25 @@
 #include<Windows.h>
 #include"Rager.h"
 
+int AskSize()
+{
+	int size = 0;
+	do
+	{
+		scanf_s("%d", &size);
+	} while (size <= 0 || size > 15);
+	return size;
+}
+
 void CreateArraySelf(RaggedArray& mas)
 {
-	int count_rows = 0;
 	printf("\nВведите кол-во строк массива: \n");
-	scanf_s("%d", &count_rows);
-	mas.rows = count_rows;
+	mas.rows = AskSize();
 	mas.data = (int**)malloc(sizeof(int*) * mas.rows);
 	for (int i = 0; i < mas.rows; i++)
 	{
-		int count_el_str;
 		printf("Введите кол-во элементов строки: \n");
-		scanf_s("%d", &count_el_str);
+		int count_el_str = AskSize();
 		mas.data[i] = (int*)malloc(sizeof(int) * (count_el_str + 1));
 		mas.data[i][0] = count_el_str;
 	}
@@ -142,21 +149,22 @@ int AddLine(RaggedArray& mas, int* line)
 	mas.rows++;
 	mas.data = (int**)realloc(mas.data, sizeof(int*) * mas.rows);
 	mas.data[mas.rows - 1] = line;
-	PrintArray(mas);
 	return mas.rows;
 }
 
 void MakeLine(RaggedArray& mas)
 {
-	int count_el_str;
-	int* line;
 	printf("Введите кол-во элементов строки: \n");
-	scanf_s("%d", &count_el_str);
+	int count_el_str = AskSize();
+	int* line;
 	line = (int*)malloc(sizeof(int) * (count_el_str + 1));
 	line[0] = count_el_str;
 	for (int i = 1; i <= line[0]; i++)
 		line[i] = rand() % 100;
-	printf("\nНовое количество строк: %i\n",AddLine(mas, line));
+	int newSize = AddLine(mas, line);
+	PrintArray(mas);
+	printf("\nНовое количество строк: %i\n", newSize);
+
 	AskForAdd(mas);
 }
 
