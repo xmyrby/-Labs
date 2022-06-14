@@ -1,7 +1,7 @@
 #include <stdio.h>
 #include <string.h>
 #include <iostream>
-
+//7
 char* RemoveNumbers(char* str)
 {
 	char newStr[80];

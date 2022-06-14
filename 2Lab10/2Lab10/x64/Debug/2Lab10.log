@@ -1,3 +1,1 @@
-﻿  VarN.cpp
-D:\GitHub\-Labs\2Lab10\2Lab10\VarN.cpp(19): warning C4172: возвращение адреса локальной или временной переменной : newStr
-  2Lab10.vcxproj -> D:\GitHub\-Labs\2Lab10\x64\Debug\2Lab10.exe
+﻿  2Lab10.vcxproj -> D:\GitHub\-Labs\2Lab10\x64\Debug\2Lab10.exe

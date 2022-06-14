@@ -1,0 +1,26 @@
+{
+  "Version": 1,
+  "ProjectMap": {
+    "49cdda07-23cd-446a-83a8-602edc903579": {
+      "ProjectGuid": "49cdda07-23cd-446a-83a8-602edc903579",
+      "DisplayName": "2Lab10",
+      "ColorIndex": 0
+    },
+    "ba82279b-ee93-44ef-80de-bd4e3570ded6": {
+      "ProjectGuid": "ba82279b-ee93-44ef-80de-bd4e3570ded6",
+      "DisplayName": "N16",
+      "ColorIndex": 1
+    },
+    "1e2c856e-603b-4bf1-b007-0705c2badadf": {
+      "ProjectGuid": "1e2c856e-603b-4bf1-b007-0705c2badadf",
+      "DisplayName": "N25",
+      "ColorIndex": 2
+    },
+    "a2fe74e1-b743-11d0-ae1a-00a0c90fffc3": {
+      "ProjectGuid": "a2fe74e1-b743-11d0-ae1a-00a0c90fffc3",
+      "DisplayName": "Прочие файлы",
+      "ColorIndex": -1
+    }
+  },
+  "NextColorIndex": 3
+}
