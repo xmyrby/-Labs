@@ -25,7 +25,7 @@ void CreateArraySelf(RaggedArray& mas)
 		printf("Введите кол-во элементов строки: \n");
 		scanf_s("%d", &count_el_str);
 		mas.data[i] = (int*)malloc(sizeof(int) * (count_el_str + 1));
-		mas.data[i][-1] = count_el_str;
+		mas.data[i][0] = count_el_str;
 	}
 }
 
@@ -33,16 +33,18 @@ void CreateArraySelf(RaggedArray& mas)
 void FillArray(RaggedArray& mas)
 {
 	for (int i = 0; i < mas.rows; i++)
-		for (int j = 0; j < mas.data[i][-1]; j++)
+		for (int j = 1; j <= mas.data[i][0]; j++)
 			mas.data[i][j] = rand() % 100;
 }
 
 //Вывод массива
 void PrintArray(RaggedArray mas)
 {
+	system("cls");
+	printf("Массив:\n\n");
 	for (int i = 0; i < mas.rows; i++)
 	{
-		for (int j = 0; j < mas.data[i][-1]; j++)
+		for (int j = 1; j <= mas.data[i][0]; j++)
 			printf("%3i ", mas.data[i][j]);
 		printf("\n");
 	}
@@ -60,7 +62,7 @@ void SaveTxt(RaggedArray mas)
 	fprintf(f, "%i\n", mas.rows);
 	for (int i = 0; i < mas.rows; i++)
 	{
-		for (int j = -1; j < mas.data[i][-1]; j++)
+		for (int j = 0; j <= mas.data[i][0]; j++)
 			fprintf(f, "%i ", mas.data[i][j]);
 		fprintf(f, "\n");
 	}
@@ -83,8 +85,8 @@ void ReadTxt(RaggedArray& mas)
 		int count_el_str;
 		fscanf_s(f, "%i", &count_el_str);
 		mas.data[i] = (int*)malloc(sizeof(int) * (count_el_str + 1));
-		mas.data[i][-1] = count_el_str;
-		for (int j = 0; j < mas.data[i][-1]; j++)
+		mas.data[i][0] = count_el_str;
+		for (int j = 1; j <= mas.data[i][0]; j++)
 		{
 			fscanf_s(f, "%i", &mas.data[i][j]);
 		}
@@ -104,8 +106,7 @@ void SaveBin(RaggedArray& mas)
 	fwrite(&mas.rows, sizeof(int), 1, f);
 	for (int i = 0; i < mas.rows; i++)
 	{
-		fwrite(&mas.data[i][-1], sizeof(int), 1, f);
-		fwrite(mas.data[i], sizeof(int), mas.data[i][-1], f);
+		fwrite(mas.data[i], sizeof(int), mas.data[i][0] + 1, f);
 	}
 
 	fclose(f);
@@ -128,15 +129,20 @@ void ReadBin(RaggedArray& mas)
 		fread(&count_el_str, sizeof(int), 1, f);
 
 		mas.data[i] = (int*)malloc(sizeof(int) * (count_el_str + 1));
-		mas.data[i][-1] = count_el_str;
-		fread(mas.data[i], sizeof(int), mas.data[i][-1], f);
+		mas.data[i][0] = count_el_str;
+		fread(&mas.data[i][1], sizeof(int), mas.data[i][0], f);
 	}
-		
+
 	fclose(f);
 }
 
 void FreeMas(RaggedArray& mas)
 {
+	for (int i = 0; i < mas.rows; i++)
+	{
+		free(mas.data[i]);
+	}
+
 	free(mas.data);
 
 	mas.data = NULL;
@@ -145,7 +151,7 @@ void FreeMas(RaggedArray& mas)
 void Switcher(int choose, RaggedArray& mas)
 {
 	do {
-		printf("Прочитать массив:\n0-Создать\n1-текстовый файл\n2-бинарный файл\nВыбор: ");
+		printf("Прочитать массив:\n0-Создать\n1-Текстовый файл\n2-Бинарный файл\nВыбор: ");
 		scanf_s("%i", &choose);
 	} while (0 > choose or choose > 3);
 
