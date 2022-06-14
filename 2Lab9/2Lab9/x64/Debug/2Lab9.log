@@ -1,3 +1,5 @@
-﻿  Source.cpp
-D:\GitHub\-Labs\2Lab9\2Lab9\Source.cpp(48,12): warning C4244: аргумент: преобразование "time_t" в "unsigned int", возможна потеря данных
+﻿  Rager.cpp
+  Source.cpp
+D:\GitHub\-Labs\2Lab9\2Lab9\Source.cpp(7,12): warning C4244: аргумент: преобразование "time_t" в "unsigned int", возможна потеря данных
+  Создание кода...
   2Lab9.vcxproj -> D:\GitHub\-Labs\2Lab9\x64\Debug\2Lab9.exe

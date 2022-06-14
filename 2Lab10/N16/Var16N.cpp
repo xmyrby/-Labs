@@ -26,9 +26,10 @@ char* RemoveSpaces(char* str)
 
 int main()
 {
+	system("chcp 1251 > nul");
 	char str[80];
 	gets_s(str);
-	printf("%s", RemoveSpaces(str));
+	printf("Итог: %s", RemoveSpaces(str));
 
 	return 0;
 }

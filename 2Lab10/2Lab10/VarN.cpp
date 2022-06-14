@@ -6,6 +6,7 @@ char* RemoveNumbers(char* str)
 {
 	char newStr[80];
 	int ln = 0;
+	int dcount = 0;
 	for (int i = 0; str[i] != '\0'; i++)
 	{
 		int symb = int(str[i]);
@@ -14,16 +15,20 @@ char* RemoveNumbers(char* str)
 			newStr[ln] = str[i];
 			ln++;
 		}
+		else
+			dcount++;
 	}
 	newStr[ln] = '\0';
+	printf("Удалено %i цифр\n", dcount);
 	return newStr;
 }
 
 int main()
 {
+	system("chcp 1251 > nul");
 	char str[80];
 	gets_s(str);
-	printf("%s", RemoveNumbers(str));
+	printf("Итог: %s", RemoveNumbers(str));
 
 	return 0;
 }

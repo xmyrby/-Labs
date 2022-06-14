@@ -124,6 +124,49 @@ void ReadBin(RaggedArray& mas)
 	fclose(f);
 }
 
+void Switcher(RaggedArray& mas)
+{
+	int choose = NULL;
+	do {
+		printf("Прочитать массив:\n0-Создать\n1-текстовый файл\n2-бинарный файл\nВыбор: ");
+		scanf_s("%i", &choose);
+	} while (0 > choose or choose > 2);
+
+	switch (choose)
+	{
+	case 0:
+	{
+		CreateArraySelf(mas);
+		FillArray(mas);
+		PrintArray(mas);
+		SaveTxt(mas);
+		SaveBin(mas);
+		FreeMas(mas);
+		break;
+	}
+	case 1:
+	{
+		ReadTxt(mas);
+		PrintArray(mas);
+		SaveTxt(mas);
+		SaveBin(mas);
+		FreeMas(mas);
+		break;
+	}
+	case 2:
+	{
+		ReadBin(mas);
+		PrintArray(mas);
+		SaveTxt(mas);
+		SaveBin(mas);
+		FreeMas(mas);
+		break;
+	}
+	break;
+	}
+}
+
+
 void FreeMas(RaggedArray& mas)
 {
 	free(mas.data);

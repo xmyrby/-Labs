@@ -1,0 +1,3 @@
+﻿  Var7.cpp
+D:\GitHub\-Labs\2Lab11\2Lab11\Var7.cpp(22): warning C4172: возвращение адреса локальной или временной переменной : newStr
+  2Lab11.vcxproj -> D:\GitHub\-Labs\2Lab11\x64\Debug\2Lab11.exe

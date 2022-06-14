@@ -24,4 +24,6 @@ void ReadBin(RaggedArray& mas);
 
 void FreeMas(RaggedArray& mas);
 
+void Switcher(RaggedArray& mas);
+
 #endif
