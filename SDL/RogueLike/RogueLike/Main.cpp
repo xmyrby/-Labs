@@ -339,7 +339,7 @@ int GetSize(const char* text)
 	return count;
 }
 
-void PrintText(int var, Position position, int size)
+Position PrintText(int var, Position position, int size)
 {
 	char text[10];
 
@@ -347,26 +347,32 @@ void PrintText(int var, Position position, int size)
 
 	SDL_Surface* textSurface = TTF_RenderText_Blended(font, text, { 255, 255, 255, 255 });
 
-	SDL_Rect rect = { position.x,position.y, 0.75 * GetSize(text) * size,size };
+	int width = 0.75 * GetSize(text) * size;
+	SDL_Rect rect = { position.x,position.y, width,size };
 
 	SDL_Texture* textTexture = SDL_CreateTextureFromSurface(ren, textSurface);
 	SDL_RenderCopy(ren, textTexture, NULL, &rect);
 
 	SDL_FreeSurface(textSurface);
 	SDL_DestroyTexture(textTexture);
+
+	return (Position{ position.x + width, position.y + size });
 }
 
-void PrintText(const char* text, Position position, int size)
+Position PrintText(const char* text, Position position, int size)
 {
 	SDL_Surface* textSurface = TTF_RenderText_Blended(font, text, { 255, 255, 255, 255 });
 
-	SDL_Rect rect = { position.x,position.y, 0.75 * GetSize(text) * size,size };
+	int width = 0.75 * GetSize(text) * size;
+	SDL_Rect rect = { position.x,position.y, width,size };
 
 	SDL_Texture* textTexture = SDL_CreateTextureFromSurface(ren, textSurface);
 	SDL_RenderCopy(ren, textTexture, NULL, &rect);
 
 	SDL_FreeSurface(textSurface);
 	SDL_DestroyTexture(textTexture);
+
+	return (Position{ position.x + width, position.y + size });
 }
 
 void RenderImage(int textureId, Position position, int w, int h, int alpha)
@@ -392,18 +398,24 @@ int GetAlpha(int value, int b)
 	return Max(15, value - b * k);
 }
 
+float Distance(Position a, Position b)
+{
+	return sqrt((b.x - a.x) * (b.x - a.x) + (b.y - a.y) * (b.y - a.y));
+}
+
 void DrawUI()
 {
-	PrintText("Moves: ", { 10,18 }, 16);
-	PrintText(moves + 1, { 96, 18 }, 16);
+	Position ofset;
+	ofset = PrintText("Moves: ", { 10,18 }, 16);
+	PrintText(moves + 1, { ofset.x + 4, 18 }, 16);
 	RenderImage(0, { 10, 52 }, 32, 32, 255);
 	PrintText(player.attacks, { 52, 60 }, 16);
 	RenderImage(1, { 10, 94 }, 32, 32, 255);
 	PrintText(player.moves, { 52, 104 }, 16);
 	PrintText("Health: ", { 10, 926 }, 16);
-	PrintText(player.health, { 102, 926 }, 16);
-	PrintText("/", { 130, 926 }, 16);
-	PrintText(player.maxHealth, { 142, 926 }, 16);
+	ofset = PrintText(player.health, { 102, 926 }, 16);
+	ofset = PrintText("/", { ofset.x + 4, 926 }, 16);
+	PrintText(player.maxHealth, { ofset.x + 4, 926 }, 16);
 
 	if (player.selectedEnemy >= 0)
 		if (RayTracing(enemies[player.selectedEnemy].position) > 5)
@@ -427,7 +439,7 @@ void DrawUI()
 				SDL_Rect rect = { 240 + (i + 30 - player.x()) * 8 - 4,240 + (j + 30 - player.y()) * 8 - 4,8,8 };
 				if (mapOverview[i][j] == 1)
 				{
-					SDL_SetRenderDrawColor(ren, 255, 255, 255, 75 - Min((i + j - player.x() - player.y()) * 8, 75));
+					SDL_SetRenderDrawColor(ren, 255, 255, 255, 75 - Min(int(round(Distance({ i,j }, player.position))) * 4, 75));
 					SDL_RenderFillRect(ren, &rect);
 				}
 			}
@@ -807,6 +819,13 @@ int main()
 			{
 				player.moves = 0;
 				player.attacks = 0;
+			}
+			else if (state[SDL_SCANCODE_M])
+			{
+				if (showMap)
+					showMap = false;
+				else
+					showMap = true;
 			}
 
 			CheckMove();
