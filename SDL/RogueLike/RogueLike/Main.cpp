@@ -18,7 +18,7 @@ const int MAP_SIZE = 300;
 const int CELLS_DENSITY = 7;
 const int CELLS_FILL = 10000;
 const int ANTS_COUNT = 6;
-const int ENEMIES_COUNT = 30;
+const int ENEMIES_COUNT = 100;
 
 bool showMap = false;
 
@@ -484,7 +484,7 @@ void Draw()
 		SDL_RenderFillRect(ren, &rect);
 		if (blocks <= 5)
 		{
-			RenderImage(3, { rect.x, rect.y }, 32, 32, 255 - blocks * 33);
+			RenderImage(3, { rect.x, rect.y }, 32, 32, GetAlpha(255, blocks));
 		}
 	}
 
