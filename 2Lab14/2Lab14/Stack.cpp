@@ -1,6 +1,14 @@
 #include<iostream>
 #include"Stack.h"
 
+int GetSize(Stack* stack)
+{
+	int size = 0;
+	for (Element* current = stack->head; current != NULL; current = current->next)
+		size++;
+	return size;
+}
+
 void PushStack(Stack* stack, int number)
 {
 	Element* tmp = (Element*)malloc(sizeof(Element));

@@ -20,6 +20,8 @@ const int CELLS_FILL = 10000;
 const int ANTS_COUNT = 6;
 const int ENEMIES_COUNT = 30;
 
+bool showMap = false;
+
 struct Position
 {
 	int x, y;
@@ -31,11 +33,14 @@ struct Path
 	Position* path;
 	int next;
 };
+
 bool CheckEntity(Position pos);
+
 struct Entity
 {
 	Position position;
 	int health;
+	int maxHealth;
 	int moves = 1;
 	int attacks = 1;
 	int damage = 1;
@@ -99,6 +104,7 @@ Player player;
 Enemy enemies[ENEMIES_COUNT];
 
 int map[MAP_SIZE][MAP_SIZE];
+int mapOverview[MAP_SIZE][MAP_SIZE];
 
 void DeInit(char error)
 {
@@ -156,6 +162,8 @@ void Init()
 	win_surf = SDL_GetWindowSurface(win);
 
 	LoadTextures();
+
+	SDL_SetRenderDrawBlendMode(ren, SDL_BLENDMODE_BLEND);
 }
 
 bool CheckCell(int x, int y)
@@ -190,7 +198,10 @@ void Generate()
 
 	for (int i = 0; i < MAP_SIZE; i++)
 		for (int j = 0; j < MAP_SIZE; j++)
+		{
 			map[i][j] = 1;
+			mapOverview[i][j] = 0;
+		}
 
 	Ant ants[ANTS_COUNT];
 	int cells = 0;
@@ -296,18 +307,26 @@ int RayTracing(Position position)
 		{
 			if (map[position.x][position.y] == 1)
 				blocks += 5;
+
 			blocks += 1;
 			lastx = position.x;
 			lasty = position.y;
 		}
-
 	}
+
 	return blocks;
 }
 
 int Max(int a, int b)
 {
 	if (a > b)
+		return a;
+	return b;
+}
+
+int Min(int a, int b)
+{
+	if (a < b)
 		return a;
 	return b;
 }
@@ -375,7 +394,7 @@ int GetAlpha(int value, int b)
 
 void DrawUI()
 {
-	PrintText("Move: #", { 10,18 }, 16);
+	PrintText("Moves: ", { 10,18 }, 16);
 	PrintText(moves + 1, { 96, 18 }, 16);
 	RenderImage(0, { 10, 52 }, 32, 32, 255);
 	PrintText(player.attacks, { 52, 60 }, 16);
@@ -383,6 +402,8 @@ void DrawUI()
 	PrintText(player.moves, { 52, 104 }, 16);
 	PrintText("Health: ", { 10, 926 }, 16);
 	PrintText(player.health, { 102, 926 }, 16);
+	PrintText("/", { 130, 926 }, 16);
+	PrintText(player.maxHealth, { 142, 926 }, 16);
 
 	if (player.selectedEnemy >= 0)
 		if (RayTracing(enemies[player.selectedEnemy].position) > 5)
@@ -395,6 +416,22 @@ void DrawUI()
 			RenderImage(4, position, 32, 32, 255);
 		}
 
+	if (showMap)
+	{
+		SDL_Rect rect = { 240 + (30) * 8 - 4,240 + (30) * 8 - 4,8,8 };
+		SDL_SetRenderDrawColor(ren, 255, 100, 100, 100);
+		SDL_RenderFillRect(ren, &rect);
+		for (int i = player.x() - 30; i < player.x() + 31; i++)
+			for (int j = player.y() - 30; j < player.y() + 31; j++)
+			{
+				SDL_Rect rect = { 240 + (i + 30 - player.x()) * 8 - 4,240 + (j + 30 - player.y()) * 8 - 4,8,8 };
+				if (mapOverview[i][j] == 1)
+				{
+					SDL_SetRenderDrawColor(ren, 255, 255, 255, 75 - Min((i + j - player.x() - player.y()) * 8, 75));
+					SDL_RenderFillRect(ren, &rect);
+				}
+			}
+	}
 }
 
 void Draw()
@@ -407,6 +444,8 @@ void Draw()
 		{
 			SDL_Rect rect = { ConvBig(i, player.x()),ConvBig(j, player.y()),32,32 };
 			int blocks = RayTracing({ i, j });
+			if (blocks <= 5 && map[i][j] == 1)
+				mapOverview[i][j] = 1;
 			if (map[i][j] == 1)
 			{
 				SDL_SetRenderDrawColor(ren, GetAlpha(138, blocks), GetAlpha(22, blocks), GetAlpha(31, blocks), 255);
@@ -448,6 +487,7 @@ void SpawnPlayer()
 		player.y(rand() % MAP_SIZE);
 	} while (map[player.x()][player.y()] != 0);
 	player.health = 10;
+	player.maxHealth = 10;
 }
 
 void SpawnEnemies()
@@ -461,6 +501,8 @@ void SpawnEnemies()
 			enemy.y(rand() % MAP_SIZE);
 		} while (map[enemy.x()][enemy.y()] != 0);
 		enemies[i] = enemy;
+		enemies[i].health = 10;
+		enemies[i].maxHealth = 10;
 	}
 }
 

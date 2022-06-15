@@ -22,4 +22,6 @@ void ClearStack(Stack* stack);
 
 bool CheckIfStackIsEmpty(Stack* stack);
 
+int GetSize(Stack* stack);
+
 #endif
