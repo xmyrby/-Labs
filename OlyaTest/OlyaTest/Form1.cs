@@ -20,8 +20,7 @@ namespace OlyaTest
         private void Form1_Load(object sender, EventArgs e)
         {
             double KHV, KHB, oH, vH;
-            double de2 = 165 * Math.Pow((KHV * KHB * double.Parse(textBox.Text.ToString()) * double.Parse(textBox.Text.ToString())) / (oH * oH * vH), 1 / 3);
-            de2 = de2 ^ (1 / 3);
+            double de2 = 165 * Math.Pow((KHV * KHB * (double)numericUpDown1.Value * (double)numericUpDown1.Value) / (oH * oH * vH), 1 / 3);
         }
     }
 }
