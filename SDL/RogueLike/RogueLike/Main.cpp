@@ -444,6 +444,13 @@ void DrawUI()
 				}
 			}
 	}
+
+	if (player.selectedEnemy != -1)
+	{
+		SDL_Rect rect = { 640,0,320,480 };
+		SDL_SetRenderDrawColor(ren, 0, 0, 0, 55);
+		SDL_RenderFillRect(ren, &rect);
+	}
 }
 
 void Draw()
