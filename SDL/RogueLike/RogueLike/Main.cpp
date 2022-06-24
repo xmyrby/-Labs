@@ -7,7 +7,7 @@ SDL_Window* win = NULL;
 SDL_Renderer* ren = NULL;
 SDL_Surface* win_surf = NULL;
 TTF_Font* font = NULL;
-SDL_Texture* textures[5];
+SDL_Texture* textures[6];
 
 int winWdt = 960;
 int winHgt = 960;
@@ -121,6 +121,7 @@ void LoadTextures()
 	textures[2] = IMG_LoadTexture(ren, "GFX\\PlayerPawn.png");
 	textures[3] = IMG_LoadTexture(ren, "GFX\\TigerPawn.png");
 	textures[4] = IMG_LoadTexture(ren, "GFX\\Selection.png");
+	textures[5] = IMG_LoadTexture(ren, "GFX\\TigerIcon.png");
 }
 
 void Init()
