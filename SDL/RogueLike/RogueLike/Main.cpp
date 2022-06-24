@@ -451,6 +451,12 @@ void DrawUI()
 		SDL_Rect rect = { 640,0,320,480 };
 		SDL_SetRenderDrawColor(ren, 0, 0, 0, 55);
 		SDL_RenderFillRect(ren, &rect);
+		RenderImage(5, { 652, 16 }, 48, 48, 255);
+		PrintText("Tiger", { 716, 20 }, 16);
+		PrintText("Health: ", { 716, 44 }, 16);
+		ofset = PrintText(enemies[player.selectedEnemy].health, {808, 44}, 16);
+		ofset = PrintText("/", { ofset.x + 4, 44 }, 16);
+		PrintText(enemies[player.selectedEnemy].maxHealth, { ofset.x + 4, 44 }, 16);
 	}
 }
 
