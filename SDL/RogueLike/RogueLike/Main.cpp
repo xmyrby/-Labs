@@ -18,10 +18,26 @@ const int MAP_SIZE = 300;
 const int CELLS_DENSITY = 7;
 const int CELLS_FILL = 10000;
 const int ANTS_COUNT = 6;
-const int ENEMIES_COUNT = 100;
+
+int enemiesCount = 100;
+int enemiesTypesCount = 0;
 int lastBtnId = -1;
 
 bool showMap = false;
+
+int Max(int a, int b)
+{
+	if (a > b)
+		return a;
+	return b;
+}
+
+int Min(int a, int b)
+{
+	if (a < b)
+		return a;
+	return b;
+}
 
 struct Position
 {
@@ -77,6 +93,7 @@ struct Entity
 	int attacks = 1;
 	int damage = 1;
 	int attackrange = 1;
+	int regeneration = 1;
 
 	int x()
 	{
@@ -109,6 +126,8 @@ struct Enemy : Entity
 {
 	int type = 0;
 	Path path;
+	char name[100];
+	int iconTextureId;
 
 	void NewPath(Path nPath)
 	{
@@ -118,14 +137,16 @@ struct Enemy : Entity
 
 	void Move()
 	{
-		if (path.len > 0)
+		if (path.len > 0 && moves > 0)
 		{
 			if (CheckEntity(path.path[path.next]))
 			{
 				position = path.path[path.next];
+				moves--;
 				path.next++;
 				if (path.next >= path.len - 1)
 					path.len = 0;
+				health = Min(health + regeneration, maxHealth);
 			}
 		}
 	}
@@ -133,7 +154,8 @@ struct Enemy : Entity
 
 Player player;
 
-Enemy enemies[ENEMIES_COUNT];
+Enemy* enemies;
+Enemy* enemiesTypes;
 
 Button* buttons;
 
@@ -157,6 +179,41 @@ void LoadTextures()
 	textures[4] = IMG_LoadTexture(ren, "GFX\\Selection.png");
 	textures[5] = IMG_LoadTexture(ren, "GFX\\TigerIcon.png");
 	textures[6] = IMG_LoadTexture(ren, "GFX\\AttackIcon.png");
+}
+
+void InitEnemies()
+{
+	FILE* ft;
+	if (fopen_s(&ft, "PARAMS\\EnemiesTypes.txt", "rt") != 0)
+	{
+		exit(1);
+	}
+	fscanf_s(ft, "%d", &enemiesTypesCount);
+
+	enemiesTypes = (Enemy*)malloc(sizeof(Enemy) * enemiesTypesCount);
+
+	for (int i = 0; i < enemiesTypesCount; i++)
+	{
+		fscanf_s(ft, "%s %d %d %d %d %d %d %d", &enemiesTypes[i].name, sizeof(enemiesTypes[i].name), &enemiesTypes[i].iconTextureId, &enemiesTypes[i].maxHealth, &enemiesTypes[i].attacks, &enemiesTypes[i].moves, &enemiesTypes[i].damage, &enemiesTypes[i].attackrange, &enemiesTypes[i].regeneration);
+		enemiesTypes[i].health = enemiesTypes[i].maxHealth;
+		enemiesTypes[i].type = i;
+	}
+
+	fclose(ft);
+
+	enemies = (Enemy*)malloc(sizeof(Enemy) * enemiesCount);
+	for (int i = 0; i < enemiesCount; i++)
+		enemies[i].type = rand() % enemiesTypesCount;
+}
+
+void KillEnemy(int id)
+{
+	for (int i = id; i < enemiesCount - 1; i++)
+	{
+		enemies[i] = enemies[i + 1];
+	}
+	enemiesCount--;
+	player.selectedEnemy = -1;
 }
 
 void InitButtons()
@@ -206,6 +263,8 @@ void Init()
 	LoadTextures();
 
 	InitButtons();
+
+	InitEnemies();
 
 	SDL_SetRenderDrawBlendMode(ren, SDL_BLENDMODE_BLEND);
 }
@@ -324,20 +383,6 @@ int RayTracing(Position position)
 	return blocks;
 }
 
-int Max(int a, int b)
-{
-	if (a > b)
-		return a;
-	return b;
-}
-
-int Min(int a, int b)
-{
-	if (a < b)
-		return a;
-	return b;
-}
-
 int GetSize(const char* text)
 {
 	int count = 0;
@@ -393,7 +438,7 @@ bool CheckEntity(Position pos)
 {
 	if (player.x() == pos.x && player.y() == pos.y)
 		return false;
-	for (int i = 0; i < ENEMIES_COUNT; i++)
+	for (int i = 0; i < enemiesCount; i++)
 		if (enemies[i].x() == pos.x && enemies[i].y() == pos.y)
 			return false;
 	return true;
@@ -465,7 +510,7 @@ void DrawUI()
 		SDL_SetRenderDrawColor(ren, 0, 0, 0, 55);
 		SDL_RenderFillRect(ren, &rect);
 		RenderImage(5, { 652, 16 }, 48, 48, 255);
-		PrintText("Tiger", { 716, 20 }, 16, 255);
+		PrintText(enemies[player.selectedEnemy].name, { 716, 20 }, 16, 255);
 		PrintText("Health: ", { 716, 44 }, 16, 255);
 		ofset = PrintText(enemies[player.selectedEnemy].health, { 808, 44 }, 16, 255);
 		ofset = PrintText("/", { ofset.x + 4, 44 }, 16, 255);
@@ -513,7 +558,7 @@ void Draw()
 	RenderImage(2, { 464, 464 }, 32, 32, 255);
 
 	SDL_SetRenderDrawColor(ren, 114, 230, 221, 255);
-	for (int i = 0; i < ENEMIES_COUNT; i++)
+	for (int i = 0; i < enemiesCount; i++)
 	{
 		int blocks = RayTracing(enemies[i].position);
 		rect = { ConvBig(enemies[i].x(), player.x()) ,ConvBig(enemies[i].y(), player.y()),32,32 };
@@ -541,7 +586,7 @@ void SpawnPlayer()
 
 void SpawnEnemies()
 {
-	for (int i = 0; i < ENEMIES_COUNT; i++)
+	for (int i = 0; i < enemiesCount; i++)
 	{
 		Enemy enemy;
 		do
@@ -549,9 +594,8 @@ void SpawnEnemies()
 			enemy.x(rand() % MAP_SIZE);
 			enemy.y(rand() % MAP_SIZE);
 		} while (map[enemy.x()][enemy.y()] != 0);
-		enemies[i] = enemy;
-		enemies[i].health = 10;
-		enemies[i].maxHealth = 10;
+		enemies[i] = enemiesTypes[enemies[i].type];
+		enemies[i].position = enemy.position;
 	}
 }
 
@@ -733,18 +777,19 @@ void MakeEnemyMove(Enemy& enemy)
 {
 	if (RayTracing(enemy.position) <= 5)
 	{
-		if (enemy.moves > 0 && !CheckAttackDist(enemy, player))
+		while (enemy.moves > 0 && !CheckAttackDist(enemy, player))
 		{
 			enemy.NewPath(FindPath(enemy.position, player.position));
 
 			enemy.Move();
 		}
 
-		if (enemy.attacks > 0)
+		for (int i = 0; i < enemy.attacks; i++)
 		{
 			if (CheckAttackDist(enemy, player))
 			{
 				player.health -= enemy.damage;
+				enemy.moves--;
 			}
 		}
 	}
@@ -752,7 +797,8 @@ void MakeEnemyMove(Enemy& enemy)
 	{
 		enemy.Move();
 	}
-
+	enemy.moves = enemiesTypes[enemy.type].moves;
+	enemy.attacks = enemiesTypes[enemy.type].attacks;
 }
 
 void CheckMove()
@@ -763,7 +809,7 @@ void CheckMove()
 		player.moves++;
 		player.attacks++;
 
-		for (int i = 0; i < ENEMIES_COUNT; i++)
+		for (int i = 0; i < enemiesCount; i++)
 		{
 			MakeEnemyMove(enemies[i]);
 		}
@@ -774,7 +820,7 @@ int CheckSelection(Position position)
 {
 	position.x = ConvSmall(position.x, player.x());
 	position.y = ConvSmall(position.y, player.y());
-	for (int i = 0; i < ENEMIES_COUNT; i++)
+	for (int i = 0; i < enemiesCount; i++)
 	{
 		if (position.x == enemies[i].x() && position.y == enemies[i].y())
 			if (RayTracing(position) <= 5)
@@ -789,9 +835,11 @@ void ButtonAction(int buttonId)
 {
 	if (buttonId == 0 && player.attacks)
 	{
-		enemies[player.selectedEnemy].health -= player.attackrange;
+		enemies[player.selectedEnemy].health -= player.damage;
 		player.attacks -= 1;
 		player.moves = Max(0, player.moves - 1);
+		if (enemies[player.selectedEnemy].health <= 0)
+			KillEnemy(player.selectedEnemy);
 	}
 	Draw();
 	CheckMove();
@@ -847,12 +895,13 @@ int main()
 
 		if (event.type == SDL_KEYDOWN || event.type == SDL_KEYUP)
 		{
+			bool moved = false;
 			if (state[SDL_SCANCODE_W])
 			{
 				if (map[player.x()][player.y() - 1] == 0 && player.moves > 0 && CheckEntity({ player.x(), player.y() - 1 }))
 				{
 					player.position.y--;
-					player.moves--;
+					moved = true;
 				}
 			}
 			else if (state[SDL_SCANCODE_S])
@@ -860,7 +909,7 @@ int main()
 				if (map[player.x()][player.y() + 1] == 0 && player.moves > 0 && CheckEntity({ player.x(), player.y() + 1 }))
 				{
 					player.position.y++;
-					player.moves--;
+					moved = true;
 				}
 			}
 			else if (state[SDL_SCANCODE_A])
@@ -868,7 +917,7 @@ int main()
 				if (map[player.x() - 1][player.y()] == 0 && player.moves > 0 && CheckEntity({ player.x() - 1, player.y() }))
 				{
 					player.position.x--;
-					player.moves--;
+					moved = true;
 				}
 			}
 			else if (state[SDL_SCANCODE_D])
@@ -876,7 +925,7 @@ int main()
 				if (map[player.x() + 1][player.y()] == 0 && player.moves > 0 && CheckEntity({ player.x() + 1, player.y() }))
 				{
 					player.position.x++;
-					player.moves--;
+					moved = true;
 				}
 			}
 			else if (state[SDL_SCANCODE_SPACE])
@@ -890,6 +939,12 @@ int main()
 					showMap = false;
 				else
 					showMap = true;
+			}
+
+			if (moved)
+			{
+				player.moves--;
+				player.health = Min(player.health + player.regeneration, player.maxHealth);
 			}
 
 			CheckMove();

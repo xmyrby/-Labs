@@ -1,0 +1,3 @@
+#EnemiesTypes
+	-(Count of types)
+	-(Name) -(Texture Id) -(Health) -(Attacks) -(Moves) -(Damage) -(Attack Range) -(Regeneration)
