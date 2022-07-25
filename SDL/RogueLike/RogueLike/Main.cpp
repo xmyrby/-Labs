@@ -7,7 +7,7 @@ SDL_Window* win = NULL;
 SDL_Renderer* ren = NULL;
 SDL_Surface* win_surf = NULL;
 TTF_Font* font = NULL;
-SDL_Texture* textures[6];
+SDL_Texture* textures[7];
 
 int winWdt = 960;
 int winHgt = 960;
@@ -19,6 +19,7 @@ const int CELLS_DENSITY = 7;
 const int CELLS_FILL = 10000;
 const int ANTS_COUNT = 6;
 const int ENEMIES_COUNT = 100;
+int lastBtnId = -1;
 
 bool showMap = false;
 
@@ -27,14 +28,45 @@ struct Position
 	int x, y;
 };
 
+Position PrintText(int var, Position position, int size, Uint8 alpha);
+Position PrintText(const char* var, Position position, int siz, Uint8 alpha);
+void RenderImage(int textureId, Position position, int w, int h, int alpha);
+bool CheckEntity(Position pos);
+
+struct Button
+{
+	Position position;
+	int width, height;
+	char* text;
+	bool active;
+	int offset;
+	int textureId;
+
+	void DrawButton()
+	{
+		int alpha = 0;
+		if (!active)
+			alpha = 125;
+		SDL_Rect rect = { position.x,position.y,width,height };
+		SDL_SetRenderDrawColor(ren, 55, 55, 55, 150 - alpha);
+		SDL_RenderFillRect(ren, &rect);
+		SDL_SetRenderDrawColor(ren, 255, 255, 255, 255 - alpha);
+		SDL_RenderDrawRect(ren, &rect);
+		PrintText(text, { position.x + offset,position.y + 6 }, height / 2, 255 - alpha);
+		if (textureId != NULL)
+			RenderImage(textureId, position, height, height, 255 - alpha);
+	}
+
+	Button(Position pos, char* txt, unsigned int wd, unsigned int ht, bool act, int off, int texture) : position(pos), text(txt), width(wd), height(ht), active(act), offset(off), textureId(texture) {
+	}
+};
+
 struct Path
 {
 	int len;
 	Position* path;
 	int next;
 };
-
-bool CheckEntity(Position pos);
 
 struct Entity
 {
@@ -103,6 +135,8 @@ Player player;
 
 Enemy enemies[ENEMIES_COUNT];
 
+Button* buttons;
+
 int map[MAP_SIZE][MAP_SIZE];
 int mapOverview[MAP_SIZE][MAP_SIZE];
 
@@ -122,6 +156,13 @@ void LoadTextures()
 	textures[3] = IMG_LoadTexture(ren, "GFX\\TigerPawn.png");
 	textures[4] = IMG_LoadTexture(ren, "GFX\\Selection.png");
 	textures[5] = IMG_LoadTexture(ren, "GFX\\TigerIcon.png");
+	textures[6] = IMG_LoadTexture(ren, "GFX\\AttackIcon.png");
+}
+
+void InitButtons()
+{
+	buttons = (Button*)malloc(sizeof(Button) * 1);
+	buttons[0] = *(new Button({ 652,80 }, new char[7]{ "Attack" }, 296, 24, false, 30, 6));
 }
 
 void Init()
@@ -163,6 +204,8 @@ void Init()
 	win_surf = SDL_GetWindowSurface(win);
 
 	LoadTextures();
+
+	InitButtons();
 
 	SDL_SetRenderDrawBlendMode(ren, SDL_BLENDMODE_BLEND);
 }
@@ -253,43 +296,6 @@ void Generate()
 		}
 }
 
-/*int GetTile(int i, int j)
-{
-	if (map[i - 1][j] == 0 && map[i + 1][j] != 0 && map[i][j - 1] == 0 && map[i][j + 1] != 0 && map[i + 1][j + 1] != 0)
-		return 0;
-	if (map[i + 1][j] != 0 && map[i][j - 1] == 0 && map[i][j + 1] != 0 && map[i - 1][j] != 0)
-		return 1;
-	if (map[i + 1][j] == 0 && map[i - 1][j] != 0 && map[i][j - 1] == 0 && map[i][j + 1] != 0 && map[i - 1][j + 1] != 0)
-		return 2;
-	if (map[i + 1][j] == 0 && map[i][j - 1] != 0 && map[i][j + 1] != 0 && map[i - 1][j] != 0)
-		return 3;
-	if (map[i + 1][j] == 0 && map[i - 1][j] != 0 && map[i][j + 1] == 0 && map[i][j - 1] != 0 && map[i - 1][j - 1] != 0)
-		return 4;
-	if (map[i - 1][j] != 0 && map[i][j + 1] == 0 && map[i][j - 1] != 0 && map[i + 1][j] != 0)
-		return 5;
-	if (map[i - 1][j] == 0 && map[i + 1][j] != 0 && map[i][j + 1] == 0 && map[i][j - 1] != 0 && map[i + 1][j - 1] != 0)
-		return 6;
-	if (map[i - 1][j] == 0 && map[i][j - 1] != 0 && map[i][j + 1] != 0 && map[i + 1][j] != 0)
-		return 7;
-	if (map[i - 1][j] == 0 && map[i][j - 1] == 0 && map[i][j + 1] != 0 && map[i + 1][j] == 0)
-		return 9;
-	if (map[i - 1][j] != 0 && map[i][j - 1] == 0 && map[i][j + 1] == 0 && map[i + 1][j] == 0)
-		return 10;
-	if (map[i - 1][j] == 0 && map[i][j + 1] == 0 && map[i][j - 1] != 0 && map[i + 1][j] == 0)
-		return 11;
-	if (map[i - 1][j] == 0 && map[i][j - 1] == 0 && map[i][j + 1] == 0 && map[i + 1][j] != 0)
-		return 12;
-	if (map[i - 1][j] == 0 && map[i + 1][j] != 0 && map[i][j - 1] == 0 && map[i][j + 1] != 0 && map[i + 1][j + 1] == 0)
-		return 13;
-	if (map[i + 1][j] == 0 && map[i - 1][j] != 0 && map[i][j - 1] == 0 && map[i][j + 1] != 0 && map[i - 1][j + 1] == 0)
-		return 14;
-	if (map[i + 1][j] == 0 && map[i - 1][j] != 0 && map[i][j + 1] == 0 && map[i][j - 1] != 0 && map[i - 1][j - 1] == 0)
-		return 15;
-	if (map[i - 1][j] == 0 && map[i + 1][j] != 0 && map[i][j + 1] == 0 && map[i][j - 1] != 0 && map[i + 1][j - 1] == 0)
-		return 16;
-	return 8;
-}*/
-
 int RayTracing(Position position)
 {
 	float ax = position.x, ay = position.y;
@@ -340,13 +346,13 @@ int GetSize(const char* text)
 	return count;
 }
 
-Position PrintText(int var, Position position, int size)
+Position PrintText(int var, Position position, int size, Uint8 alpha)
 {
 	char text[10];
 
 	_itoa_s(var, (char*)text, 10, 10);
 
-	SDL_Surface* textSurface = TTF_RenderText_Blended(font, text, { 255, 255, 255, 255 });
+	SDL_Surface* textSurface = TTF_RenderText_Blended(font, text, { 255, 255, 255, alpha });
 
 	int width = 0.75 * GetSize(text) * size;
 	SDL_Rect rect = { position.x,position.y, width,size };
@@ -360,9 +366,9 @@ Position PrintText(int var, Position position, int size)
 	return (Position{ position.x + width, position.y + size });
 }
 
-Position PrintText(const char* text, Position position, int size)
+Position PrintText(const char* text, Position position, int size, Uint8 alpha)
 {
-	SDL_Surface* textSurface = TTF_RenderText_Blended(font, text, { 255, 255, 255, 255 });
+	SDL_Surface* textSurface = TTF_RenderText_Blended(font, text, { 255, 255, 255, alpha });
 
 	int width = 0.75 * GetSize(text) * size;
 	SDL_Rect rect = { position.x,position.y, width,size };
@@ -404,19 +410,26 @@ float Distance(Position a, Position b)
 	return sqrt((b.x - a.x) * (b.x - a.x) + (b.y - a.y) * (b.y - a.y));
 }
 
+bool CheckAttackDist(Entity a, Entity b)
+{
+	if (a.attackrange >= int(round(sqrt((a.x() - b.x()) * (a.x() - b.x()) + (a.y() - b.y()) * (a.y() - b.y())))))
+		return true;
+	return false;
+}
+
 void DrawUI()
 {
 	Position ofset;
-	ofset = PrintText("Moves: ", { 10,18 }, 16);
-	PrintText(moves + 1, { ofset.x + 4, 18 }, 16);
+	ofset = PrintText("Moves: ", { 10,18 }, 16, 255);
+	PrintText(moves + 1, { ofset.x + 4, 18 }, 16, 255);
 	RenderImage(0, { 10, 52 }, 32, 32, 255);
-	PrintText(player.attacks, { 52, 60 }, 16);
+	PrintText(player.attacks, { 52, 60 }, 16, 255);
 	RenderImage(1, { 10, 94 }, 32, 32, 255);
-	PrintText(player.moves, { 52, 104 }, 16);
-	PrintText("Health: ", { 10, 926 }, 16);
-	ofset = PrintText(player.health, { 102, 926 }, 16);
-	ofset = PrintText("/", { ofset.x + 4, 926 }, 16);
-	PrintText(player.maxHealth, { ofset.x + 4, 926 }, 16);
+	PrintText(player.moves, { 52, 104 }, 16, 255);
+	PrintText("Health: ", { 10, 926 }, 16, 255);
+	ofset = PrintText(player.health, { 102, 926 }, 16, 255);
+	ofset = PrintText("/", { ofset.x + 4, 926 }, 16, 255);
+	PrintText(player.maxHealth, { ofset.x + 4, 926 }, 16, 255);
 
 	if (player.selectedEnemy >= 0)
 		if (RayTracing(enemies[player.selectedEnemy].position) > 5)
@@ -452,11 +465,21 @@ void DrawUI()
 		SDL_SetRenderDrawColor(ren, 0, 0, 0, 55);
 		SDL_RenderFillRect(ren, &rect);
 		RenderImage(5, { 652, 16 }, 48, 48, 255);
-		PrintText("Tiger", { 716, 20 }, 16);
-		PrintText("Health: ", { 716, 44 }, 16);
-		ofset = PrintText(enemies[player.selectedEnemy].health, {808, 44}, 16);
-		ofset = PrintText("/", { ofset.x + 4, 44 }, 16);
-		PrintText(enemies[player.selectedEnemy].maxHealth, { ofset.x + 4, 44 }, 16);
+		PrintText("Tiger", { 716, 20 }, 16, 255);
+		PrintText("Health: ", { 716, 44 }, 16, 255);
+		ofset = PrintText(enemies[player.selectedEnemy].health, { 808, 44 }, 16, 255);
+		ofset = PrintText("/", { ofset.x + 4, 44 }, 16, 255);
+		PrintText(enemies[player.selectedEnemy].maxHealth, { ofset.x + 4, 44 }, 16, 255);
+
+		bool active = false;
+		if (CheckAttackDist(player, enemies[player.selectedEnemy]) && player.attacks)
+			active = true;
+		buttons[0].active = active;
+		buttons[0].DrawButton();
+	}
+	else
+	{
+		buttons[0].active = false;
 	}
 }
 
@@ -572,14 +595,17 @@ Path FindPath(Position start, Position end)
 				w[i][j] = 0;
 	if (w[end.x][end.y] == -1)
 		return { 0,NULL };
+
 	struct Root
 	{
 		Position point;
 		int branchCount = 0;
 		Position branchPoints[100];
 
-		void addBranch(Position branch)
+		bool addBranch(Position branch)
 		{
+			if (branchCount < 0)
+				return false;
 			branchPoints[branchCount] = branch;
 			branchCount++;
 		}
@@ -613,26 +639,30 @@ Path FindPath(Position start, Position end)
 						break;
 					}
 					bool canConnect = false;
+					bool resulter = false;
 					if ((weights[0] != -1 && weights[0] > wd + 1 || weights[0] == 0) && i < MAP_SIZE - 1)
 					{
-						roots[rootCount].addBranch({ i + 1,j });
+						resulter = roots[rootCount].addBranch({ i + 1,j });
 						canConnect = true;
 					}
 					if ((weights[1] != -1 && weights[1] > wd + 1 || weights[1] == 0) && i > 0)
 					{
-						roots[rootCount].addBranch({ i - 1,j });
+						resulter = roots[rootCount].addBranch({ i - 1,j });
 						canConnect = true;
 					}
 					if ((weights[2] != -1 && weights[2] > wd + 1 || weights[2] == 0) && j < MAP_SIZE - 1)
 					{
-						roots[rootCount].addBranch({ i,j + 1 });
+						resulter = roots[rootCount].addBranch({ i,j + 1 });
 						canConnect = true;
 					}
 					if ((weights[3] != -1 && weights[3] > wd + 1 || weights[3] == 0) && j > 0)
 					{
-						roots[rootCount].addBranch({ i,j - 1 });
+						resulter = roots[rootCount].addBranch({ i,j - 1 });
 						canConnect = true;
 					}
+
+					if (!resulter)
+						return { 0,NULL };
 
 					if (canConnect)
 					{
@@ -699,18 +729,11 @@ Path FindPath(Position start, Position end)
 	return { len,path };
 }
 
-bool CheckAttackDist(Entity a, Entity b)
-{
-	if (a.attackrange >= int(round(sqrt((a.x() - b.x()) * (a.x() - b.x()) + (a.y() - b.y()) * (a.y() - b.y())))))
-		return true;
-	return false;
-}
-
 void MakeEnemyMove(Enemy& enemy)
 {
 	if (RayTracing(enemy.position) <= 5)
 	{
-		if (enemy.moves > 0)
+		if (enemy.moves > 0 && !CheckAttackDist(enemy, player))
 		{
 			enemy.NewPath(FindPath(enemy.position, player.position));
 
@@ -757,6 +780,31 @@ int CheckSelection(Position position)
 			if (RayTracing(position) <= 5)
 				return i;
 	}
+	if (lastBtnId == 0)
+		return player.selectedEnemy;
+	return -1;
+}
+
+void ButtonAction(int buttonId)
+{
+	if (buttonId == 0 && player.attacks)
+	{
+		enemies[player.selectedEnemy].health -= player.attackrange;
+		player.attacks -= 1;
+		player.moves = Max(0, player.moves - 1);
+	}
+	Draw();
+	CheckMove();
+}
+
+int CheckButtonClick(Position mPos)
+{
+	for (int i = 0; i < 1; i++)
+	{
+		Button button = buttons[i];
+		if (mPos.x >= button.position.x && mPos.y >= button.position.y && mPos.x <= button.position.x + button.width && mPos.y <= button.position.y + button.height && button.active)
+			return i;
+	}
 	return -1;
 }
 
@@ -787,6 +835,8 @@ int main()
 		if ((events & SDL_BUTTON_LMASK) != 0 && !_down)
 		{
 			_down = true;
+			lastBtnId = CheckButtonClick(_mouse);
+			ButtonAction(lastBtnId);
 			player.selectedEnemy = CheckSelection(_mouse);
 			Draw();
 		}
