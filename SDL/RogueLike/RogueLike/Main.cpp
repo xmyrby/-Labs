@@ -48,6 +48,7 @@ struct OverlayNum
 {
 	Position pos;
 	int num;
+	int color;
 };
 
 Position PrintText(int var, Position position, int size, Uint8 alpha, int colorId);
@@ -178,10 +179,10 @@ struct Overlay
 		overlayNums = (OverlayNum*)realloc(overlayNums, 0);
 	}
 
-	void AddNum(Position pos, int num)
+	void AddNum(Position pos, int num, int color)
 	{
 		overlayNums = (OverlayNum*)realloc(overlayNums, sizeof(OverlayNum) * (numsCount + 1));
-		overlayNums[numsCount] = { pos,num };
+		overlayNums[numsCount] = { pos,num, color };
 		numsCount++;
 	}
 };
@@ -195,7 +196,7 @@ Button* buttons;
 
 Overlay overlay;
 
-SDL_Color colors[3];
+SDL_Color colors[4];
 
 int map[MAP_SIZE][MAP_SIZE];
 int mapOverview[MAP_SIZE][MAP_SIZE];
@@ -205,6 +206,7 @@ void InitColors()
 	colors[0] = { 255,255,255 };
 	colors[1] = { 255,200,200 };
 	colors[2] = { 0,0,0 };
+	colors[3] = { 100,255,100 };
 }
 
 void DeInit(char error)
@@ -521,17 +523,17 @@ bool CheckAttackDist(Entity a, Entity b)
 
 void DrawUI()
 {
-	Position ofset;
-	ofset = PrintText("Moves: ", { 10,18 }, 16, 255, 0);
-	PrintText(moves + 1, { ofset.x + 4, 18 }, 16, 255, 0);
+	Position offset;
+	offset = PrintText("Moves: ", { 10,18 }, 16, 255, 0);
+	PrintText(moves + 1, { offset.x + 4, 18 }, 16, 255, 0);
 	RenderImage(0, { 10, 52 }, 32, 32, 255);
 	PrintText(player.attacks, { 52, 60 }, 16, 255, 0);
 	RenderImage(1, { 10, 94 }, 32, 32, 255);
 	PrintText(player.moves, { 52, 104 }, 16, 255, 0);
 	PrintText("Health: ", { 10, 926 }, 16, 255, 0);
-	ofset = PrintText(player.health, { 102, 926 }, 16, 255, 0);
-	ofset = PrintText("/", { ofset.x + 4, 926 }, 16, 255, 0);
-	PrintText(player.maxHealth, { ofset.x + 4, 926 }, 16, 255, 0);
+	offset = PrintText(player.health, { 102, 926 }, 16, 255, 0);
+	offset = PrintText("/", { offset.x + 4, 926 }, 16, 255, 0);
+	PrintText(player.maxHealth, { offset.x + 4, 926 }, 16, 255, 0);
 
 	if (player.selectedEnemy >= 0)
 		if (RayTracing(enemies[player.selectedEnemy].position) > 5)
@@ -569,9 +571,9 @@ void DrawUI()
 		RenderImage(5, { 652, 16 }, 48, 48, 255);
 		PrintText(enemies[player.selectedEnemy].name, { 716, 20 }, 16, 255, 0);
 		PrintText("Health: ", { 716, 44 }, 16, 255, 0);
-		ofset = PrintText(enemies[player.selectedEnemy].health, { 808, 44 }, 16, 255, 0);
-		ofset = PrintText("/", { ofset.x + 4, 44 }, 16, 255, 0);
-		PrintText(enemies[player.selectedEnemy].maxHealth, { ofset.x + 4, 44 }, 16, 255, 0);
+		offset = PrintText(enemies[player.selectedEnemy].health, { 808, 44 }, 16, 255, 0);
+		offset = PrintText("/", { offset.x + 4, 44 }, 16, 255, 0);
+		PrintText(enemies[player.selectedEnemy].maxHealth, { offset.x + 4, 44 }, 16, 255, 0);
 
 		bool active = false;
 		if (CheckAttackDist(player, enemies[player.selectedEnemy]) && player.attacks)
@@ -847,7 +849,7 @@ void MakeEnemyMove(Enemy& enemy)
 			{
 				player.health -= enemy.damage;
 				enemy.moves--;
-				overlay.AddNum(player.position, -enemy.damage);
+				overlay.AddNum(player.position, -enemy.damage, 1);
 			}
 		}
 	}
@@ -866,7 +868,7 @@ void CheckMove()
 	{
 		canMove = false;
 	}
-	else if (player.attacks)
+	else if (player.attacks && !player.moves)
 	{
 		canMove = false;
 		for (int i = 0; i < enemiesCount; i++)
@@ -915,7 +917,7 @@ void ButtonAction(int buttonId)
 	{
 		enemies[player.selectedEnemy].health -= player.damage;
 		player.attacks -= 1;
-		overlay.AddNum(enemies[player.selectedEnemy].position, -player.damage);
+		overlay.AddNum(enemies[player.selectedEnemy].position, -player.damage, 1);
 		player.moves = Max(0, player.moves - 1);
 		if (enemies[player.selectedEnemy].health <= 0)
 			KillEnemy(player.selectedEnemy);
@@ -939,12 +941,13 @@ void DrawOverlay()
 {
 	for (int i = 0; i < overlay.numsCount; i++)
 	{
-		Position pos = overlay.overlayNums[i].pos;
+		OverlayNum oNum = overlay.overlayNums[i];
+		Position pos = oNum.pos;
 		pos.x = ConvBig(pos.x, player.x()) + rand() % 16 + 4;
 		pos.y = ConvBig(pos.y, player.y()) + rand() % 16 + 6;
-		PrintText(overlay.overlayNums[i].num, pos, 16, 255, 2);
+		PrintText(oNum.num, pos, 16, 255, 2);
 		pos.y--;
-		PrintText(overlay.overlayNums[i].num, pos, 16, 255, 1);
+		PrintText(oNum.num, pos, 16, 255, oNum.color);
 	}
 	overlay.Clear();
 	SDL_Delay(10);
@@ -1039,7 +1042,11 @@ int main()
 			if (moved)
 			{
 				player.moves--;
-				player.health = Min(player.health + player.regeneration, player.maxHealth);
+				if (player.health < player.maxHealth)
+				{
+					player.health = Min(player.health + player.regeneration, player.maxHealth);
+					overlay.AddNum(player.position, player.regeneration, 3);
+				}
 			}
 
 			CheckMove();
