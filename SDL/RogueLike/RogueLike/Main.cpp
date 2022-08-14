@@ -7,7 +7,7 @@ SDL_Window* win = NULL;
 SDL_Renderer* ren = NULL;
 SDL_Surface* win_surf = NULL;
 TTF_Font* font = NULL;
-SDL_Texture* textures[7];
+SDL_Texture* textures[8];
 
 int winWdt = 960;
 int winHgt = 960;
@@ -22,6 +22,7 @@ const int ANTS_COUNT = 6;
 int enemiesCount = 100;
 int enemiesTypesCount = 0;
 int lastBtnId = -1;
+int playerMenu = 0;
 
 bool showMap = false;
 
@@ -64,23 +65,27 @@ struct Button
 	bool active;
 	int offset;
 	int textureId;
+	bool border;
 
 	void DrawButton()
 	{
 		int alpha = 0;
 		if (!active)
 			alpha = 125;
-		SDL_Rect rect = { position.x,position.y,width,height };
-		SDL_SetRenderDrawColor(ren, 55, 55, 55, 150 - alpha);
-		SDL_RenderFillRect(ren, &rect);
-		SDL_SetRenderDrawColor(ren, 255, 255, 255, 255 - alpha);
-		SDL_RenderDrawRect(ren, &rect);
+		if (border)
+		{
+			SDL_Rect rect = { position.x,position.y,width,height };
+			SDL_SetRenderDrawColor(ren, 55, 55, 55, 150 - alpha);
+			SDL_RenderFillRect(ren, &rect);
+			SDL_SetRenderDrawColor(ren, 255, 255, 255, 255 - alpha);
+			SDL_RenderDrawRect(ren, &rect);
+		}
 		PrintText(text, { position.x + offset,position.y + 6 }, height / 2, 255 - alpha, 0);
 		if (textureId != NULL)
 			RenderImage(textureId, position, height, height, 255 - alpha);
 	}
 
-	Button(Position pos, char* txt, unsigned int wd, unsigned int ht, bool act, int off, int texture) : position(pos), text(txt), width(wd), height(ht), active(act), offset(off), textureId(texture) {
+	Button(Position pos, char* txt, unsigned int wd, unsigned int ht, bool act, int off, int texture, bool bord) : position(pos), text(txt), width(wd), height(ht), active(act), offset(off), textureId(texture), border(bord) {
 	}
 };
 
@@ -130,6 +135,7 @@ struct Player : Entity
 
 	int xp = 0;
 	int next = 100;
+	int points = 3;
 };
 
 struct Enemy : Entity
@@ -226,6 +232,7 @@ void LoadTextures()
 	textures[4] = IMG_LoadTexture(ren, "GFX\\Selection.png");
 	textures[5] = IMG_LoadTexture(ren, "GFX\\TigerIcon.png");
 	textures[6] = IMG_LoadTexture(ren, "GFX\\AttackIcon.png");
+	textures[7] = IMG_LoadTexture(ren, "GFX\\PlayerMenuButton.png");
 }
 
 void InitEnemies()
@@ -241,7 +248,7 @@ void InitEnemies()
 
 	for (int i = 0; i < enemiesTypesCount; i++)
 	{
-		fscanf_s(ft, "%s %d %d %d %d %d %d %d", &enemiesTypes[i].name, sizeof(enemiesTypes[i].name), &enemiesTypes[i].iconTextureId, &enemiesTypes[i].maxHealth, &enemiesTypes[i].attacks, &enemiesTypes[i].moves, &enemiesTypes[i].damage, &enemiesTypes[i].attackrange, &enemiesTypes[i].regeneration);
+		fscanf_s(ft, "%s %d %d %d %d %d %d %d %d", &enemiesTypes[i].name, sizeof(enemiesTypes[i].name), &enemiesTypes[i].iconTextureId, &enemiesTypes[i].maxHealth, &enemiesTypes[i].attacks, &enemiesTypes[i].moves, &enemiesTypes[i].damage, &enemiesTypes[i].attackrange, &enemiesTypes[i].regeneration, &enemiesTypes[i].xpReward);
 		enemiesTypes[i].health = enemiesTypes[i].maxHealth;
 		enemiesTypes[i].type = i;
 	}
@@ -255,6 +262,7 @@ void InitEnemies()
 
 void KillEnemy(int id)
 {
+	player.xp += enemies[id].xpReward;
 	for (int i = id; i < enemiesCount - 1; i++)
 	{
 		enemies[i] = enemies[i + 1];
@@ -263,13 +271,13 @@ void KillEnemy(int id)
 	player.selectedEnemy = -1;
 
 	enemies = (Enemy*)realloc(enemies, sizeof(Enemy) * enemiesCount);
-	int a = 5;
 }
 
 void InitButtons()
 {
-	buttons = (Button*)malloc(sizeof(Button) * 1);
-	buttons[0] = *(new Button({ 652,80 }, new char[7]{ "Attack" }, 296, 24, false, 30, 6));
+	buttons = (Button*)malloc(sizeof(Button) * 2);
+	buttons[0] = *(new Button({ 652,80 }, new char[7]{ "Attack" }, 296, 24, false, 30, 6, true));
+	buttons[1] = *(new Button({ 928,480 }, new char[2]{ "\0" }, 32, 32, true, NULL, 7, false));
 }
 
 void Init()
@@ -585,6 +593,28 @@ void DrawUI()
 	{
 		buttons[0].active = false;
 	}
+
+	if (playerMenu == 0)
+	{
+		buttons[1].position.x = 928;
+		buttons[1].active = true;
+		buttons[1].DrawButton();
+	}
+	else if (playerMenu == 1)
+	{
+		buttons[1].position.x = 608;
+		buttons[1].active = true;
+		buttons[1].DrawButton();
+		SDL_Rect rect = { 640,480,320,480 };
+		SDL_SetRenderDrawColor(ren, 0, 0, 0, 55);
+		SDL_RenderFillRect(ren, &rect);
+		offset = PrintText("Level ", { 656, 496 }, 16, 255, 0);
+		PrintText(player.level, { offset.x, 496 }, 16, 255, 0);
+		offset = PrintText("Exp: ", { 760, 496 }, 16, 255, 0);
+		offset = PrintText(player.xp, { offset.x, 496 }, 16, 255, 0);
+		offset = PrintText("/", { offset.x + 4, 496 }, 16, 255, 0);
+		offset = PrintText(player.next, { offset.x + 4, 496 }, 16, 255, 0);
+	}
 }
 
 void Draw()
@@ -894,6 +924,15 @@ void CheckMove()
 			MakeEnemyMove(enemies[i]);
 		}
 	}
+	
+	if (player.xp >= player.next)
+	{
+		player.maxHealth += 2;
+		player.health = player.maxHealth;
+		player.points++;
+		player.xp -= player.next;
+		player.next *= 1.25;
+	}
 }
 
 int CheckSelection(Position position)
@@ -906,7 +945,7 @@ int CheckSelection(Position position)
 			if (RayTracing(position) <= 5)
 				return i;
 	}
-	if (lastBtnId == 0)
+	if (lastBtnId == 0 || lastBtnId == 1)
 		return player.selectedEnemy;
 	return -1;
 }
@@ -921,14 +960,25 @@ void ButtonAction(int buttonId)
 		player.moves = Max(0, player.moves - 1);
 		if (enemies[player.selectedEnemy].health <= 0)
 			KillEnemy(player.selectedEnemy);
+		CheckMove();
+	}
+	else if (buttonId == 1)
+	{
+		if (playerMenu == 0)
+		{
+			playerMenu = 1;
+		}
+		else
+		{
+			playerMenu = 0;
+		}
 	}
 	Draw();
-	CheckMove();
 }
 
 int CheckButtonClick(Position mPos)
 {
-	for (int i = 0; i < 1; i++)
+	for (int i = 0; i < 2; i++)
 	{
 		Button button = buttons[i];
 		if (mPos.x >= button.position.x && mPos.y >= button.position.y && mPos.x <= button.position.x + button.width && mPos.y <= button.position.y + button.height && button.active)
