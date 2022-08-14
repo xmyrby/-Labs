@@ -44,8 +44,14 @@ struct Position
 	int x, y;
 };
 
-Position PrintText(int var, Position position, int size, Uint8 alpha);
-Position PrintText(const char* var, Position position, int siz, Uint8 alpha);
+struct OverlayNum
+{
+	Position pos;
+	int num;
+};
+
+Position PrintText(int var, Position position, int size, Uint8 alpha, int colorId);
+Position PrintText(const char* var, Position position, int siz, Uint8 alpha, int colorId);
 void RenderImage(int textureId, Position position, int w, int h, int alpha);
 bool CheckEntity(Position pos);
 
@@ -68,7 +74,7 @@ struct Button
 		SDL_RenderFillRect(ren, &rect);
 		SDL_SetRenderDrawColor(ren, 255, 255, 255, 255 - alpha);
 		SDL_RenderDrawRect(ren, &rect);
-		PrintText(text, { position.x + offset,position.y + 6 }, height / 2, 255 - alpha);
+		PrintText(text, { position.x + offset,position.y + 6 }, height / 2, 255 - alpha, 0);
 		if (textureId != NULL)
 			RenderImage(textureId, position, height, height, 255 - alpha);
 	}
@@ -120,6 +126,9 @@ struct Player : Entity
 {
 	int selectedEnemy = -1;
 	int level = 1;
+
+	int xp = 0;
+	int next = 100;
 };
 
 struct Enemy : Entity
@@ -128,6 +137,7 @@ struct Enemy : Entity
 	Path path;
 	char name[100];
 	int iconTextureId;
+	int xpReward;
 
 	void NewPath(Path nPath)
 	{
@@ -152,6 +162,30 @@ struct Enemy : Entity
 	}
 };
 
+struct Overlay
+{
+	OverlayNum* overlayNums;
+	int numsCount = 0;
+
+	void Init()
+	{
+		overlayNums = (OverlayNum*)malloc(sizeof(OverlayNum));
+	}
+
+	void Clear()
+	{
+		numsCount = 0;
+		overlayNums = (OverlayNum*)realloc(overlayNums, 0);
+	}
+
+	void AddNum(Position pos, int num)
+	{
+		overlayNums = (OverlayNum*)realloc(overlayNums, sizeof(OverlayNum) * (numsCount + 1));
+		overlayNums[numsCount] = { pos,num };
+		numsCount++;
+	}
+};
+
 Player player;
 
 Enemy* enemies;
@@ -159,8 +193,19 @@ Enemy* enemiesTypes;
 
 Button* buttons;
 
+Overlay overlay;
+
+SDL_Color colors[3];
+
 int map[MAP_SIZE][MAP_SIZE];
 int mapOverview[MAP_SIZE][MAP_SIZE];
+
+void InitColors()
+{
+	colors[0] = { 255,255,255 };
+	colors[1] = { 255,200,200 };
+	colors[2] = { 0,0,0 };
+}
 
 void DeInit(char error)
 {
@@ -214,6 +259,9 @@ void KillEnemy(int id)
 	}
 	enemiesCount--;
 	player.selectedEnemy = -1;
+
+	enemies = (Enemy*)realloc(enemies, sizeof(Enemy) * enemiesCount);
+	int a = 5;
 }
 
 void InitButtons()
@@ -265,6 +313,10 @@ void Init()
 	InitButtons();
 
 	InitEnemies();
+
+	InitColors();
+
+	overlay.Init();
 
 	SDL_SetRenderDrawBlendMode(ren, SDL_BLENDMODE_BLEND);
 }
@@ -391,13 +443,15 @@ int GetSize(const char* text)
 	return count;
 }
 
-Position PrintText(int var, Position position, int size, Uint8 alpha)
+Position PrintText(int var, Position position, int size, Uint8 alpha, int colorId)
 {
 	char text[10];
 
 	_itoa_s(var, (char*)text, 10, 10);
 
-	SDL_Surface* textSurface = TTF_RenderText_Blended(font, text, { 255, 255, 255, alpha });
+	SDL_Color color = colors[colorId];
+	color.a = alpha;
+	SDL_Surface* textSurface = TTF_RenderText_Blended(font, text, color);
 
 	int width = 0.75 * GetSize(text) * size;
 	SDL_Rect rect = { position.x,position.y, width,size };
@@ -411,9 +465,12 @@ Position PrintText(int var, Position position, int size, Uint8 alpha)
 	return (Position{ position.x + width, position.y + size });
 }
 
-Position PrintText(const char* text, Position position, int size, Uint8 alpha)
+Position PrintText(const char* text, Position position, int size, Uint8 alpha, int colorId)
 {
-	SDL_Surface* textSurface = TTF_RenderText_Blended(font, text, { 255, 255, 255, alpha });
+	SDL_Color color = colors[colorId];
+	color.a = alpha;
+
+	SDL_Surface* textSurface = TTF_RenderText_Blended(font, text, color);
 
 	int width = 0.75 * GetSize(text) * size;
 	SDL_Rect rect = { position.x,position.y, width,size };
@@ -465,16 +522,16 @@ bool CheckAttackDist(Entity a, Entity b)
 void DrawUI()
 {
 	Position ofset;
-	ofset = PrintText("Moves: ", { 10,18 }, 16, 255);
-	PrintText(moves + 1, { ofset.x + 4, 18 }, 16, 255);
+	ofset = PrintText("Moves: ", { 10,18 }, 16, 255, 0);
+	PrintText(moves + 1, { ofset.x + 4, 18 }, 16, 255, 0);
 	RenderImage(0, { 10, 52 }, 32, 32, 255);
-	PrintText(player.attacks, { 52, 60 }, 16, 255);
+	PrintText(player.attacks, { 52, 60 }, 16, 255, 0);
 	RenderImage(1, { 10, 94 }, 32, 32, 255);
-	PrintText(player.moves, { 52, 104 }, 16, 255);
-	PrintText("Health: ", { 10, 926 }, 16, 255);
-	ofset = PrintText(player.health, { 102, 926 }, 16, 255);
-	ofset = PrintText("/", { ofset.x + 4, 926 }, 16, 255);
-	PrintText(player.maxHealth, { ofset.x + 4, 926 }, 16, 255);
+	PrintText(player.moves, { 52, 104 }, 16, 255, 0);
+	PrintText("Health: ", { 10, 926 }, 16, 255, 0);
+	ofset = PrintText(player.health, { 102, 926 }, 16, 255, 0);
+	ofset = PrintText("/", { ofset.x + 4, 926 }, 16, 255, 0);
+	PrintText(player.maxHealth, { ofset.x + 4, 926 }, 16, 255, 0);
 
 	if (player.selectedEnemy >= 0)
 		if (RayTracing(enemies[player.selectedEnemy].position) > 5)
@@ -510,11 +567,11 @@ void DrawUI()
 		SDL_SetRenderDrawColor(ren, 0, 0, 0, 55);
 		SDL_RenderFillRect(ren, &rect);
 		RenderImage(5, { 652, 16 }, 48, 48, 255);
-		PrintText(enemies[player.selectedEnemy].name, { 716, 20 }, 16, 255);
-		PrintText("Health: ", { 716, 44 }, 16, 255);
-		ofset = PrintText(enemies[player.selectedEnemy].health, { 808, 44 }, 16, 255);
-		ofset = PrintText("/", { ofset.x + 4, 44 }, 16, 255);
-		PrintText(enemies[player.selectedEnemy].maxHealth, { ofset.x + 4, 44 }, 16, 255);
+		PrintText(enemies[player.selectedEnemy].name, { 716, 20 }, 16, 255, 0);
+		PrintText("Health: ", { 716, 44 }, 16, 255, 0);
+		ofset = PrintText(enemies[player.selectedEnemy].health, { 808, 44 }, 16, 255, 0);
+		ofset = PrintText("/", { ofset.x + 4, 44 }, 16, 255, 0);
+		PrintText(enemies[player.selectedEnemy].maxHealth, { ofset.x + 4, 44 }, 16, 255, 0);
 
 		bool active = false;
 		if (CheckAttackDist(player, enemies[player.selectedEnemy]) && player.attacks)
@@ -790,6 +847,7 @@ void MakeEnemyMove(Enemy& enemy)
 			{
 				player.health -= enemy.damage;
 				enemy.moves--;
+				overlay.AddNum(player.position, -enemy.damage);
 			}
 		}
 	}
@@ -803,8 +861,28 @@ void MakeEnemyMove(Enemy& enemy)
 
 void CheckMove()
 {
-	if (player.moves == 0 && player.attacks == 0)
+	bool canMove = true;
+	if (!player.moves && !player.attacks)
 	{
+		canMove = false;
+	}
+	else if (player.attacks)
+	{
+		canMove = false;
+		for (int i = 0; i < enemiesCount; i++)
+		{
+			if (CheckAttackDist(player, enemies[i]))
+			{
+				canMove = true;
+				break;
+			}
+		}
+	}
+
+	if (!canMove)
+	{
+		player.moves = 0;
+		player.attacks = 0;
 		moves++;
 		player.moves++;
 		player.attacks++;
@@ -837,6 +915,7 @@ void ButtonAction(int buttonId)
 	{
 		enemies[player.selectedEnemy].health -= player.damage;
 		player.attacks -= 1;
+		overlay.AddNum(enemies[player.selectedEnemy].position, -player.damage);
 		player.moves = Max(0, player.moves - 1);
 		if (enemies[player.selectedEnemy].health <= 0)
 			KillEnemy(player.selectedEnemy);
@@ -856,11 +935,27 @@ int CheckButtonClick(Position mPos)
 	return -1;
 }
 
+void DrawOverlay()
+{
+	for (int i = 0; i < overlay.numsCount; i++)
+	{
+		Position pos = overlay.overlayNums[i].pos;
+		pos.x = ConvBig(pos.x, player.x()) + rand() % 16 + 4;
+		pos.y = ConvBig(pos.y, player.y()) + rand() % 16 + 6;
+		PrintText(overlay.overlayNums[i].num, pos, 16, 255, 2);
+		pos.y--;
+		PrintText(overlay.overlayNums[i].num, pos, 16, 255, 1);
+	}
+	overlay.Clear();
+	SDL_Delay(10);
+}
+
 #undef main;
 int main()
 {
 	srand(time(NULL));
 	Init();
+
 	Position _mouse{ 0,0 };
 
 	bool _down = false;
@@ -951,6 +1046,7 @@ int main()
 			Draw();
 		}
 
+		DrawOverlay();
 		SDL_RenderPresent(ren);
 	}
 	TTF_CloseFont(font);
