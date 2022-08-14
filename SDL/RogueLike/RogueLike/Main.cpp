@@ -924,7 +924,7 @@ void CheckMove()
 			MakeEnemyMove(enemies[i]);
 		}
 	}
-	
+
 	if (player.xp >= player.next)
 	{
 		player.maxHealth += 2;
@@ -932,6 +932,7 @@ void CheckMove()
 		player.points++;
 		player.xp -= player.next;
 		player.next *= 1.25;
+		player.level++;
 	}
 }
 
