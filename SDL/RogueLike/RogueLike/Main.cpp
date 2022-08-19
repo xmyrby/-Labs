@@ -7,7 +7,7 @@ SDL_Window* win = NULL;
 SDL_Renderer* ren = NULL;
 SDL_Surface* win_surf = NULL;
 TTF_Font* font = NULL;
-SDL_Texture* textures[8];
+SDL_Texture* textures[9];
 
 int winWdt = 960;
 int winHgt = 960;
@@ -136,6 +136,8 @@ struct Player : Entity
 	int xp = 0;
 	int next = 100;
 	int points = 3;
+
+	int params[3]{ 1,1,1 };
 };
 
 struct Enemy : Entity
@@ -145,6 +147,7 @@ struct Enemy : Entity
 	char name[100];
 	int iconTextureId;
 	int xpReward;
+	int protection;
 
 	void NewPath(Path nPath)
 	{
@@ -207,6 +210,13 @@ SDL_Color colors[4];
 int map[MAP_SIZE][MAP_SIZE];
 int mapOverview[MAP_SIZE][MAP_SIZE];
 
+void RecalculatePlayer()
+{
+	player.maxHealth = 10 + (player.level - 1) * 2 + player.params[1] * player.level / 4;
+	player.damage = 1 + player.params[0] * player.level / 2;
+	player.health = Min(player.maxHealth, player.health);
+}
+
 void InitColors()
 {
 	colors[0] = { 255,255,255 };
@@ -233,6 +243,7 @@ void LoadTextures()
 	textures[5] = IMG_LoadTexture(ren, "GFX\\TigerIcon.png");
 	textures[6] = IMG_LoadTexture(ren, "GFX\\AttackIcon.png");
 	textures[7] = IMG_LoadTexture(ren, "GFX\\PlayerMenuButton.png");
+	textures[8] = IMG_LoadTexture(ren, "GFX\\UpgradeMenuButton.png");
 }
 
 void InitEnemies()
@@ -248,7 +259,7 @@ void InitEnemies()
 
 	for (int i = 0; i < enemiesTypesCount; i++)
 	{
-		fscanf_s(ft, "%s %d %d %d %d %d %d %d %d", &enemiesTypes[i].name, sizeof(enemiesTypes[i].name), &enemiesTypes[i].iconTextureId, &enemiesTypes[i].maxHealth, &enemiesTypes[i].attacks, &enemiesTypes[i].moves, &enemiesTypes[i].damage, &enemiesTypes[i].attackrange, &enemiesTypes[i].regeneration, &enemiesTypes[i].xpReward);
+		fscanf_s(ft, "%s %d %d %d %d %d %d %d %d %d", &enemiesTypes[i].name, sizeof(enemiesTypes[i].name), &enemiesTypes[i].iconTextureId, &enemiesTypes[i].maxHealth, &enemiesTypes[i].attacks, &enemiesTypes[i].moves, &enemiesTypes[i].damage, &enemiesTypes[i].attackrange, &enemiesTypes[i].regeneration, &enemiesTypes[i].xpReward, &enemiesTypes[i].protection);
 		enemiesTypes[i].health = enemiesTypes[i].maxHealth;
 		enemiesTypes[i].type = i;
 	}
@@ -275,9 +286,12 @@ void KillEnemy(int id)
 
 void InitButtons()
 {
-	buttons = (Button*)malloc(sizeof(Button) * 2);
+	buttons = (Button*)malloc(sizeof(Button) * 5);
 	buttons[0] = *(new Button({ 652,80 }, new char[7]{ "Attack" }, 296, 24, false, 30, 6, true));
-	buttons[1] = *(new Button({ 928,480 }, new char[2]{ "\0" }, 32, 32, true, NULL, 7, false));
+	buttons[1] = *(new Button({ 928,480 }, new char[2]{ "\0" }, 32, 32, false, NULL, 7, false));
+	buttons[2] = *(new Button({ 928,558 }, new char[2]{ "\0" }, 24, 24, false, NULL, 8, false));
+	buttons[3] = *(new Button({ 928,590 }, new char[2]{ "\0" }, 24, 24, false, NULL, 8, false));
+	buttons[4] = *(new Button({ 928,622 }, new char[2]{ "\0" }, 24, 24, false, NULL, 8, false));
 }
 
 void Init()
@@ -529,6 +543,20 @@ bool CheckAttackDist(Entity a, Entity b)
 	return false;
 }
 
+void DrawOverlay()
+{
+	for (int i = 0; i < overlay.numsCount; i++)
+	{
+		OverlayNum oNum = overlay.overlayNums[i];
+		Position pos = oNum.pos;
+		pos.x = ConvBig(pos.x, player.x()) + rand() % 16 + 4;
+		pos.y = ConvBig(pos.y, player.y()) + rand() % 16 + 6;
+		PrintText(oNum.num, pos, 16, 255, 2);
+		pos.y--;
+		PrintText(oNum.num, pos, 16, 255, oNum.color);
+	}
+}
+
 void DrawUI()
 {
 	Position offset;
@@ -614,6 +642,42 @@ void DrawUI()
 		offset = PrintText(player.xp, { offset.x, 496 }, 16, 255, 0);
 		offset = PrintText("/", { offset.x + 4, 496 }, 16, 255, 0);
 		offset = PrintText(player.next, { offset.x + 4, 496 }, 16, 255, 0);
+		offset = PrintText("Points ", { 656, 520 }, 16, 255, 0);
+		PrintText(player.points, { offset.x, 520 }, 16, 255, 0);
+
+		offset = PrintText("Strength ", { 656, 560 }, 16, 255, 0);
+		offset = PrintText(player.params[0], { offset.x, 560 }, 16, 255, 0);
+		if (player.points > 0)
+		{
+			offset = PrintText("Cost: ", { offset.x + 36, 564 }, 12, 255, 0);
+			PrintText(floor(1 + player.params[0] * 0.4), { offset.x, 562 }, 12, 255, 0);
+		}
+
+		offset = PrintText("Vitality ", { 656, 592 }, 16, 255, 0);
+		offset = PrintText(player.params[1], { offset.x, 592 }, 16, 255, 0);
+		if (player.points > 0)
+		{
+			offset = PrintText("Cost: ", { offset.x + 36, 594 }, 12, 255, 0);
+			PrintText(floor(1 + player.params[1] * 0.4), { offset.x, 592 }, 12, 255, 0);
+		}
+
+		offset = PrintText("Protection ", { 656, 624 }, 16, 255, 0);
+		offset = PrintText(player.params[2], { offset.x, 624 }, 16, 255, 0);
+		if (player.points > 0)
+		{
+			offset = PrintText("Cost: ", { offset.x + 36, 626 }, 12, 255, 0);
+			PrintText(floor(1 + player.params[2] * 0.4), { offset.x, 626 }, 12, 255, 0);
+		}
+
+		for (int i = 0; i < 3; i++)
+		{
+			if (player.points >= floor(1 + player.params[i] * 0.4))
+				buttons[2 + i].active = true;
+			else
+				buttons[2 + i].active = false;
+			if (player.points > 0)
+				buttons[2 + i].DrawButton();
+		}
 	}
 }
 
@@ -669,8 +733,9 @@ void SpawnPlayer()
 		player.x(rand() % MAP_SIZE);
 		player.y(rand() % MAP_SIZE);
 	} while (map[player.x()][player.y()] != 0);
-	player.health = 10;
+
 	player.maxHealth = 10;
+	player.health = 10;
 }
 
 void SpawnEnemies()
@@ -877,9 +942,10 @@ void MakeEnemyMove(Enemy& enemy)
 		{
 			if (CheckAttackDist(enemy, player))
 			{
-				player.health -= enemy.damage;
+				int damage = round(enemy.damage / floor(1 + player.params[2] / 3));
+				player.health -= damage;
 				enemy.moves--;
-				overlay.AddNum(player.position, -enemy.damage, 1);
+				overlay.AddNum(player.position, -damage, 1);
 			}
 		}
 	}
@@ -927,13 +993,15 @@ void CheckMove()
 
 	if (player.xp >= player.next)
 	{
-		player.maxHealth += 2;
+		RecalculatePlayer();
 		player.health = player.maxHealth;
 		player.points++;
 		player.xp -= player.next;
 		player.next *= 1.25;
 		player.level++;
 	}
+
+	RecalculatePlayer();
 }
 
 int CheckSelection(Position position)
@@ -955,9 +1023,11 @@ void ButtonAction(int buttonId)
 {
 	if (buttonId == 0 && player.attacks)
 	{
-		enemies[player.selectedEnemy].health -= player.damage;
+		int damage = round(player.damage / floor(1 + enemies[player.selectedEnemy].protection / 3));
+
+		enemies[player.selectedEnemy].health -= damage;
 		player.attacks -= 1;
-		overlay.AddNum(enemies[player.selectedEnemy].position, -player.damage, 1);
+		overlay.AddNum(enemies[player.selectedEnemy].position, -damage, 1);
 		player.moves = Max(0, player.moves - 1);
 		if (enemies[player.selectedEnemy].health <= 0)
 			KillEnemy(player.selectedEnemy);
@@ -974,34 +1044,29 @@ void ButtonAction(int buttonId)
 			playerMenu = 0;
 		}
 	}
+	else if (buttonId >= 2 && buttonId <= 4)
+	{
+		int reqPoints = floor(1 + player.params[buttonId - 2] * 0.4);
+
+		if (player.points >= (int)reqPoints)
+		{
+			player.points -= reqPoints;
+			player.params[buttonId - 2]++;
+			RecalculatePlayer();
+		}
+	}
 	Draw();
 }
 
 int CheckButtonClick(Position mPos)
 {
-	for (int i = 0; i < 2; i++)
+	for (int i = 0; i < 5; i++)
 	{
 		Button button = buttons[i];
 		if (mPos.x >= button.position.x && mPos.y >= button.position.y && mPos.x <= button.position.x + button.width && mPos.y <= button.position.y + button.height && button.active)
 			return i;
 	}
 	return -1;
-}
-
-void DrawOverlay()
-{
-	for (int i = 0; i < overlay.numsCount; i++)
-	{
-		OverlayNum oNum = overlay.overlayNums[i];
-		Position pos = oNum.pos;
-		pos.x = ConvBig(pos.x, player.x()) + rand() % 16 + 4;
-		pos.y = ConvBig(pos.y, player.y()) + rand() % 16 + 6;
-		PrintText(oNum.num, pos, 16, 255, 2);
-		pos.y--;
-		PrintText(oNum.num, pos, 16, 255, oNum.color);
-	}
-	overlay.Clear();
-	SDL_Delay(10);
 }
 
 #undef main;
@@ -1013,13 +1078,14 @@ int main()
 	Position _mouse{ 0,0 };
 
 	bool _down = false;
+	int lDraw = 0;
 	font = TTF_OpenFont("Fonts\\MainFont.ttf", 20);
 	SDL_Event event;
 
 	Generate();
 	SpawnPlayer();
 	SpawnEnemies();
-
+	RecalculatePlayer();
 	Draw();
 
 	while (true)
@@ -1104,7 +1170,13 @@ int main()
 			Draw();
 		}
 
-		DrawOverlay();
+
+		if (moves != lDraw)
+		{
+			DrawOverlay();
+			overlay.Clear();
+			lDraw = moves;
+		}
 		SDL_RenderPresent(ren);
 	}
 	TTF_CloseFont(font);
