@@ -7,13 +7,12 @@ SDL_Window* win = NULL;
 SDL_Renderer* ren = NULL;
 SDL_Surface* win_surf = NULL;
 TTF_Font* font = NULL;
-SDL_Texture* textures[11];
+SDL_Texture* textures[13];
 
 int winWdt = 960;
 int winHgt = 960;
 
 int moves = 0;
-
 const int MAP_SIZE = 300;
 const int CELLS_DENSITY = 7;
 const int CELLS_FILL = 10000;
@@ -246,6 +245,8 @@ void LoadTextures()
 	textures[8] = IMG_LoadTexture(ren, "GFX\\UpgradeMenuButton.png");
 	textures[9] = IMG_LoadTexture(ren, "GFX\\EquipmentMenuButton.png");
 	textures[10] = IMG_LoadTexture(ren, "GFX\\HelmetMenuCell.png");
+	textures[11] = IMG_LoadTexture(ren, "GFX\\PlateMenuCell.png");
+	textures[12] = IMG_LoadTexture(ren, "GFX\\PantsMenuCell.png");
 }
 
 void InitEnemies()
@@ -434,15 +435,15 @@ void Generate()
 		}
 }
 
-int RayTracing(Position position)
+int RayTracing(Position position, Position mainPos)
 {
 	float ax = position.x, ay = position.y;
-	float kx = player.x() - position.x, ky = player.y() - position.y;
+	float kx = mainPos.x - position.x, ky = mainPos.y - position.y;
 	int lastx = position.x, lasty = position.y;
 	int blocks = 0;
 	if (abs(kx) == abs(ky))
 		blocks++;
-	while (position.x != player.x() || position.y != player.y())
+	while (position.x != mainPos.x || position.y != mainPos.y)
 	{
 		ax += kx / 40;
 		ay += ky / 40;
@@ -575,7 +576,7 @@ void DrawUI()
 	PrintText(player.maxHealth, { offset.x + 4, 926 }, 16, 255, 0);
 
 	if (player.selectedEnemy >= 0)
-		if (RayTracing(enemies[player.selectedEnemy].position) > 5)
+		if (RayTracing(enemies[player.selectedEnemy].position, player.position) > 5)
 			player.selectedEnemy = -1;
 		else
 		{
@@ -697,6 +698,9 @@ void DrawUI()
 		SDL_Rect rect = { 640,480,320,480 };
 		SDL_SetRenderDrawColor(ren, 0, 0, 0, 55);
 		SDL_RenderFillRect(ren, &rect);
+		RenderImage(10, {768,512}, 64, 64, 255);
+		RenderImage(11, {768,592}, 64, 64, 255);
+		RenderImage(12, { 768,672 }, 64, 64, 255);
 
 	}
 }
@@ -710,7 +714,7 @@ void Draw()
 		for (int j = player.y() - 15; j < player.y() + 16; j++)
 		{
 			SDL_Rect rect = { ConvBig(i, player.x()),ConvBig(j, player.y()),32,32 };
-			int blocks = RayTracing({ i, j });
+			int blocks = RayTracing({ i, j }, player.position);
 			if (blocks <= 5 && map[i][j] == 1)
 				mapOverview[i][j] = 1;
 			if (map[i][j] == 1)
@@ -733,7 +737,7 @@ void Draw()
 	SDL_SetRenderDrawColor(ren, 114, 230, 221, 255);
 	for (int i = 0; i < enemiesCount; i++)
 	{
-		int blocks = RayTracing(enemies[i].position);
+		int blocks = RayTracing(enemies[i].position, player.position);
 		rect = { ConvBig(enemies[i].x(), player.x()) ,ConvBig(enemies[i].y(), player.y()),32,32 };
 		SDL_SetRenderDrawColor(ren, GetAlpha(198, blocks), GetAlpha(101, blocks), GetAlpha(202, blocks), 255);
 		SDL_RenderFillRect(ren, &rect);
@@ -949,7 +953,7 @@ Path FindPath(Position start, Position end)
 
 void MakeEnemyMove(Enemy& enemy)
 {
-	if (RayTracing(enemy.position) <= 5)
+	if (RayTracing(enemy.position, player.position) <= 5)
 	{
 		while (enemy.moves > 0 && !CheckAttackDist(enemy, player))
 		{
@@ -1031,7 +1035,7 @@ int CheckSelection(Position position)
 	for (int i = 0; i < enemiesCount; i++)
 	{
 		if (position.x == enemies[i].x() && position.y == enemies[i].y())
-			if (RayTracing(position) <= 5)
+			if (RayTracing(position, player.position) <= 5)
 				return i;
 	}
 	if (lastBtnId == 0 || lastBtnId == 1 || lastBtnId == 2)
