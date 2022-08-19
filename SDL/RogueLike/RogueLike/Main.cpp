@@ -7,7 +7,7 @@ SDL_Window* win = NULL;
 SDL_Renderer* ren = NULL;
 SDL_Surface* win_surf = NULL;
 TTF_Font* font = NULL;
-SDL_Texture* textures[9];
+SDL_Texture* textures[11];
 
 int winWdt = 960;
 int winHgt = 960;
@@ -244,6 +244,8 @@ void LoadTextures()
 	textures[6] = IMG_LoadTexture(ren, "GFX\\AttackIcon.png");
 	textures[7] = IMG_LoadTexture(ren, "GFX\\PlayerMenuButton.png");
 	textures[8] = IMG_LoadTexture(ren, "GFX\\UpgradeMenuButton.png");
+	textures[9] = IMG_LoadTexture(ren, "GFX\\EquipmentMenuButton.png");
+	textures[10] = IMG_LoadTexture(ren, "GFX\\HelmetMenuCell.png");
 }
 
 void InitEnemies()
@@ -286,12 +288,13 @@ void KillEnemy(int id)
 
 void InitButtons()
 {
-	buttons = (Button*)malloc(sizeof(Button) * 5);
+	buttons = (Button*)malloc(sizeof(Button) * 6);
 	buttons[0] = *(new Button({ 652,80 }, new char[7]{ "Attack" }, 296, 24, false, 30, 6, true));
 	buttons[1] = *(new Button({ 928,480 }, new char[2]{ "\0" }, 32, 32, false, NULL, 7, false));
-	buttons[2] = *(new Button({ 928,558 }, new char[2]{ "\0" }, 24, 24, false, NULL, 8, false));
-	buttons[3] = *(new Button({ 928,590 }, new char[2]{ "\0" }, 24, 24, false, NULL, 8, false));
-	buttons[4] = *(new Button({ 928,622 }, new char[2]{ "\0" }, 24, 24, false, NULL, 8, false));
+	buttons[2] = *(new Button({ 928,512 }, new char[2]{ "\0" }, 32, 32, false, NULL, 9, false));
+	buttons[3] = *(new Button({ 928,558 }, new char[2]{ "\0" }, 24, 24, false, NULL, 8, false));
+	buttons[4] = *(new Button({ 928,590 }, new char[2]{ "\0" }, 24, 24, false, NULL, 8, false));
+	buttons[5] = *(new Button({ 928,622 }, new char[2]{ "\0" }, 24, 24, false, NULL, 8, false));
 }
 
 void Init()
@@ -627,12 +630,17 @@ void DrawUI()
 		buttons[1].position.x = 928;
 		buttons[1].active = true;
 		buttons[1].DrawButton();
+		buttons[2].position.x = 928;
+		buttons[2].position.y = 512;
+		buttons[2].active = true;
+		buttons[2].DrawButton();
 	}
 	else if (playerMenu == 1)
 	{
 		buttons[1].position.x = 608;
 		buttons[1].active = true;
 		buttons[1].DrawButton();
+		buttons[2].active = false;
 		SDL_Rect rect = { 640,480,320,480 };
 		SDL_SetRenderDrawColor(ren, 0, 0, 0, 55);
 		SDL_RenderFillRect(ren, &rect);
@@ -672,12 +680,24 @@ void DrawUI()
 		for (int i = 0; i < 3; i++)
 		{
 			if (player.points >= floor(1 + player.params[i] * 0.4))
-				buttons[2 + i].active = true;
+				buttons[3 + i].active = true;
 			else
-				buttons[2 + i].active = false;
+				buttons[3 + i].active = false;
 			if (player.points > 0)
-				buttons[2 + i].DrawButton();
+				buttons[3 + i].DrawButton();
 		}
+	}
+	else if (playerMenu == 2)
+	{
+		buttons[2].position.x = 608;
+		buttons[2].position.y = 480;
+		buttons[2].active = true;
+		buttons[2].DrawButton();
+		buttons[1].active = false;
+		SDL_Rect rect = { 640,480,320,480 };
+		SDL_SetRenderDrawColor(ren, 0, 0, 0, 55);
+		SDL_RenderFillRect(ren, &rect);
+
 	}
 }
 
@@ -1014,7 +1034,7 @@ int CheckSelection(Position position)
 			if (RayTracing(position) <= 5)
 				return i;
 	}
-	if (lastBtnId == 0 || lastBtnId == 1)
+	if (lastBtnId == 0 || lastBtnId == 1 || lastBtnId == 2)
 		return player.selectedEnemy;
 	return -1;
 }
@@ -1044,14 +1064,25 @@ void ButtonAction(int buttonId)
 			playerMenu = 0;
 		}
 	}
-	else if (buttonId >= 2 && buttonId <= 4)
+	else if (buttonId == 2)
 	{
-		int reqPoints = floor(1 + player.params[buttonId - 2] * 0.4);
+		if (playerMenu == 0)
+		{
+			playerMenu = 2;
+		}
+		else
+		{
+			playerMenu = 0;
+		}
+	}
+	else if (buttonId >= 3 && buttonId <= 5)
+	{
+		int reqPoints = floor(1 + player.params[buttonId - 3] * 0.4);
 
 		if (player.points >= (int)reqPoints)
 		{
 			player.points -= reqPoints;
-			player.params[buttonId - 2]++;
+			player.params[buttonId - 3]++;
 			RecalculatePlayer();
 		}
 	}
@@ -1060,7 +1091,7 @@ void ButtonAction(int buttonId)
 
 int CheckButtonClick(Position mPos)
 {
-	for (int i = 0; i < 5; i++)
+	for (int i = 0; i < 6; i++)
 	{
 		Button button = buttons[i];
 		if (mPos.x >= button.position.x && mPos.y >= button.position.y && mPos.x <= button.position.x + button.width && mPos.y <= button.position.y + button.height && button.active)
