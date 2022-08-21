@@ -7,7 +7,7 @@ SDL_Window* win = NULL;
 SDL_Renderer* ren = NULL;
 SDL_Surface* win_surf = NULL;
 TTF_Font* font = NULL;
-SDL_Texture* textures[13];
+SDL_Texture* textures[14];
 
 int winWdt = 960;
 int winHgt = 960;
@@ -247,6 +247,7 @@ void LoadTextures()
 	textures[10] = IMG_LoadTexture(ren, "GFX\\HelmetMenuCell.png");
 	textures[11] = IMG_LoadTexture(ren, "GFX\\PlateMenuCell.png");
 	textures[12] = IMG_LoadTexture(ren, "GFX\\PantsMenuCell.png");
+	textures[13] = IMG_LoadTexture(ren, "GFX\\BootsMenuCell.png");
 }
 
 void InitEnemies()
@@ -698,9 +699,10 @@ void DrawUI()
 		SDL_Rect rect = { 640,480,320,480 };
 		SDL_SetRenderDrawColor(ren, 0, 0, 0, 55);
 		SDL_RenderFillRect(ren, &rect);
-		RenderImage(10, {768,512}, 64, 64, 255);
-		RenderImage(11, {768,592}, 64, 64, 255);
+		RenderImage(10, { 768,512 }, 64, 64, 255);
+		RenderImage(11, { 768,592 }, 64, 64, 255);
 		RenderImage(12, { 768,672 }, 64, 64, 255);
+		RenderImage(13, { 768,752 }, 64, 64, 255);
 
 	}
 }
@@ -709,11 +711,11 @@ void Draw()
 {
 	SDL_SetRenderDrawColor(ren, 0, 0, 0, 255);
 	SDL_RenderClear(ren);
-
 	for (int i = player.x() - 15; i < player.x() + 16; i++)
 		for (int j = player.y() - 15; j < player.y() + 16; j++)
 		{
 			SDL_Rect rect = { ConvBig(i, player.x()),ConvBig(j, player.y()),32,32 };
+
 			int blocks = RayTracing({ i, j }, player.position);
 			if (blocks <= 5 && map[i][j] == 1)
 				mapOverview[i][j] = 1;
