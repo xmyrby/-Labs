@@ -18,12 +18,16 @@ const int MAP_SIZE = 300;
 const int CELLS_DENSITY = 7;
 const int CELLS_FILL = 10000;
 const int ANTS_COUNT = 6;
-const int LAMPS_COUNT = 75;
+const int LAMPS_COUNT = 15;
 
 int enemiesCount = 100;
 int enemiesTypesCount = 0;
 int lastBtnId = -1;
 int playerMenu = 0;
+int itemsCount = 0;
+int dropCount = 0;
+int itemMenuType = 0;
+int itemMenu = 0;
 
 bool showMap = false;
 
@@ -64,6 +68,12 @@ Position PrintText(int var, Position position, int size, Uint8 alpha, int colorI
 Position PrintText(const char* var, Position position, int siz, Uint8 alpha, int colorId);
 void RenderImage(int textureId, Position position, int w, int h, int alpha);
 bool CheckEntity(Position pos);
+
+struct Bonus
+{
+	int type;
+	int value;
+};
 
 struct Button
 {
@@ -106,9 +116,13 @@ struct Path
 
 struct Item
 {
-	int type;
-	int iconTexture;
 	char name[100];
+	int iconTextureId;
+	int type;
+	int bonusesCount;
+	int level = 1;
+
+	Bonus* bonuses;
 };
 
 struct Entity
@@ -121,6 +135,7 @@ struct Entity
 	int damage = 1;
 	int attackrange = 1;
 	int regeneration = 1;
+	int level = 1;
 
 	int x()
 	{
@@ -146,7 +161,6 @@ struct Entity
 struct Player : Entity
 {
 	int selectedEnemy = -1;
-	int level = 1;
 
 	int xp = 0;
 	int next = 100;
@@ -155,7 +169,7 @@ struct Player : Entity
 	int mana;
 	int maxMana;
 
-	int equipment[4]{ 0,-1,-1,-1 };
+	int equipment[4]{ 0,1,-1,-1 };
 
 	int params[3]{ 1,1,1 };
 };
@@ -169,6 +183,7 @@ struct Enemy : Entity
 	int xpReward;
 	int goldReward;
 	int protection;
+	int dropChance;
 
 	void NewPath(Path nPath)
 	{
@@ -217,6 +232,13 @@ struct Overlay
 	}
 };
 
+struct Drop
+{
+	int id;
+	Position position;
+	int level;
+};
+
 Player player;
 
 Enemy* enemies;
@@ -224,7 +246,7 @@ Enemy* enemiesTypes;
 
 Button* buttons;
 
-Item items[1];
+Item* items;
 
 Overlay overlay;
 
@@ -234,6 +256,26 @@ Lamp lamps[LAMPS_COUNT];
 
 int map[MAP_SIZE][MAP_SIZE];
 int mapOverview[MAP_SIZE][MAP_SIZE];
+Drop* drop;
+
+void AddDrop(int itemId, Position position, int level)
+{
+	dropCount++;
+	drop = (Drop*)realloc(drop, sizeof(Drop) * dropCount);
+
+	drop[dropCount - 1] = { itemId, position, level };
+}
+
+void DeleteDrop(int id)
+{
+	for (int i = id; i < dropCount - 1; i++)
+	{
+		drop[i] = drop[i + 1];
+	}
+	dropCount--;
+
+	drop = (Drop*)realloc(drop, sizeof(Drop) * dropCount);
+}
 
 int Random(int a, int b)
 {
@@ -244,7 +286,27 @@ int Random(int a, int b)
 
 void InitItems()
 {
-	items[0] = { 0, 25, NULL };
+	FILE* ft;
+	if (fopen_s(&ft, "PARAMS\\Items.txt", "rt") != 0)
+	{
+		exit(1);
+	}
+	fscanf_s(ft, "%d", &itemsCount);
+
+	items = (Item*)malloc(sizeof(Item) * itemsCount);
+
+	for (int i = 0; i < itemsCount; i++)
+	{
+		fgets(items[i].name, 126, ft);
+
+		items[i].name[strlen(items[i].name) - 1] = '\0';
+		fscanf_s(ft, "%d %d %d", &items[i].iconTextureId, &items[i].type, &items[i].bonusesCount);
+		items[i].bonuses = (Bonus*)malloc(sizeof(Bonus) * items[i].bonusesCount);
+		for (int j = 0; j < items[i].bonusesCount; j++)
+			fscanf_s(ft, "%d %d", &items[i].bonuses[j].type, &items[i].bonuses[j].value);
+	}
+
+	fclose(ft);
 }
 
 void RecalculatePlayer()
@@ -290,6 +352,7 @@ void LoadTextures()
 	textures[14] = IMG_LoadTexture(ren, "GFX\\MenuCell.png");
 	textures[19] = IMG_LoadTexture(ren, "GFX\\GoldMenu.png");
 	textures[25] = IMG_LoadTexture(ren, "GFX\\EQP\\Item0.png");
+	textures[26] = IMG_LoadTexture(ren, "GFX\\EQP\\Item1.png");
 	textures[50] = IMG_LoadTexture(ren, "GFX\\Lamp.png");
 }
 
@@ -306,7 +369,7 @@ void InitEnemies()
 
 	for (int i = 0; i < enemiesTypesCount; i++)
 	{
-		fscanf_s(ft, "%s %d %d %d %d %d %d %d %d %d %d", &enemiesTypes[i].name, sizeof(enemiesTypes[i].name), &enemiesTypes[i].iconTextureId, &enemiesTypes[i].maxHealth, &enemiesTypes[i].attacks, &enemiesTypes[i].moves, &enemiesTypes[i].damage, &enemiesTypes[i].attackrange, &enemiesTypes[i].regeneration, &enemiesTypes[i].xpReward, &enemiesTypes[i].protection, &enemiesTypes[i].goldReward);
+		fscanf_s(ft, "%s %d %d %d %d %d %d %d %d %d %d %d", &enemiesTypes[i].name, sizeof(enemiesTypes[i].name), &enemiesTypes[i].iconTextureId, &enemiesTypes[i].maxHealth, &enemiesTypes[i].attacks, &enemiesTypes[i].moves, &enemiesTypes[i].damage, &enemiesTypes[i].attackrange, &enemiesTypes[i].regeneration, &enemiesTypes[i].xpReward, &enemiesTypes[i].protection, &enemiesTypes[i].goldReward, &enemiesTypes[i].dropChance);
 		enemiesTypes[i].health = enemiesTypes[i].maxHealth;
 		enemiesTypes[i].type = i;
 	}
@@ -324,6 +387,12 @@ void KillEnemy(int id)
 	int gold = enemies[id].goldReward;
 	gold = Random(gold / 2, gold);
 	player.gold += gold;
+
+	if (Random(0, 100) <= enemies[id].dropChance)
+	{
+		AddDrop(Random(0, itemsCount - 1), enemies[id].position, enemies[id].level);
+	}
+
 	for (int i = id; i < enemiesCount - 1; i++)
 	{
 		enemies[i] = enemies[i + 1];
@@ -337,7 +406,7 @@ void KillEnemy(int id)
 void InitButtons()
 {
 	buttons = (Button*)malloc(sizeof(Button) * 6);
-	buttons[0] = *(new Button({ 652,80 }, new char[7]{ "Attack" }, 296, 24, false, 30, 6, true));
+	buttons[0] = *(new Button({ 652,100 }, new char[7]{ "Attack" }, 296, 24, false, 30, 6, true));
 	buttons[1] = *(new Button({ 928,480 }, new char[2]{ "\0" }, 32, 32, false, NULL, 7, false));
 	buttons[2] = *(new Button({ 928,512 }, new char[2]{ "\0" }, 32, 32, false, NULL, 9, false));
 	buttons[3] = *(new Button({ 928,558 }, new char[2]{ "\0" }, 24, 24, false, NULL, 8, false));
@@ -678,6 +747,8 @@ void DrawUI()
 		offset = PrintText(enemies[player.selectedEnemy].health, { 808, 44 }, 16, 255, 0);
 		offset = PrintText("/", { offset.x + 4, 44 }, 16, 255, 0);
 		PrintText(enemies[player.selectedEnemy].maxHealth, { offset.x + 4, 44 }, 16, 255, 0);
+		offset = PrintText("Level: ", { 652, 68 }, 16, 255, 0);
+		PrintText(enemies[player.selectedEnemy].level, { offset.x + 4, 68 }, 16, 255, 0);
 
 		bool active = false;
 		if (CheckAttackDist(player, enemies[player.selectedEnemy]) && player.attacks)
@@ -763,7 +834,7 @@ void DrawUI()
 		SDL_SetRenderDrawColor(ren, 0, 0, 0, 55);
 		SDL_RenderFillRect(ren, &rect);
 
-		RenderImage(11, { 768,592 }, 64, 64, 255);
+
 		RenderImage(12, { 768,672 }, 64, 64, 255);
 		RenderImage(13, { 768,752 }, 64, 64, 255);
 		RenderImage(19, { 640,480 }, 32, 32, 255);
@@ -772,13 +843,59 @@ void DrawUI()
 		if (player.equipment[0] != -1)
 		{
 			RenderImage(14, { 768,512 }, 64, 64, 255);
-			RenderImage(items[player.equipment[0]].iconTexture, { 768,512 }, 64, 64, 255);
+			RenderImage(items[player.equipment[0]].iconTextureId, { 768,512 }, 64, 64, 255);
 			Item item = items[player.equipment[0]];
-			printf("%d %d\n", item.iconTexture, item.type);
 		}
 		else
 		{
 			RenderImage(10, { 768,512 }, 64, 64, 255);
+		}
+		if (player.equipment[1] != -1)
+		{
+			RenderImage(14, { 768,592 }, 64, 64, 255);
+			RenderImage(items[player.equipment[1]].iconTextureId, { 768,592 }, 64, 64, 255);
+			Item item = items[player.equipment[1]];
+		}
+		else
+		{
+			RenderImage(11, { 768,592 }, 64, 64, 255);
+		}
+	}
+	else if (playerMenu == 3)
+	{
+		SDL_Rect rect = { 320,240,320,480 };
+		SDL_SetRenderDrawColor(ren, 0, 0, 0, 155);
+		SDL_RenderFillRect(ren, &rect);
+
+		if (itemMenuType == 0)
+		{
+			Drop droped = drop[itemMenu];
+			Item item = items[droped.id];
+			item.level = droped.level;
+			RenderImage(14, { 336,256 }, 64, 64, 255);
+			RenderImage(item.iconTextureId, { 336,256 }, 64, 64, 255);
+			PrintText(item.name, { 416,264 }, 16, 255, 0);
+			switch (item.type)
+			{
+			case 0:
+				PrintText("On Head", { 416,300 }, 16, 255, 0);
+				break;
+			case 1:
+				PrintText("On Body", { 416,300 }, 16, 255, 0);
+				break;
+			case 2:
+				PrintText("On Legs", { 416,300 }, 16, 255, 0);
+				break;
+			case 3:
+				PrintText("On Feet", { 416,300 }, 16, 255, 0);
+				break;
+			default:
+				break;
+			}
+
+			offset = PrintText("Level: ", { 336,336 }, 16, 255, 0);
+			PrintText(item.level, { offset.x,336 }, 16, 255, 0);
+
 		}
 	}
 }
@@ -818,6 +935,13 @@ void Draw()
 			}
 		}
 
+	for (int i = 0; i < dropCount; i++)
+	{
+		int blocks = RayTracing(drop[i].position, player.position);
+		if (blocks < 5)
+			RenderImage(items[drop[i].id].iconTextureId, { ConvBig(drop[i].position.x,player.x()), ConvBig(drop[i].position.y,player.y()) }, 32, 32, GetAlpha(255, blocks));
+	}
+
 	SDL_Rect rect = { 464, 464,32,32 };
 	SDL_SetRenderDrawColor(ren, 114, 230, 221, 255);
 	SDL_RenderFillRect(ren, &rect);
@@ -853,6 +977,8 @@ void SpawnPlayer()
 
 	player.maxHealth = 10;
 	player.health = 10;
+
+	AddDrop(Random(0, itemsCount - 1), player.position, Random(1, 3));
 }
 
 void SpawnEnemies()
@@ -867,6 +993,9 @@ void SpawnEnemies()
 		} while (map[enemy.x()][enemy.y()] != 0);
 		enemies[i] = enemiesTypes[enemies[i].type];
 		enemies[i].position = enemy.position;
+		enemies[i].level = Random(1, 3);
+		enemies[i].maxHealth += enemies[i].maxHealth / 5 * (enemies[i].level - 1);
+		enemies[i].health = enemies[i].maxHealth;
 	}
 }
 
@@ -1144,7 +1273,7 @@ int CheckSelection(Position position)
 
 void ButtonAction(int buttonId)
 {
-	if (buttonId == 0 && player.attacks)
+	if (buttonId == 0 && player.attacks && playerMenu != 3)
 	{
 		int damage = round(player.damage / floor(1 + enemies[player.selectedEnemy].protection / 3));
 
@@ -1189,17 +1318,45 @@ void ButtonAction(int buttonId)
 			RecalculatePlayer();
 		}
 	}
+	else if (buttonId >= 100)
+	{
+		if (playerMenu != 3)
+		{
+			playerMenu = 3;
+			itemMenuType = 0;
+			itemMenu = buttonId % 100;
+			player.selectedEnemy = -1;
+		}
+		else
+		{
+			playerMenu = 0;
+		}
+	}
 	Draw();
 }
 
 int CheckButtonClick(Position mPos)
 {
+	if (playerMenu != 3)
+	{
+		for (int i = 0; i < dropCount; i++)
+		{
+			Position pos = { ConvBig(drop[i].position.x,player.x()), ConvBig(drop[i].position.y,player.y()) };
+			if (mPos.x >= pos.x && mPos.y >= pos.y && mPos.x <= pos.x + 32 && mPos.y <= pos.y + 32)
+			{
+				return 100 + i;
+			}
+		}
+	}
+	else if ((mPos.x < 320 || mPos.x>640 || mPos.y < 240 || mPos.y>720))
+		playerMenu = 0;
 	for (int i = 0; i < 6; i++)
 	{
 		Button button = buttons[i];
 		if (mPos.x >= button.position.x && mPos.y >= button.position.y && mPos.x <= button.position.x + button.width && mPos.y <= button.position.y + button.height && button.active)
 			return i;
 	}
+
 	return -1;
 }
 
@@ -1234,7 +1391,8 @@ int main()
 			_down = true;
 			lastBtnId = CheckButtonClick(_mouse);
 			ButtonAction(lastBtnId);
-			player.selectedEnemy = CheckSelection(_mouse);
+			if (playerMenu != 3)
+				player.selectedEnemy = CheckSelection(_mouse);
 			Draw();
 		}
 		if ((events & SDL_BUTTON_LMASK) == 0)
@@ -1242,7 +1400,7 @@ int main()
 
 		SDL_PollEvent(&event);
 
-		if (event.type == SDL_KEYDOWN || event.type == SDL_KEYUP)
+		if ((event.type == SDL_KEYDOWN || event.type == SDL_KEYUP) && playerMenu != 3)
 		{
 			bool moved = false;
 			if (state[SDL_SCANCODE_W])

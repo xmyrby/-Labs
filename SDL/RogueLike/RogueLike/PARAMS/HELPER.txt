@@ -1,3 +1,7 @@
 #EnemiesTypes
-	-(Count of types)
-	-(Name) -(Texture Id) -(Health) -(Attacks) -(Moves) -(Damage) -(Attack Range) -(Regeneration) -(XpReward) -(Protection) -(GoldReward)
+	-(Count of Types)-(Name)
+	-(Texture Id) -(Health) -(Attacks) -(Moves) -(Damage) -(Attack Range) -(Regeneration) -(XpReward) -(Protection) -(GoldReward) -(DropChance)
+#Items
+	-(Count of Items)-(Name)
+	-(Texture Id) -(Type) -(BonusesCount)
+	-(Bonus Type) -(Bonus Value) VxBonusesCount
