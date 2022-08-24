@@ -2,12 +2,13 @@
 #include <SDL.h>
 #include <SDL_image.h>
 #include <SDL_ttf.h>
+#include <math.h>
 
 SDL_Window* win = NULL;
 SDL_Renderer* ren = NULL;
 SDL_Surface* win_surf = NULL;
 TTF_Font* font = NULL;
-SDL_Texture* textures[14];
+SDL_Texture* textures[50];
 
 int winWdt = 960;
 int winHgt = 960;
@@ -95,6 +96,13 @@ struct Path
 	int next;
 };
 
+struct Item
+{
+	int type;
+	int iconTexture;
+	char name[100];
+};
+
 struct Entity
 {
 	Position position;
@@ -135,6 +143,9 @@ struct Player : Entity
 	int xp = 0;
 	int next = 100;
 	int points = 3;
+	int gold;
+
+	int equipment[4]{ 0,-1,-1,-1 };
 
 	int params[3]{ 1,1,1 };
 };
@@ -146,6 +157,7 @@ struct Enemy : Entity
 	char name[100];
 	int iconTextureId;
 	int xpReward;
+	int goldReward;
 	int protection;
 
 	void NewPath(Path nPath)
@@ -202,12 +214,19 @@ Enemy* enemiesTypes;
 
 Button* buttons;
 
+Item items[1];
+
 Overlay overlay;
 
-SDL_Color colors[4];
+SDL_Color colors[5];
 
 int map[MAP_SIZE][MAP_SIZE];
 int mapOverview[MAP_SIZE][MAP_SIZE];
+
+void InitItems()
+{
+	items[0] = { 0, 25, NULL };
+}
 
 void RecalculatePlayer()
 {
@@ -222,6 +241,7 @@ void InitColors()
 	colors[1] = { 255,200,200 };
 	colors[2] = { 0,0,0 };
 	colors[3] = { 100,255,100 };
+	colors[4] = { 232,211,68 };
 }
 
 void DeInit(char error)
@@ -248,6 +268,9 @@ void LoadTextures()
 	textures[11] = IMG_LoadTexture(ren, "GFX\\PlateMenuCell.png");
 	textures[12] = IMG_LoadTexture(ren, "GFX\\PantsMenuCell.png");
 	textures[13] = IMG_LoadTexture(ren, "GFX\\BootsMenuCell.png");
+	textures[14] = IMG_LoadTexture(ren, "GFX\\MenuCell.png");
+	textures[19] = IMG_LoadTexture(ren, "GFX\\GoldMenu.png");
+	textures[25] = IMG_LoadTexture(ren, "GFX\\EQP\\Item0.png");
 }
 
 void InitEnemies()
@@ -263,7 +286,7 @@ void InitEnemies()
 
 	for (int i = 0; i < enemiesTypesCount; i++)
 	{
-		fscanf_s(ft, "%s %d %d %d %d %d %d %d %d %d", &enemiesTypes[i].name, sizeof(enemiesTypes[i].name), &enemiesTypes[i].iconTextureId, &enemiesTypes[i].maxHealth, &enemiesTypes[i].attacks, &enemiesTypes[i].moves, &enemiesTypes[i].damage, &enemiesTypes[i].attackrange, &enemiesTypes[i].regeneration, &enemiesTypes[i].xpReward, &enemiesTypes[i].protection);
+		fscanf_s(ft, "%s %d %d %d %d %d %d %d %d %d %d", &enemiesTypes[i].name, sizeof(enemiesTypes[i].name), &enemiesTypes[i].iconTextureId, &enemiesTypes[i].maxHealth, &enemiesTypes[i].attacks, &enemiesTypes[i].moves, &enemiesTypes[i].damage, &enemiesTypes[i].attackrange, &enemiesTypes[i].regeneration, &enemiesTypes[i].xpReward, &enemiesTypes[i].protection, &enemiesTypes[i].goldReward);
 		enemiesTypes[i].health = enemiesTypes[i].maxHealth;
 		enemiesTypes[i].type = i;
 	}
@@ -278,6 +301,9 @@ void InitEnemies()
 void KillEnemy(int id)
 {
 	player.xp += enemies[id].xpReward;
+	int gold = enemies[id].goldReward;
+	gold = rand() % (gold / 2) + gold / 2;
+	player.gold += gold;
 	for (int i = id; i < enemiesCount - 1; i++)
 	{
 		enemies[i] = enemies[i + 1];
@@ -344,6 +370,8 @@ void Init()
 	InitEnemies();
 
 	InitColors();
+
+	InitItems();
 
 	overlay.Init();
 
@@ -436,29 +464,28 @@ void Generate()
 		}
 }
 
+float GetAngle(Position a, Position b)
+{
+	return atan2(a.y - b.y, a.x - b.x);
+}
+
 int RayTracing(Position position, Position mainPos)
 {
 	float ax = position.x, ay = position.y;
-	float kx = mainPos.x - position.x, ky = mainPos.y - position.y;
-	int lastx = position.x, lasty = position.y;
+	float angle = GetAngle(mainPos, position);
 	int blocks = 0;
-	if (abs(kx) == abs(ky))
-		blocks++;
 	while (position.x != mainPos.x || position.y != mainPos.y)
 	{
-		ax += kx / 40;
-		ay += ky / 40;
+		if (position.x != mainPos.x)
+			ax += cos(angle);
+		if (position.y != mainPos.y)
+			ay += sin(angle);
 		position.x = round(ax);
 		position.y = round(ay);
-		if (lastx != position.x || lasty != position.y)
-		{
-			if (map[position.x][position.y] == 1)
-				blocks += 5;
+		if (map[position.x][position.y] == 1)
+			blocks += 5;
 
-			blocks += 1;
-			lastx = position.x;
-			lasty = position.y;
-		}
+		blocks += 1;
 	}
 
 	return blocks;
@@ -589,13 +616,13 @@ void DrawUI()
 
 	if (showMap)
 	{
-		SDL_Rect rect = { 240 + (30) * 8 - 4,240 + (30) * 8 - 4,8,8 };
+		SDL_Rect rect = { 240 + (30) * 8 - 4,540 + (30) * 8 - 4,8,8 };
 		SDL_SetRenderDrawColor(ren, 255, 100, 100, 100);
 		SDL_RenderFillRect(ren, &rect);
 		for (int i = player.x() - 30; i < player.x() + 31; i++)
 			for (int j = player.y() - 30; j < player.y() + 31; j++)
 			{
-				SDL_Rect rect = { 240 + (i + 30 - player.x()) * 8 - 4,240 + (j + 30 - player.y()) * 8 - 4,8,8 };
+				SDL_Rect rect = { 240 + (i + 30 - player.x()) * 8 - 4,540 + (j + 30 - player.y()) * 8 - 4,8,8 };
 				if (mapOverview[i][j] == 1)
 				{
 					SDL_SetRenderDrawColor(ren, 255, 255, 255, 75 - Min(int(round(Distance({ i,j }, player.position))) * 4, 75));
@@ -699,11 +726,24 @@ void DrawUI()
 		SDL_Rect rect = { 640,480,320,480 };
 		SDL_SetRenderDrawColor(ren, 0, 0, 0, 55);
 		SDL_RenderFillRect(ren, &rect);
-		RenderImage(10, { 768,512 }, 64, 64, 255);
+
 		RenderImage(11, { 768,592 }, 64, 64, 255);
 		RenderImage(12, { 768,672 }, 64, 64, 255);
 		RenderImage(13, { 768,752 }, 64, 64, 255);
+		RenderImage(19, { 640,480 }, 32, 32, 255);
+		PrintText(player.gold, { 676, 488 }, 16, 255, 4);
 
+		if (player.equipment[0] != -1)
+		{
+			RenderImage(14, { 768,512 }, 64, 64, 255);
+			RenderImage(items[player.equipment[0]].iconTexture, { 768,512 }, 64, 64, 255);
+			Item item = items[player.equipment[0]];
+			printf("%d %d\n", item.iconTexture, item.type);
+		}
+		else
+		{
+			RenderImage(10, { 768,512 }, 64, 64, 255);
+		}
 	}
 }
 
@@ -995,7 +1035,7 @@ void CheckMove()
 		canMove = false;
 		for (int i = 0; i < enemiesCount; i++)
 		{
-			if (CheckAttackDist(player, enemies[i]))
+			if (CheckAttackDist(player, enemies[i]) && RayTracing(player.position, enemies[i].position) <= 5)
 			{
 				canMove = true;
 				break;
