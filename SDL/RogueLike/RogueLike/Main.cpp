@@ -8,7 +8,7 @@ SDL_Window* win = NULL;
 SDL_Renderer* ren = NULL;
 SDL_Surface* win_surf = NULL;
 TTF_Font* font = NULL;
-SDL_Texture* textures[50];
+SDL_Texture* textures[51];
 
 int winWdt = 960;
 int winHgt = 960;
@@ -18,6 +18,7 @@ const int MAP_SIZE = 300;
 const int CELLS_DENSITY = 7;
 const int CELLS_FILL = 10000;
 const int ANTS_COUNT = 6;
+const int LAMPS_COUNT = 75;
 
 int enemiesCount = 100;
 int enemiesTypesCount = 0;
@@ -50,6 +51,13 @@ struct OverlayNum
 	Position pos;
 	int num;
 	int color;
+};
+
+struct Lamp
+{
+	int textureId;
+	Position position;
+	int bright;
 };
 
 Position PrintText(int var, Position position, int size, Uint8 alpha, int colorId);
@@ -144,6 +152,8 @@ struct Player : Entity
 	int next = 100;
 	int points = 3;
 	int gold;
+	int mana;
+	int maxMana;
 
 	int equipment[4]{ 0,-1,-1,-1 };
 
@@ -220,8 +230,17 @@ Overlay overlay;
 
 SDL_Color colors[5];
 
+Lamp lamps[LAMPS_COUNT];
+
 int map[MAP_SIZE][MAP_SIZE];
 int mapOverview[MAP_SIZE][MAP_SIZE];
+
+int Random(int a, int b)
+{
+	if (a >= b)
+		return 0;
+	return rand() % (b - a + 1) + a;
+}
 
 void InitItems()
 {
@@ -271,6 +290,7 @@ void LoadTextures()
 	textures[14] = IMG_LoadTexture(ren, "GFX\\MenuCell.png");
 	textures[19] = IMG_LoadTexture(ren, "GFX\\GoldMenu.png");
 	textures[25] = IMG_LoadTexture(ren, "GFX\\EQP\\Item0.png");
+	textures[50] = IMG_LoadTexture(ren, "GFX\\Lamp.png");
 }
 
 void InitEnemies()
@@ -302,7 +322,7 @@ void KillEnemy(int id)
 {
 	player.xp += enemies[id].xpReward;
 	int gold = enemies[id].goldReward;
-	gold = rand() % (gold / 2) + gold / 2;
+	gold = Random(gold / 2, gold);
 	player.gold += gold;
 	for (int i = id; i < enemiesCount - 1; i++)
 	{
@@ -420,7 +440,7 @@ void Generate()
 
 	for (int i = 0; i < ANTS_COUNT; i++)
 	{
-		ants[i] = { rand() % (MAP_SIZE / 2) + (MAP_SIZE / 4), rand() % (MAP_SIZE / 2) + (MAP_SIZE / 4) };
+		ants[i] = { Random(MAP_SIZE / 4,MAP_SIZE / 4 * 3), Random(MAP_SIZE / 4,MAP_SIZE / 4 * 3) };
 		map[ants[i].position.x][ants[i].position.y] = 0;
 		cells++;
 	}
@@ -432,7 +452,7 @@ void Generate()
 
 			for (int i = 0; i < 1000; i++)
 			{
-				int dir = rand() % 4;
+				int dir = Random(0, 3);
 
 				switch (dir)
 				{
@@ -462,6 +482,18 @@ void Generate()
 				}
 			}
 		}
+
+	for (int i = 0; i < LAMPS_COUNT; i++)
+	{
+		do
+		{
+			lamps[i].position.x = Random(0, MAP_SIZE - 1);
+			lamps[i].position.y = Random(0, MAP_SIZE - 1);
+		} while (map[lamps[i].position.x][lamps[i].position.y] != 0);
+		lamps[i].textureId = 50;
+		lamps[i].bright = Random(-2, 2);
+		map[lamps[i].position.x][lamps[i].position.y] = 2;
+	}
 }
 
 float GetAngle(Position a, Position b)
@@ -598,10 +630,14 @@ void DrawUI()
 	PrintText(player.attacks, { 52, 60 }, 16, 255, 0);
 	RenderImage(1, { 10, 94 }, 32, 32, 255);
 	PrintText(player.moves, { 52, 104 }, 16, 255, 0);
-	PrintText("Health: ", { 10, 926 }, 16, 255, 0);
-	offset = PrintText(player.health, { 102, 926 }, 16, 255, 0);
+	PrintText("Health: ", { 10, 896 }, 16, 255, 0);
+	offset = PrintText(player.health, { 102, 896 }, 16, 255, 0);
+	offset = PrintText("/", { offset.x + 4, 896 }, 16, 255, 0);
+	PrintText(player.maxHealth, { offset.x + 4, 896 }, 16, 255, 0);
+	PrintText("Mana: ", { 10, 926 }, 16, 255, 0);
+	offset = PrintText(player.mana, { 102, 926 }, 16, 255, 0);
 	offset = PrintText("/", { offset.x + 4, 926 }, 16, 255, 0);
-	PrintText(player.maxHealth, { offset.x + 4, 926 }, 16, 255, 0);
+	PrintText(player.maxMana, { offset.x + 4, 926 }, 16, 255, 0);
 
 	if (player.selectedEnemy >= 0)
 		if (RayTracing(enemies[player.selectedEnemy].position, player.position) > 5)
@@ -757,6 +793,17 @@ void Draw()
 			SDL_Rect rect = { ConvBig(i, player.x()),ConvBig(j, player.y()),32,32 };
 
 			int blocks = RayTracing({ i, j }, player.position);
+			SDL_SetRenderDrawColor(ren, GetAlpha(30, blocks), GetAlpha(30, blocks), GetAlpha(30, blocks), 255);
+			SDL_RenderFillRect(ren, &rect);
+			for (int l = 0; l < LAMPS_COUNT; l++)
+				if (Distance(player.position, lamps[l].position) <= 15 && RayTracing(lamps[l].position, player.position) <= 6)
+				{
+					blocks = Min(blocks, Max(RayTracing({ i, j }, lamps[l].position) + lamps[l].bright, 0));
+					SDL_SetRenderDrawColor(ren, GetAlpha(30, blocks), GetAlpha(30, blocks), GetAlpha(30, blocks), 255);
+					SDL_RenderFillRect(ren, &rect);
+					RenderImage(lamps[l].textureId, { ConvBig(lamps[l].position.x, player.x()),ConvBig(lamps[l].position.y, player.y()) }, 32, 32, 255);
+				}
+
 			if (blocks <= 5 && map[i][j] == 1)
 				mapOverview[i][j] = 1;
 			if (map[i][j] == 1)
@@ -764,7 +811,7 @@ void Draw()
 				SDL_SetRenderDrawColor(ren, GetAlpha(138, blocks), GetAlpha(22, blocks), GetAlpha(31, blocks), 255);
 				SDL_RenderFillRect(ren, &rect);
 			}
-			else
+			else if (map[i][j] == 0)
 			{
 				SDL_SetRenderDrawColor(ren, GetAlpha(30, blocks), GetAlpha(30, blocks), GetAlpha(30, blocks), 255);
 				SDL_RenderFillRect(ren, &rect);
@@ -779,13 +826,17 @@ void Draw()
 	SDL_SetRenderDrawColor(ren, 114, 230, 221, 255);
 	for (int i = 0; i < enemiesCount; i++)
 	{
-		int blocks = RayTracing(enemies[i].position, player.position);
-		rect = { ConvBig(enemies[i].x(), player.x()) ,ConvBig(enemies[i].y(), player.y()),32,32 };
-		SDL_SetRenderDrawColor(ren, GetAlpha(198, blocks), GetAlpha(101, blocks), GetAlpha(202, blocks), 255);
-		SDL_RenderFillRect(ren, &rect);
-		if (blocks <= 5)
+		if (Distance(player.position, enemies[i].position) <= 20)
 		{
-			RenderImage(3, { rect.x, rect.y }, 32, 32, GetAlpha(255, blocks));
+			int blocks = RayTracing(enemies[i].position, player.position);
+			for (int l = 0; l < LAMPS_COUNT; l++)
+				if (Distance(player.position, lamps[l].position) <= 15 && RayTracing(lamps[l].position, player.position) <= 5)
+					blocks = Min(blocks, Max(RayTracing(enemies[i].position, lamps[l].position) + lamps[l].bright, 0));
+			rect = { ConvBig(enemies[i].x(), player.x()) ,ConvBig(enemies[i].y(), player.y()),32,32 };
+			SDL_SetRenderDrawColor(ren, GetAlpha(198, blocks), GetAlpha(101, blocks), GetAlpha(202, blocks), 255);
+			SDL_RenderFillRect(ren, &rect);
+			if (blocks <= 5)
+				RenderImage(3, { rect.x, rect.y }, 32, 32, GetAlpha(255, blocks));
 		}
 	}
 
@@ -796,8 +847,8 @@ void SpawnPlayer()
 {
 	do
 	{
-		player.x(rand() % MAP_SIZE);
-		player.y(rand() % MAP_SIZE);
+		player.x(Random(0, MAP_SIZE - 1));
+		player.y(Random(0, MAP_SIZE - 1));
 	} while (map[player.x()][player.y()] != 0);
 
 	player.maxHealth = 10;
@@ -811,8 +862,8 @@ void SpawnEnemies()
 		Enemy enemy;
 		do
 		{
-			enemy.x(rand() % MAP_SIZE);
-			enemy.y(rand() % MAP_SIZE);
+			enemy.x(Random(0, MAP_SIZE - 1));
+			enemy.y(Random(0, MAP_SIZE - 1));
 		} while (map[enemy.x()][enemy.y()] != 0);
 		enemies[i] = enemiesTypes[enemies[i].type];
 		enemies[i].position = enemy.position;
@@ -851,7 +902,7 @@ Path FindPath(Position start, Position end)
 	int w[MAP_SIZE][MAP_SIZE];
 	for (int i = 0; i < MAP_SIZE; i++)
 		for (int j = 0; j < MAP_SIZE; j++)
-			if (map[i][j] == 1 || !CheckEntity({ i,j }) && !Comp(end, { i,j }) && !Comp(start, { i,j }))
+			if (map[i][j] == 1 || map[i][j] == 2 || !CheckEntity({ i,j }) && !Comp(end, { i,j }) && !Comp(start, { i,j }))
 				w[i][j] = -1;
 			else if (i == start.x && j == start.y)
 				w[i][j] = 1;
@@ -1000,8 +1051,10 @@ void MakeEnemyMove(Enemy& enemy)
 		while (enemy.moves > 0 && !CheckAttackDist(enemy, player))
 		{
 			enemy.NewPath(FindPath(enemy.position, player.position));
-
+			//printf("%d",enemy.path.len);
 			enemy.Move();
+			if (enemy.path.len <= 0)
+				break;
 		}
 
 		for (int i = 0; i < enemy.attacks; i++)
@@ -1015,8 +1068,12 @@ void MakeEnemyMove(Enemy& enemy)
 			}
 		}
 	}
-	else
+	else if (Distance(player.position, enemy.position) <= 15)
 	{
+		if (enemy.path.len > 0)
+			enemy.Move();
+		else if (Random(0, 15) <= 3)
+			enemy.NewPath(FindPath(enemy.position, { enemy.position.x + Random(-2,2),enemy.position.y + Random(-2,2) }));
 		enemy.Move();
 	}
 	enemy.moves = enemiesTypes[enemy.type].moves;
