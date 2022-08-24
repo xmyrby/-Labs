@@ -770,6 +770,8 @@ void DrawUI()
 		buttons[2].position.y = 512;
 		buttons[2].active = true;
 		buttons[2].DrawButton();
+		for (int i = 0; i < 3; i++)
+			buttons[3 + i].active = false;
 	}
 	else if (playerMenu == 1)
 	{
@@ -863,6 +865,8 @@ void DrawUI()
 	}
 	else if (playerMenu == 3)
 	{
+		buttons[2].active = false;
+		buttons[1].active = false;
 		SDL_Rect rect = { 320,240,320,480 };
 		SDL_SetRenderDrawColor(ren, 0, 0, 0, 155);
 		SDL_RenderFillRect(ren, &rect);
@@ -895,6 +899,27 @@ void DrawUI()
 
 			offset = PrintText("Level: ", { 336,336 }, 16, 255, 0);
 			PrintText(item.level, { offset.x,336 }, 16, 255, 0);
+
+			PrintText("Bonuses:", { 336,384 }, 16, 255, 0);
+			for (int i = 0; i < item.bonusesCount; i++)
+			{
+				switch (item.bonuses[i].type)
+				{
+				case 0:
+					offset = PrintText("Strength ", { 336,432 + i * 24 }, 16, 255, 0);
+					break;
+				case 1:
+					offset = PrintText("Vitality ", { 336,432 + i * 24 }, 16, 255, 0);
+					break;
+				case 2:
+					offset = PrintText("Protection ", { 336,432 + i * 24 }, 16, 255, 0);
+					break;
+				default:
+					break;
+				}
+
+				PrintText(item.bonuses[i].value + (item.level - 1), { offset.x,432 + i * 24 }, 16, 255, 0);
+			}
 
 		}
 	}
