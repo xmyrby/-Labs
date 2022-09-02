@@ -169,7 +169,7 @@ struct Player : Entity
 	int mana;
 	int maxMana;
 
-	int equipment[4]{ 0,1,-1,-1 };
+	int equipment[4][2]{ {0,1},{1,2},{-1, 0},{-1, 0} };
 
 	int params[3]{ 1,1,1 };
 };
@@ -842,21 +842,21 @@ void DrawUI()
 		RenderImage(19, { 640,480 }, 32, 32, 255);
 		PrintText(player.gold, { 676, 488 }, 16, 255, 4);
 
-		if (player.equipment[0] != -1)
+		if (player.equipment[0][0] != -1)
 		{
 			RenderImage(14, { 768,512 }, 64, 64, 255);
-			RenderImage(items[player.equipment[0]].iconTextureId, { 768,512 }, 64, 64, 255);
-			Item item = items[player.equipment[0]];
+			RenderImage(items[player.equipment[0][0]].iconTextureId, { 768,512 }, 64, 64, 255);
+			Item item = items[player.equipment[0][0]];
 		}
 		else
 		{
 			RenderImage(10, { 768,512 }, 64, 64, 255);
 		}
-		if (player.equipment[1] != -1)
+		if (player.equipment[1][0] != -1)
 		{
 			RenderImage(14, { 768,592 }, 64, 64, 255);
-			RenderImage(items[player.equipment[1]].iconTextureId, { 768,592 }, 64, 64, 255);
-			Item item = items[player.equipment[1]];
+			RenderImage(items[player.equipment[1][0]].iconTextureId, { 768,592 }, 64, 64, 255);
+			Item item = items[player.equipment[1][0]];
 		}
 		else
 		{
