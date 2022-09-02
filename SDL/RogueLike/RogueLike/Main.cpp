@@ -136,6 +136,7 @@ struct Entity
 	int attackrange = 1;
 	int regeneration = 1;
 	int level = 1;
+	int protection;
 
 	int x()
 	{
@@ -171,7 +172,7 @@ struct Player : Entity
 
 	int equipment[4][2]{ {0,1},{1,2},{-1, 0},{-1, 0} };
 
-	int params[3]{ 1,1,1 };
+	int params[4]{ 1,1,1,1 };
 };
 
 struct Enemy : Entity
@@ -182,7 +183,6 @@ struct Enemy : Entity
 	int iconTextureId;
 	int xpReward;
 	int goldReward;
-	int protection;
 	int dropChance;
 
 	void NewPath(Path nPath)
@@ -250,7 +250,7 @@ Item* items;
 
 Overlay overlay;
 
-SDL_Color colors[5];
+SDL_Color colors[6];
 
 Lamp lamps[LAMPS_COUNT];
 
@@ -311,9 +311,51 @@ void InitItems()
 
 void RecalculatePlayer()
 {
-	player.maxHealth = 10 + (player.level - 1) * 2 + player.params[1] * player.level / 4;
-	player.damage = 1 + player.params[0] * player.level / 2;
+	player.maxHealth = 10 + (player.level - 1) * 2 + player.params[1] * (player.level / 4 + 1);
+	player.damage = player.params[0] * (player.level / 2 + 1);
+	player.protection = player.params[2] * (player.level / 3 + 1);
+
+	for (int i = 0; i < 4; i++)
+	{
+		if (player.equipment[i][0])
+			break;
+		Item item = items[player.equipment[i][0]];
+		item.level = player.equipment[i][1];
+
+		for (int j = 0; j < item.bonusesCount; j++)
+		{
+			if (item.bonuses[j].type == 0)
+				player.damage += (item.bonuses[j].value + item.level - 1) * item.level * (player.level / 2 + 1);
+			else if (item.bonuses[j].type == 1)
+				player.maxHealth += (item.bonuses[j].value + item.level - 1) * (player.level / 4 + 1);
+			else if (item.bonuses[j].type == 2)
+				player.protection += (item.bonuses[j].value + item.level - 1) * (player.level / 3 + 1);
+		}
+	}
 	player.health = Min(player.maxHealth, player.health);
+}
+
+int GetItemBonus(int bonusId)
+{
+	int bonus = 0;
+	for (int i = 0; i < 4; i++)
+	{
+		if (player.equipment[i][0])
+			break;
+		Item item = items[player.equipment[i][0]];
+		item.level = player.equipment[i][1];
+
+		for (int j = 0; j < item.bonusesCount; j++)
+		{
+			if (item.bonuses[j].type == 0 && bonusId == 0)
+				bonus += (item.bonuses[j].value + item.level - 1) * item.level * (player.level / 2 + 1);
+			else if (item.bonuses[j].type == 1 && bonusId == 1)
+				bonus += (item.bonuses[j].value + item.level - 1) * (player.level / 4 + 1);
+			else if (item.bonuses[j].type == 2 && bonusId == 2)
+				bonus += (item.bonuses[j].value + item.level - 1) * (player.level / 3 + 1);
+		}
+	}
+	return bonus;
 }
 
 void InitColors()
@@ -323,6 +365,7 @@ void InitColors()
 	colors[2] = { 0,0,0 };
 	colors[3] = { 100,255,100 };
 	colors[4] = { 232,211,68 };
+	colors[5] = { 200,200,255 };
 }
 
 void DeInit(char error)
@@ -791,28 +834,52 @@ void DrawUI()
 		offset = PrintText("Points ", { 656, 520 }, 16, 255, 0);
 		PrintText(player.points, { offset.x, 520 }, 16, 255, 0);
 
-		offset = PrintText("Strength ", { 656, 560 }, 16, 255, 0);
-		offset = PrintText(player.params[0], { offset.x, 560 }, 16, 255, 0);
+		int bn = GetItemBonus(0);
+
+		offset = PrintText("Strength ", { 656, 560 }, 12, 255, 0);
+		offset = PrintText(player.params[0] + bn, { offset.x, 560 }, 12, 255, 0);
+		if (bn)
+		{
+			offset = PrintText(" (+", { offset.x, 560 }, 12, 255, 5);
+			offset = PrintText(bn, { offset.x, 560 }, 12, 255, 5);
+			offset = PrintText(")", { offset.x, 560 }, 12, 255, 5);
+		}
 		if (player.points > 0)
 		{
-			offset = PrintText("Cost: ", { offset.x + 36, 564 }, 12, 255, 0);
-			PrintText(floor(1 + player.params[0] * 0.4), { offset.x, 562 }, 12, 255, 0);
+			offset = PrintText("Cost: ", { offset.x + 16, 560 }, 12, 255, 0);
+			PrintText(floor(1 + player.params[0] * 0.4), { offset.x, 560 }, 12, 255, 0);
 		}
 
-		offset = PrintText("Vitality ", { 656, 592 }, 16, 255, 0);
-		offset = PrintText(player.params[1], { offset.x, 592 }, 16, 255, 0);
+		bn = GetItemBonus(1);
+
+		offset = PrintText("Vitality ", { 656, 592 }, 12, 255, 0);
+		offset = PrintText(player.params[1] + bn, { offset.x, 592 }, 12, 255, 0);
+		if (bn)
+		{
+			offset = PrintText(" (+", { offset.x, 592 }, 12, 255, 5);
+			offset = PrintText(bn, { offset.x, 592 }, 12, 255, 5);
+			offset = PrintText(")", { offset.x, 592 }, 12, 255, 5);
+		}
 		if (player.points > 0)
 		{
-			offset = PrintText("Cost: ", { offset.x + 36, 594 }, 12, 255, 0);
+			offset = PrintText("Cost: ", { offset.x + 16, 592 }, 12, 255, 0);
 			PrintText(floor(1 + player.params[1] * 0.4), { offset.x, 592 }, 12, 255, 0);
 		}
 
-		offset = PrintText("Protection ", { 656, 624 }, 16, 255, 0);
-		offset = PrintText(player.params[2], { offset.x, 624 }, 16, 255, 0);
+		bn = GetItemBonus(2);
+
+		offset = PrintText("Protection ", { 656, 624 }, 12, 255, 0);
+		offset = PrintText(player.params[2] + bn, { offset.x, 624 }, 12, 255, 0);
+		if (bn)
+		{
+			offset = PrintText(" (+", { offset.x, 624 }, 12, 255, 5);
+			offset = PrintText(bn, { offset.x, 624 }, 12, 255, 5);
+			offset = PrintText(")", { offset.x, 624 }, 12, 255, 5);
+		}
 		if (player.points > 0)
 		{
-			offset = PrintText("Cost: ", { offset.x + 36, 626 }, 12, 255, 0);
-			PrintText(floor(1 + player.params[2] * 0.4), { offset.x, 626 }, 12, 255, 0);
+			offset = PrintText("Cost: ", { offset.x + 16, 624 }, 12, 255, 0);
+			PrintText(floor(1 + player.params[2] * 0.4), { offset.x, 624 }, 12, 255, 0);
 		}
 
 		for (int i = 0; i < 3; i++)
@@ -1215,7 +1282,7 @@ void MakeEnemyMove(Enemy& enemy)
 		{
 			if (CheckAttackDist(enemy, player))
 			{
-				int damage = round(enemy.damage / floor(1 + player.params[2] / 3));
+				int damage = round(enemy.damage / floor(1 + player.protection / 3));
 				player.health -= damage;
 				enemy.moves--;
 				overlay.AddNum(player.position, -damage, 1);

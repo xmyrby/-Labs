@@ -5,3 +5,7 @@
 	-(Count of Items)-(Name)
 	-(Texture Id) -(Type) -(BonusesCount)
 	-(Bonus Type) -(Bonus Value) VxBonusesCount
+#Bonuses
+0  -  Strength
+1  -  Vitality
+2  -  Protection
