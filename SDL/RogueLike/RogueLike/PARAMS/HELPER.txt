@@ -2,10 +2,25 @@
 	-(Count of Types)-(Name)
 	-(Texture Id) -(Health) -(Attacks) -(Moves) -(Damage) -(Attack Range) -(Regeneration) -(XpReward) -(Protection) -(GoldReward) -(DropChance)
 #Items
-	-(Count of Items)-(Name)
-	-(Texture Id) -(Type) -(BonusesCount)
+	-(Count of Items)
+	-(Name)
+	-(Texture Id) -(Type) -(Bonuses Count) -(Requirements Count)
 	-(Bonus Type) -(Bonus Value) VxBonusesCount
+	-(Requirement Type) -(Requirement Value) VxRequirementsCount
+
+#Types
+0  -  Head
+1  -  Body
+2  -  Pants
+3  -  Boots
+
 #Bonuses
 0  -  Strength
 1  -  Vitality
 2  -  Protection
+
+#Requirements
+0  -  Level
+1  -  Strength
+2  -  Vitality
+3  -  Protection

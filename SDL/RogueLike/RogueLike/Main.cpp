@@ -20,7 +20,7 @@ const int CELLS_FILL = 10000;
 const int ANTS_COUNT = 6;
 const int LAMPS_COUNT = 15;
 
-int enemiesCount = 100;
+int enemiesCount = 200;
 int enemiesTypesCount = 0;
 int lastBtnId = -1;
 int playerMenu = 0;
@@ -69,7 +69,7 @@ Position PrintText(const char* var, Position position, int siz, Uint8 alpha, int
 void RenderImage(int textureId, Position position, int w, int h, int alpha);
 bool CheckEntity(Position pos);
 
-struct Bonus
+struct ItemParam
 {
 	int type;
 	int value;
@@ -121,8 +121,10 @@ struct Item
 	int type;
 	int bonusesCount;
 	int level = 1;
+	int requirementsCount;
 
-	Bonus* bonuses;
+	ItemParam* bonuses;
+	ItemParam* requirements;
 };
 
 struct Entity
@@ -250,7 +252,7 @@ Item* items;
 
 Overlay overlay;
 
-SDL_Color colors[6];
+SDL_Color colors[7];
 
 Lamp lamps[LAMPS_COUNT];
 
@@ -300,10 +302,13 @@ void InitItems()
 		fgets(items[i].name, 126, ft);
 
 		items[i].name[strlen(items[i].name) - 1] = '\0';
-		fscanf_s(ft, "%d %d %d", &items[i].iconTextureId, &items[i].type, &items[i].bonusesCount);
-		items[i].bonuses = (Bonus*)malloc(sizeof(Bonus) * items[i].bonusesCount);
+		fscanf_s(ft, "%d %d %d %d", &items[i].iconTextureId, &items[i].type, &items[i].bonusesCount, &items[i].requirementsCount);
+		items[i].bonuses = (ItemParam*)malloc(sizeof(ItemParam) * items[i].bonusesCount);
+		items[i].requirements = (ItemParam*)malloc(sizeof(ItemParam) * items[i].requirementsCount);
 		for (int j = 0; j < items[i].bonusesCount; j++)
 			fscanf_s(ft, "%d %d", &items[i].bonuses[j].type, &items[i].bonuses[j].value);
+		for (int j = 0; j < items[i].requirementsCount; j++)
+			fscanf_s(ft, "%d %d", &items[i].requirements[j].type, &items[i].requirements[j].value);
 	}
 
 	fclose(ft);
@@ -317,19 +322,22 @@ void RecalculatePlayer()
 
 	for (int i = 0; i < 4; i++)
 	{
-		if (player.equipment[i][0])
-			break;
-		Item item = items[player.equipment[i][0]];
-		item.level = player.equipment[i][1];
-
-		for (int j = 0; j < item.bonusesCount; j++)
+		if (player.equipment[i][0] == -1)
 		{
-			if (item.bonuses[j].type == 0)
-				player.damage += (item.bonuses[j].value + item.level - 1) * item.level * (player.level / 2 + 1);
-			else if (item.bonuses[j].type == 1)
-				player.maxHealth += (item.bonuses[j].value + item.level - 1) * (player.level / 4 + 1);
-			else if (item.bonuses[j].type == 2)
-				player.protection += (item.bonuses[j].value + item.level - 1) * (player.level / 3 + 1);
+			Item item = items[player.equipment[i][0]];
+			item.level = player.equipment[i][1];
+
+			for (int j = 0; j < item.bonusesCount; j++)
+			{
+				if (item.bonuses[j].type == 0)
+					player.damage += (item.bonuses[j].value + item.level - 1) * (player.level / 2 + 1);
+				else if (item.bonuses[j].type == 1)
+					player.maxHealth += (item.bonuses[j].value + item.level - 1) * (player.level / 4 + 1);
+				else if (item.bonuses[j].type == 2)
+				{
+					player.protection += (item.bonuses[j].value + item.level - 1) * (player.level / 3 + 1);
+				}
+			}
 		}
 	}
 	player.health = Min(player.maxHealth, player.health);
@@ -340,19 +348,20 @@ int GetItemBonus(int bonusId)
 	int bonus = 0;
 	for (int i = 0; i < 4; i++)
 	{
-		if (player.equipment[i][0])
-			break;
-		Item item = items[player.equipment[i][0]];
-		item.level = player.equipment[i][1];
-
-		for (int j = 0; j < item.bonusesCount; j++)
+		if (player.equipment[i][0] != -1)
 		{
-			if (item.bonuses[j].type == 0 && bonusId == 0)
-				bonus += (item.bonuses[j].value + item.level - 1) * item.level * (player.level / 2 + 1);
-			else if (item.bonuses[j].type == 1 && bonusId == 1)
-				bonus += (item.bonuses[j].value + item.level - 1) * (player.level / 4 + 1);
-			else if (item.bonuses[j].type == 2 && bonusId == 2)
-				bonus += (item.bonuses[j].value + item.level - 1) * (player.level / 3 + 1);
+			Item item = items[player.equipment[i][0]];
+			item.level = player.equipment[i][1];
+
+			for (int j = 0; j < item.bonusesCount; j++)
+			{
+				if (item.bonuses[j].type == 0 && bonusId == 0)
+					bonus += (item.bonuses[j].value + item.level - 1);
+				else if (item.bonuses[j].type == 1 && bonusId == 1)
+					bonus += (item.bonuses[j].value + item.level - 1);
+				else if (item.bonuses[j].type == 2 && bonusId == 2)
+					bonus += (item.bonuses[j].value + item.level - 1);
+			}
 		}
 	}
 	return bonus;
@@ -366,6 +375,7 @@ void InitColors()
 	colors[3] = { 100,255,100 };
 	colors[4] = { 232,211,68 };
 	colors[5] = { 200,200,255 };
+	colors[6] = { 190,162,88 };
 }
 
 void DeInit(char error)
@@ -426,7 +436,7 @@ void InitEnemies()
 
 void KillEnemy(int id)
 {
-	player.xp += enemies[id].xpReward;
+	player.xp += enemies[id].xpReward + enemies[id].xpReward * enemies[id].level / 4;
 	int gold = enemies[id].goldReward;
 	gold = Random(gold / 2, gold);
 	player.gold += gold;
@@ -448,13 +458,14 @@ void KillEnemy(int id)
 
 void InitButtons()
 {
-	buttons = (Button*)malloc(sizeof(Button) * 6);
+	buttons = (Button*)malloc(sizeof(Button) * 7);
 	buttons[0] = *(new Button({ 652,100 }, new char[7]{ "Attack" }, 296, 24, false, 30, 6, true));
 	buttons[1] = *(new Button({ 928,480 }, new char[2]{ "\0" }, 32, 32, false, NULL, 7, false));
 	buttons[2] = *(new Button({ 928,512 }, new char[2]{ "\0" }, 32, 32, false, NULL, 9, false));
 	buttons[3] = *(new Button({ 928,558 }, new char[2]{ "\0" }, 24, 24, false, NULL, 8, false));
 	buttons[4] = *(new Button({ 928,590 }, new char[2]{ "\0" }, 24, 24, false, NULL, 8, false));
 	buttons[5] = *(new Button({ 928,622 }, new char[2]{ "\0" }, 24, 24, false, NULL, 8, false));
+	buttons[6] = *(new Button({ 400,674 }, new char[5]{ "Robe" }, 160, 24, false, 64, NULL, true));
 }
 
 void Init()
@@ -778,6 +789,7 @@ void DrawUI()
 				}
 			}
 	}
+	buttons[6].active = false;
 
 	if (player.selectedEnemy != -1)
 	{
@@ -837,12 +849,11 @@ void DrawUI()
 		int bn = GetItemBonus(0);
 
 		offset = PrintText("Strength ", { 656, 560 }, 12, 255, 0);
-		offset = PrintText(player.params[0] + bn, { offset.x, 560 }, 12, 255, 0);
+		offset = PrintText(player.params[0], { offset.x, 560 }, 12, 255, 0);
 		if (bn)
 		{
-			offset = PrintText(" (+", { offset.x, 560 }, 12, 255, 5);
+			offset = PrintText(" + ", { offset.x, 560 }, 12, 255, 5);
 			offset = PrintText(bn, { offset.x, 560 }, 12, 255, 5);
-			offset = PrintText(")", { offset.x, 560 }, 12, 255, 5);
 		}
 		if (player.points > 0)
 		{
@@ -853,12 +864,11 @@ void DrawUI()
 		bn = GetItemBonus(1);
 
 		offset = PrintText("Vitality ", { 656, 592 }, 12, 255, 0);
-		offset = PrintText(player.params[1] + bn, { offset.x, 592 }, 12, 255, 0);
+		offset = PrintText(player.params[1], { offset.x, 592 }, 12, 255, 0);
 		if (bn)
 		{
-			offset = PrintText(" (+", { offset.x, 592 }, 12, 255, 5);
+			offset = PrintText(" + ", { offset.x, 592 }, 12, 255, 5);
 			offset = PrintText(bn, { offset.x, 592 }, 12, 255, 5);
-			offset = PrintText(")", { offset.x, 592 }, 12, 255, 5);
 		}
 		if (player.points > 0)
 		{
@@ -869,12 +879,11 @@ void DrawUI()
 		bn = GetItemBonus(2);
 
 		offset = PrintText("Protection ", { 656, 624 }, 12, 255, 0);
-		offset = PrintText(player.params[2] + bn, { offset.x, 624 }, 12, 255, 0);
+		offset = PrintText(player.params[2], { offset.x, 624 }, 12, 255, 0);
 		if (bn)
 		{
-			offset = PrintText(" (+", { offset.x, 624 }, 12, 255, 5);
+			offset = PrintText(" + ", { offset.x, 624 }, 12, 255, 5);
 			offset = PrintText(bn, { offset.x, 624 }, 12, 255, 5);
-			offset = PrintText(")", { offset.x, 624 }, 12, 255, 5);
 		}
 		if (player.points > 0)
 		{
@@ -899,10 +908,10 @@ void DrawUI()
 		buttons[2].active = true;
 		buttons[2].DrawButton();
 		buttons[1].active = false;
+
 		SDL_Rect rect = { 640,480,320,480 };
 		SDL_SetRenderDrawColor(ren, 0, 0, 0, 55);
 		SDL_RenderFillRect(ren, &rect);
-
 
 		RenderImage(12, { 768,672 }, 64, 64, 255);
 		RenderImage(13, { 768,752 }, 64, 64, 255);
@@ -934,6 +943,7 @@ void DrawUI()
 	{
 		buttons[2].active = false;
 		buttons[1].active = false;
+
 		SDL_Rect rect = { 320,240,320,480 };
 		SDL_SetRenderDrawColor(ren, 0, 0, 0, 155);
 		SDL_RenderFillRect(ren, &rect);
@@ -967,27 +977,87 @@ void DrawUI()
 			offset = PrintText("Level: ", { 336,336 }, 16, 255, 0);
 			PrintText(item.level, { offset.x,336 }, 16, 255, 0);
 
-			PrintText("Bonuses:", { 336,384 }, 16, 255, 0);
+			PrintText("Bonuses:", { 336,384 }, 16, 255, 6);
+
 			for (int i = 0; i < item.bonusesCount; i++)
 			{
 				switch (item.bonuses[i].type)
 				{
 				case 0:
-					offset = PrintText("Strength ", { 336,432 + i * 24 }, 16, 255, 0);
+					offset = PrintText("Strength ", { 336,408 + i * 24 }, 16, 255, 0);
 					break;
 				case 1:
-					offset = PrintText("Vitality ", { 336,432 + i * 24 }, 16, 255, 0);
+					offset = PrintText("Vitality ", { 336,408 + i * 24 }, 16, 255, 0);
 					break;
 				case 2:
-					offset = PrintText("Protection ", { 336,432 + i * 24 }, 16, 255, 0);
+					offset = PrintText("Protection ", { 336,408 + i * 24 }, 16, 255, 0);
 					break;
 				default:
 					break;
 				}
 
-				PrintText(item.bonuses[i].value + (item.level - 1), { offset.x,432 + i * 24 }, 16, 255, 0);
+				PrintText(item.bonuses[i].value + (item.level - 1), { offset.x,408 + i * 24 }, 16, 255, 0);
 			}
 
+			int bnDown = 432 + item.bonusesCount * 24;
+
+			PrintText("Requirements:", { 336,bnDown }, 16, 255, 6);
+
+			bnDown += 24;
+
+			for (int i = 0; i < item.requirementsCount; i++)
+			{
+				switch (item.requirements[i].type)
+				{
+				case 0:
+					offset = PrintText("Level ", { 336,bnDown + i * 24 }, 16, 255, 0);
+					break;
+				case 1:
+					offset = PrintText("Strength ", { 336,bnDown + i * 24 }, 16, 255, 0);
+					break;
+				case 2:
+					offset = PrintText("Vitality ", { 336,bnDown + i * 24 }, 16, 255, 0);
+					break;
+				case 3:
+					offset = PrintText("Protection ", { 336,bnDown + i * 24 }, 16, 255, 0);
+					break;
+				default:
+					break;
+				}
+
+				PrintText(item.requirements[i].value + (item.level - 1), { offset.x,bnDown + i * 24 }, 16, 255, 0);
+			}
+
+			bool robe = true;
+			for (int i = 0; i < item.requirementsCount; i++)
+			{
+				switch (item.requirements[i].type)
+				{
+				case 0:
+					if (item.requirements[i].value + (item.level - 1) > player.level)
+						robe = false;
+					break;
+				case 1:
+					if (item.requirements[i].value + (item.level - 1) > player.params[0])
+						robe = false;
+					break;
+				case 2:
+					if (item.requirements[i].value + (item.level - 1) > player.params[1])
+						robe = false;
+					break;
+				case 3:
+					if (item.requirements[i].value + (item.level - 1) > player.params[2])
+						robe = false;
+					break;
+				default:
+					break;
+				}
+			}
+
+			if (robe)
+				buttons[6].active = true;
+
+			buttons[6].DrawButton();
 		}
 	}
 }
@@ -1121,8 +1191,8 @@ bool CheckWd(int weight, int* weights)
 Path FindPath(Position start, Position end)
 {
 	int w[MAP_SIZE][MAP_SIZE];
-	for (int i = 0; i < MAP_SIZE; i++)
-		for (int j = 0; j < MAP_SIZE; j++)
+	for (int i = Max(Min(start.x, end.x) - 5, 0); i < Min(Max(start.x, end.x) + 5, 299); i++)
+		for (int j = Max(Min(start.y, end.y) - 5, 0); j < Min(Max(start.y, end.y) + 5, 299); j++)
 			if (map[i][j] == 1 || map[i][j] == 2 || !CheckEntity({ i,j }) && !Comp(end, { i,j }) && !Comp(start, { i,j }))
 				w[i][j] = -1;
 			else if (i == start.x && j == start.y)
@@ -1410,6 +1480,24 @@ void ButtonAction(int buttonId)
 			RecalculatePlayer();
 		}
 	}
+	else if (buttonId == 6)
+	{
+		Drop droped = drop[itemMenu];
+		int type = items[droped.id].type;
+
+		drop[itemMenu].id = player.equipment[type][0];
+		drop[itemMenu].level = player.equipment[type][1];
+
+		player.equipment[type][0] = droped.id;
+		player.equipment[type][1] = droped.level;
+
+		itemMenu = -1;
+		itemMenuType = -1;
+		buttonId = -1;
+		playerMenu = 0;
+
+		RecalculatePlayer();
+	}
 	else if (buttonId >= 100)
 	{
 		if (playerMenu != 3)
@@ -1442,7 +1530,7 @@ int CheckButtonClick(Position mPos)
 	}
 	else if ((mPos.x < 320 || mPos.x>640 || mPos.y < 240 || mPos.y>720))
 		playerMenu = 0;
-	for (int i = 0; i < 6; i++)
+	for (int i = 0; i < 7; i++)
 	{
 		Button button = buttons[i];
 		if (mPos.x >= button.position.x && mPos.y >= button.position.y && mPos.x <= button.position.x + button.width && mPos.y <= button.position.y + button.height && button.active)
@@ -1482,9 +1570,19 @@ int main()
 		{
 			_down = true;
 			lastBtnId = CheckButtonClick(_mouse);
-			ButtonAction(lastBtnId);
-			if (playerMenu != 3)
+			if (lastBtnId < 100)
+			{
+				ButtonAction(lastBtnId);
+				if (playerMenu != 3)
+					player.selectedEnemy = CheckSelection(_mouse);
+			}
+			else
+			{
 				player.selectedEnemy = CheckSelection(_mouse);
+				if (player.selectedEnemy == -1)
+					ButtonAction(lastBtnId);
+			}
+
 			Draw();
 		}
 		if ((events & SDL_BUTTON_LMASK) == 0)
