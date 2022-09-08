@@ -29,6 +29,7 @@ int itemsCount = 0;
 int dropCount = 0;
 int itemMenuType = 0;
 int itemMenu = 0;
+
 bool saveMap = true;
 
 bool showMap = false;
@@ -318,6 +319,54 @@ int map[MAP_SIZE][MAP_SIZE];
 int mapOverview[MAP_SIZE][MAP_SIZE];
 Drop* drop;
 
+int GetItemsBonus(int bonusId)
+{
+	int bonus = 0;
+	for (int i = 0; i < 5; i++)
+	{
+		if (player.equipment[i][0] != -1)
+		{
+			Item item = items[player.equipment[i][0]];
+			item.level = player.equipment[i][1];
+
+			for (int j = 0; j < item.bonusesCount; j++)
+			{
+				if (item.bonuses[j].type == 0 && bonusId == 0)
+					bonus += (item.bonuses[j].value + item.level - 1);
+				else if (item.bonuses[j].type == 1 && bonusId == 1)
+					bonus += (item.bonuses[j].value + item.level - 1);
+				else if (item.bonuses[j].type == 2 && bonusId == 2)
+					bonus += (item.bonuses[j].value + item.level - 1);
+				else if (item.bonuses[j].type == 3 && bonusId == 3)
+					bonus += item.bonuses[j].value;
+				else if (item.bonuses[j].type == 4 && bonusId == 4)
+					bonus += item.bonuses[j].value;
+				else if (item.bonuses[j].type == 5 && bonusId == 5)
+					bonus += (item.bonuses[j].value + item.level - 1);
+			}
+		}
+	}
+	return bonus;
+}
+
+int GetCellBonus(int cellId, int bonusType)
+{
+	if (player.equipment[cellId][0] != -1)
+	{
+		Item item = items[player.equipment[cellId][0]];
+		item.level = player.equipment[cellId][1];
+
+		for (int j = 0; j < item.bonusesCount; j++)
+		{
+			if (item.bonuses[j].type == bonusType)
+				if (item.bonuses[j].type != 3 && item.bonuses[j].type != 4)
+					return item.bonuses[j].value + (item.level - 1);
+				else
+					return item.bonuses[j].value;
+		}
+	}
+}
+
 void AddDrop(int itemId, Position position, int level)
 {
 	dropCount++;
@@ -367,79 +416,12 @@ void InitItems()
 
 void RecalculatePlayer()
 {
-	player.maxHealth = 10 + (player.level - 1) * 2 + player.params[1] * (player.level / 4 + 1);
-	player.damage = player.params[0] * (player.level / 2 + 1);
-	player.protection = player.params[2] * (player.level / 3 + 1);
+	player.maxHealth = 10 + (player.level - 1) * 2 + player.params[1] - 1 + GetItemsBonus(1);
+	player.damage = player.params[0] + GetItemsBonus(0);
+	player.protection = player.params[2] + GetItemsBonus(2);
+	player.agility = player.params[3] + GetItemsBonus(5);
 
-	for (int i = 0; i < 5; i++)
-	{
-		if (player.equipment[i][0] == -1)
-		{
-			Item item = items[player.equipment[i][0]];
-			item.level = player.equipment[i][1];
-
-			for (int j = 0; j < item.bonusesCount; j++)
-			{
-				if (item.bonuses[j].type == 0)
-					player.damage += (item.bonuses[j].value + item.level - 1) * (player.level / 2 + 1);
-				else if (item.bonuses[j].type == 1)
-					player.maxHealth += (item.bonuses[j].value + item.level - 1) * (player.level / 4 + 1);
-				else if (item.bonuses[j].type == 2)
-				{
-					player.protection += (item.bonuses[j].value + item.level - 1) * (player.level / 3 + 1);
-				}
-			}
-		}
-	}
 	player.health = Min(player.maxHealth, player.health);
-}
-
-int GetItemsBonus(int bonusId)
-{
-	int bonus = 0;
-	for (int i = 0; i < 5; i++)
-	{
-		if (player.equipment[i][0] != -1)
-		{
-			Item item = items[player.equipment[i][0]];
-			item.level = player.equipment[i][1];
-
-			for (int j = 0; j < item.bonusesCount; j++)
-			{
-				if (item.bonuses[j].type == 0 && bonusId == 0)
-					bonus += (item.bonuses[j].value + item.level - 1);
-				else if (item.bonuses[j].type == 1 && bonusId == 1)
-					bonus += (item.bonuses[j].value + item.level - 1);
-				else if (item.bonuses[j].type == 2 && bonusId == 2)
-					bonus += (item.bonuses[j].value + item.level - 1);
-				else if (item.bonuses[j].type == 3 && bonusId == 3)
-					bonus += item.bonuses[j].value;
-				else if (item.bonuses[j].type == 4 && bonusId == 4)
-					bonus += item.bonuses[j].value;
-				else if (item.bonuses[j].type == 5 && bonusId == 5)
-					bonus += (item.bonuses[j].value + item.level - 1);
-			}
-		}
-	}
-	return bonus;
-}
-
-int GetCellBonus(int cellId, int bonusType)
-{
-	if (player.equipment[cellId][0] != -1)
-	{
-		Item item = items[player.equipment[cellId][0]];
-		item.level = player.equipment[cellId][1];
-
-		for (int j = 0; j < item.bonusesCount; j++)
-		{
-			if (item.bonuses[j].type == bonusType)
-				if (item.bonuses[j].type != 3 && item.bonuses[j].type != 4)
-					return item.bonuses[j].value + (item.level - 1);
-				else
-					return item.bonuses[j].value;
-		}
-	}
 }
 
 void InitColors()
@@ -491,6 +473,7 @@ void LoadTextures()
 	textures[30] = IMG_LoadTexture(ren, "GFX\\EQP\\Item5.png");
 	textures[31] = IMG_LoadTexture(ren, "GFX\\EQP\\Item6.png");
 	textures[32] = IMG_LoadTexture(ren, "GFX\\EQP\\Item7.png");
+	textures[33] = IMG_LoadTexture(ren, "GFX\\EQP\\Item8.png");
 	textures[50] = IMG_LoadTexture(ren, "GFX\\Lamp.png");
 }
 
@@ -1159,6 +1142,9 @@ void DrawUI()
 				case 4:
 					offset = PrintText("Attacks +", { 336,408 + i * 24 }, 16, 255, 0);
 					break;
+				case 5:
+					offset = PrintText("Agility ", { 336,408 + i * 24 }, 16, 255, 0);
+					break;
 				default:
 					break;
 				}
@@ -1256,6 +1242,10 @@ void DrawUI()
 					break;
 				case 3:
 					if (item.requirements[i].value + (item.level - 1) > player.params[2])
+						robe = false;
+					break;
+				case 4:
+					if (item.requirements[i].value + (item.level - 1) > player.params[3])
 						robe = false;
 					break;
 				default:
@@ -1385,6 +1375,7 @@ void SpawnEnemies()
 		enemies[i].level = Random(1, 3);
 		enemies[i].maxHealth += enemies[i].maxHealth / 5 * (enemies[i].level - 1);
 		enemies[i].health = enemies[i].maxHealth;
+		enemies[i].damage += enemies[i].level - 1;
 	}
 }
 
@@ -1578,7 +1569,7 @@ void MakeEnemyMove(Enemy& enemy)
 		{
 			if (CheckAttackDist(enemy, player))
 			{
-				int damage = round(enemy.damage + enemy.damage * (enemy.level / 3) / floor(1 + player.protection / 3));
+				int damage = round(enemy.damage / floor(1 + player.protection / 3));
 				player.health -= damage;
 				enemy.moves--;
 				overlay.AddNum(player.position, -damage, 1);
