@@ -9,6 +9,7 @@ SDL_Renderer* ren = NULL;
 SDL_Surface* win_surf = NULL;
 TTF_Font* font = NULL;
 SDL_Texture* textures[51];
+SDL_Texture* lastRender;
 
 int winWdt = 960;
 int winHgt = 960;
@@ -28,8 +29,16 @@ int itemsCount = 0;
 int dropCount = 0;
 int itemMenuType = 0;
 int itemMenu = 0;
+bool saveMap = true;
 
 bool showMap = false;
+
+int Random(int a, int b)
+{
+	if (a >= b)
+		return 0;
+	return rand() % (b - a + 1) + a;
+}
 
 int Max(int a, int b)
 {
@@ -53,8 +62,10 @@ struct Position
 struct OverlayNum
 {
 	Position pos;
+	Position offset;
 	int num;
 	int color;
+	int alpha;
 };
 
 struct Lamp
@@ -62,6 +73,18 @@ struct Lamp
 	int textureId;
 	Position position;
 	int bright;
+};
+
+struct OverlayParticle
+{
+	Position pos;
+	float offX;
+	float offY;
+	int size;
+	int color;
+	int alpha;
+	float angleOfMove;
+	float moveSpeed;
 };
 
 Position PrintText(int var, Position position, int size, Uint8 alpha, int colorId);
@@ -214,24 +237,58 @@ struct Enemy : Entity
 struct Overlay
 {
 	OverlayNum* overlayNums;
+	OverlayParticle* overlayParticles;
 	int numsCount = 0;
+	int particlesCount = 0;
 
 	void Init()
 	{
 		overlayNums = (OverlayNum*)malloc(sizeof(OverlayNum));
+		overlayParticles = (OverlayParticle*)malloc(sizeof(OverlayParticle));
 	}
 
-	void Clear()
+	void ClearNum(int id)
 	{
-		numsCount = 0;
-		overlayNums = (OverlayNum*)realloc(overlayNums, 0);
+		for (int i = id; i < numsCount - 1; i++)
+		{
+			overlayNums[i] = overlayNums[i + 1];
+		}
+		numsCount--;
+
+		overlayNums = (OverlayNum*)realloc(overlayNums, sizeof(OverlayNum) * numsCount);
+	}
+
+	void ClearParticle(int id)
+	{
+		for (int i = id; i < particlesCount - 1; i++)
+		{
+			overlayParticles[i] = overlayParticles[i + 1];
+		}
+		particlesCount--;
+
+		overlayParticles = (OverlayParticle*)realloc(overlayParticles, sizeof(OverlayParticle) * particlesCount);
 	}
 
 	void AddNum(Position pos, int num, int color)
 	{
 		overlayNums = (OverlayNum*)realloc(overlayNums, sizeof(OverlayNum) * (numsCount + 1));
-		overlayNums[numsCount] = { pos,num, color };
+		Position posOff;
+		posOff.x = rand() % 16 + 4;
+		posOff.y = rand() % 16 + 6;
+		overlayNums[numsCount] = { pos,posOff,num, color, 255 };
 		numsCount++;
+	}
+
+	void AddParticle(Position pos, int size, int color, int count)
+	{
+
+		overlayParticles = (OverlayParticle*)realloc(overlayParticles, sizeof(OverlayParticle) * (particlesCount + count));
+		float angle = 6.28319 / count;
+		for (int i = 0; i < count; i++)
+		{
+			overlayParticles[particlesCount + i] = { pos,16,16,size + Random(size - 1,size + 1), color, Random(155,255),angle * i,(float)Random(5,8) };
+		}
+		particlesCount += count;
 	}
 };
 
@@ -253,7 +310,7 @@ Item* items;
 
 Overlay overlay;
 
-SDL_Color colors[8];
+SDL_Color colors[10];
 
 Lamp lamps[LAMPS_COUNT];
 
@@ -278,13 +335,6 @@ void DeleteDrop(int id)
 	dropCount--;
 
 	drop = (Drop*)realloc(drop, sizeof(Drop) * dropCount);
-}
-
-int Random(int a, int b)
-{
-	if (a >= b)
-		return 0;
-	return rand() % (b - a + 1) + a;
 }
 
 void InitItems()
@@ -374,7 +424,7 @@ int GetItemsBonus(int bonusId)
 	return bonus;
 }
 
-int GetCellBonus(int cellId, int bonusId)
+int GetCellBonus(int cellId, int bonusType)
 {
 	if (player.equipment[cellId][0] != -1)
 	{
@@ -383,8 +433,11 @@ int GetCellBonus(int cellId, int bonusId)
 
 		for (int j = 0; j < item.bonusesCount; j++)
 		{
-			if (item.bonuses[j].type == bonusId)
-				return item.bonuses[j].value;
+			if (item.bonuses[j].type == bonusType)
+				if (item.bonuses[j].type != 3 && item.bonuses[j].type != 4)
+					return item.bonuses[j].value + (item.level - 1);
+				else
+					return item.bonuses[j].value;
 		}
 	}
 }
@@ -399,6 +452,8 @@ void InitColors()
 	colors[5] = { 200,200,255 };
 	colors[6] = { 190,162,88 };
 	colors[7] = { 255,142,68 };
+	colors[8] = { 142,255,68 };
+	colors[9] = { 255,35,15 };
 }
 
 void DeInit(char error)
@@ -767,11 +822,36 @@ void DrawOverlay()
 	{
 		OverlayNum oNum = overlay.overlayNums[i];
 		Position pos = oNum.pos;
-		pos.x = ConvBig(pos.x, player.x()) + rand() % 16 + 4;
-		pos.y = ConvBig(pos.y, player.y()) + rand() % 16 + 6;
-		PrintText(oNum.num, pos, 16, 255, 2);
+		pos.x = ConvBig(pos.x, player.x()) + oNum.offset.x;
+		pos.y = ConvBig(pos.y, player.y()) + oNum.offset.y;
+		PrintText(oNum.num, pos, 16, overlay.overlayNums[i].alpha, 2);
 		pos.y--;
-		PrintText(oNum.num, pos, 16, 255, oNum.color);
+		PrintText(oNum.num, pos, 16, overlay.overlayNums[i].alpha, oNum.color);
+		overlay.overlayNums[i].offset.y -= 1;
+		overlay.overlayNums[i].alpha = Max(overlay.overlayNums[i].alpha - 3, 0);
+		if (overlay.overlayNums[i].alpha <= 0)
+			overlay.ClearNum(i);
+	}
+
+	for (int i = 0; i < overlay.particlesCount; i++)
+	{
+		OverlayParticle oPart = overlay.overlayParticles[i];
+		Position pos = oPart.pos;
+		pos.x = ConvBig(pos.x, player.x()) + (int)oPart.offX;
+		pos.y = ConvBig(pos.y, player.y()) + (int)oPart.offY;
+
+		SDL_Rect rect = { pos.x ,pos.y,oPart.size,oPart.size };
+		SDL_Color cl = colors[oPart.color];
+		SDL_SetRenderDrawColor(ren, cl.r, cl.g, cl.b, oPart.alpha);
+		SDL_RenderFillRect(ren, &rect);
+
+		overlay.overlayParticles[i].offX += cos(oPart.angleOfMove) * oPart.moveSpeed;
+		overlay.overlayParticles[i].offY += sin(oPart.angleOfMove) * oPart.moveSpeed;
+		overlay.overlayParticles[i].moveSpeed = Max(overlay.overlayParticles[i].moveSpeed - 0.01, 0);
+		overlay.overlayParticles[i].alpha -= 2;
+
+		if (overlay.overlayParticles[i].alpha <= 0)
+			overlay.ClearParticle(i);
 	}
 }
 
@@ -820,7 +900,7 @@ void DrawUI()
 				}
 			}
 	}
-	buttons[6].active = false;
+	buttons[15].active = false;
 
 	if (player.selectedEnemy != -1)
 	{
@@ -1083,23 +1163,30 @@ void DrawUI()
 					break;
 				}
 
+				int itemBonus;
 				if (item.bonuses[i].type != 3 && item.bonuses[i].type != 4)
-					offset = PrintText(item.bonuses[i].value + (item.level - 1), { offset.x,408 + i * 24 }, 16, 255, 0);
+					itemBonus = item.bonuses[i].value + (item.level - 1);
 				else
-					offset = PrintText(item.bonuses[i].value, { offset.x,408 + i * 24 }, 16, 255, 0);
+					itemBonus = item.bonuses[i].value;
 
-				int cellBonus = GetCellBonus(item.type, item.bonuses[i].type);
+				offset = PrintText(itemBonus, { offset.x,408 + i * 24 }, 16, 255, 0);
 
-				if (cellBonus >= item.bonuses[i].value)
+				if (player.equipment[item.type][0] != -1)
 				{
-					offset = PrintText(" -", { offset.x,408 + i * 24 }, 16, 255, 7);
-					offset = PrintText(cellBonus - item.bonuses[i].value, {offset.x,408 + i * 24}, 16, 255, 7);
+					int cellBonus = GetCellBonus(item.type, item.bonuses[i].type);
+
+					if (cellBonus > itemBonus)
+					{
+						offset = PrintText(" -", { offset.x,408 + i * 24 }, 16, 255, 7);
+						offset = PrintText(cellBonus - itemBonus, { offset.x,408 + i * 24 }, 16, 255, 7);
+					}
+					else if (cellBonus < itemBonus)
+					{
+						offset = PrintText(" +", { offset.x,408 + i * 24 }, 16, 255, 8);
+						offset = PrintText(itemBonus - cellBonus, { offset.x,408 + i * 24 }, 16, 255, 8);
+					}
 				}
-				else
-				{
-					offset = PrintText(" +", { offset.x,408 + i * 24 }, 16, 255, 7);
-					offset = PrintText(cellBonus - item.bonuses[i].value, { offset.x,408 + i * 24 }, 16, 255, 7);
-				}
+
 			}
 
 			int bnDown = 432 + item.bonusesCount * 24;
@@ -1115,31 +1202,31 @@ void DrawUI()
 				{
 				case 0:
 				{
-					color = player.level >= item.requirements[i].value ? 0 : 7;
+					color = player.level >= item.requirements[i].value + (item.level - 1) ? 0 : 7;
 					offset = PrintText("Level ", { 336,bnDown + i * 24 }, 16, 255, color);
 					break;
 				}
 				case 1:
 				{
-					color = player.params[0] >= item.requirements[i].value ? 0 : 7;
+					color = player.params[0] >= item.requirements[i].value + (item.level - 1) ? 0 : 7;
 					offset = PrintText("Strength ", { 336,bnDown + i * 24 }, 16, 255, color);
 					break;
 				}
 				case 2:
 				{
-					color = player.params[1] >= item.requirements[i].value ? 0 : 7;
+					color = player.params[1] >= item.requirements[i].value + (item.level - 1) ? 0 : 7;
 					offset = PrintText("Vitality ", { 336,bnDown + i * 24 }, 16, 255, color);
 					break;
 				}
 				case 3:
 				{
-					color = player.params[2] >= item.requirements[i].value ? 0 : 7;
+					color = player.params[2] >= item.requirements[i].value + (item.level - 1) ? 0 : 7;
 					offset = PrintText("Protection ", { 336,bnDown + i * 24 }, 16, 255, color);
 					break;
 				}
 				case 4:
 				{
-					color = player.params[3] >= item.requirements[i].value ? 0 : 7;
+					color = player.params[3] >= item.requirements[i].value + (item.level - 1) ? 0 : 7;
 					offset = PrintText("Agility ", { 336,bnDown + i * 24 }, 16, 255, color);
 					break;
 				}
@@ -1188,36 +1275,53 @@ void Draw()
 {
 	SDL_SetRenderDrawColor(ren, 0, 0, 0, 255);
 	SDL_RenderClear(ren);
-	for (int i = player.x() - 15; i < player.x() + 16; i++)
-		for (int j = player.y() - 15; j < player.y() + 16; j++)
-		{
-			SDL_Rect rect = { ConvBig(i, player.x()),ConvBig(j, player.y()),32,32 };
-
-			int blocks = RayTracing({ i, j }, player.position);
-			SDL_SetRenderDrawColor(ren, GetAlpha(30, blocks), GetAlpha(30, blocks), GetAlpha(30, blocks), 255);
-			SDL_RenderFillRect(ren, &rect);
-			for (int l = 0; l < LAMPS_COUNT; l++)
-				if (Distance(player.position, lamps[l].position) <= 15 && RayTracing(lamps[l].position, player.position) <= 6)
-				{
-					blocks = Min(blocks, Max(RayTracing({ i, j }, lamps[l].position) + lamps[l].bright, 0));
-					SDL_SetRenderDrawColor(ren, GetAlpha(30, blocks), GetAlpha(30, blocks), GetAlpha(30, blocks), 255);
-					SDL_RenderFillRect(ren, &rect);
-					RenderImage(lamps[l].textureId, { ConvBig(lamps[l].position.x, player.x()),ConvBig(lamps[l].position.y, player.y()) }, 32, 32, 255);
-				}
-
-			if (blocks <= 5 && map[i][j] == 1)
-				mapOverview[i][j] = 1;
-			if (map[i][j] == 1)
+	if (saveMap)
+	{
+		for (int i = player.x() - 15; i < player.x() + 16; i++)
+			for (int j = player.y() - 15; j < player.y() + 16; j++)
 			{
-				SDL_SetRenderDrawColor(ren, GetAlpha(138, blocks), GetAlpha(22, blocks), GetAlpha(31, blocks), 255);
-				SDL_RenderFillRect(ren, &rect);
-			}
-			else if (map[i][j] == 0)
-			{
+				SDL_Rect rect = { ConvBig(i, player.x()),ConvBig(j, player.y()),32,32 };
+
+				int blocks = RayTracing({ i, j }, player.position);
 				SDL_SetRenderDrawColor(ren, GetAlpha(30, blocks), GetAlpha(30, blocks), GetAlpha(30, blocks), 255);
 				SDL_RenderFillRect(ren, &rect);
+				for (int l = 0; l < LAMPS_COUNT; l++)
+					if (Distance(player.position, lamps[l].position) <= 15 && RayTracing(lamps[l].position, player.position) <= 6)
+					{
+						blocks = Min(blocks, Max(RayTracing({ i, j }, lamps[l].position) + lamps[l].bright, 0));
+						SDL_SetRenderDrawColor(ren, GetAlpha(30, blocks), GetAlpha(30, blocks), GetAlpha(30, blocks), 255);
+						SDL_RenderFillRect(ren, &rect);
+						RenderImage(lamps[l].textureId, { ConvBig(lamps[l].position.x, player.x()),ConvBig(lamps[l].position.y, player.y()) }, 32, 32, 255);
+					}
+
+				if (blocks <= 5 && map[i][j] == 1)
+					mapOverview[i][j] = 1;
+				if (map[i][j] == 1)
+				{
+					SDL_SetRenderDrawColor(ren, GetAlpha(138, blocks), GetAlpha(22, blocks), GetAlpha(31, blocks), 255);
+					SDL_RenderFillRect(ren, &rect);
+				}
+				else if (map[i][j] == 0)
+				{
+					SDL_SetRenderDrawColor(ren, GetAlpha(30, blocks), GetAlpha(30, blocks), GetAlpha(30, blocks), 255);
+					SDL_RenderFillRect(ren, &rect);
+				}
 			}
-		}
+
+		SDL_Surface* lastRenderSur = SDL_CreateRGBSurface(0, winWdt, winHgt, 32, 0x00ff0000, 0x0000ff00, 0x000000ff, 0xff000000);
+		SDL_RenderReadPixels(ren, NULL, SDL_GetWindowPixelFormat(win), lastRenderSur->pixels, lastRenderSur->pitch);
+		SDL_DestroyTexture(lastRender);
+		lastRender = SDL_CreateTextureFromSurface(ren, lastRenderSur);
+		SDL_FreeSurface(lastRenderSur);
+
+		saveMap = false;
+	}
+	else
+	{
+		SDL_Rect rect = { 0,0,winWdt,winHgt };
+		SDL_RenderCopy(ren, lastRender, NULL, &rect);
+	}
+
 
 	for (int i = 0; i < dropCount; i++)
 	{
@@ -1248,6 +1352,7 @@ void Draw()
 		}
 	}
 
+	DrawOverlay();
 	DrawUI();
 }
 
@@ -1262,7 +1367,7 @@ void SpawnPlayer()
 	player.maxHealth = 10;
 	player.health = 10;
 
-	AddDrop(2, player.position, 1);
+	//AddDrop(2, player.position, 1);
 }
 
 void SpawnEnemies()
@@ -1464,7 +1569,6 @@ void MakeEnemyMove(Enemy& enemy)
 		while (enemy.moves > 0 && !CheckAttackDist(enemy, player))
 		{
 			enemy.NewPath(FindPath(enemy.position, player.position));
-			//printf("%d",enemy.path.len);
 			enemy.Move();
 			if (enemy.path.len <= 0)
 				break;
@@ -1478,6 +1582,7 @@ void MakeEnemyMove(Enemy& enemy)
 				player.health -= damage;
 				enemy.moves--;
 				overlay.AddNum(player.position, -damage, 1);
+				overlay.AddParticle(player.position, 2, 9, 15);
 			}
 		}
 	}
@@ -1564,6 +1669,7 @@ void ButtonAction(int buttonId)
 		enemies[player.selectedEnemy].health -= damage;
 		player.attacks -= 1;
 		overlay.AddNum(enemies[player.selectedEnemy].position, -damage, 1);
+		overlay.AddParticle(enemies[player.selectedEnemy].position, 2, 9, 15);
 		player.moves = Max(0, player.moves - 1);
 		if (enemies[player.selectedEnemy].health <= 0)
 			KillEnemy(player.selectedEnemy);
@@ -1641,7 +1747,6 @@ void ButtonAction(int buttonId)
 			playerMenu = 0;
 		}
 	}
-	Draw();
 }
 
 int CheckButtonClick(Position mPos)
@@ -1678,7 +1783,8 @@ int main()
 	Position _mouse{ 0,0 };
 
 	bool _down = false;
-	int lDraw = 0;
+	int lastTime = SDL_GetTicks(), newTime, delta = 0;
+
 	font = TTF_OpenFont("Fonts\\MainFont.ttf", 20);
 	SDL_Event event;
 
@@ -1686,7 +1792,6 @@ int main()
 	SpawnPlayer();
 	SpawnEnemies();
 	RecalculatePlayer();
-	Draw();
 
 	while (true)
 	{
@@ -1711,8 +1816,6 @@ int main()
 				if (player.selectedEnemy == -1)
 					ButtonAction(lastBtnId);
 			}
-
-			Draw();
 		}
 		if ((events & SDL_BUTTON_LMASK) == 0)
 			_down = false;
@@ -1778,17 +1881,23 @@ int main()
 			}
 
 			CheckMove();
-			Draw();
-		}
 
-
-		if (moves != lDraw)
-		{
-			DrawOverlay();
-			overlay.Clear();
-			lDraw = moves;
+			if (moved)
+			{
+				saveMap = true;
+			}
 		}
+		Draw();
 		SDL_RenderPresent(ren);
+
+		newTime = SDL_GetTicks();
+		delta = newTime - lastTime;
+		lastTime = newTime;
+
+		if (delta < 16)
+		{
+			SDL_Delay(16 - delta);
+		}
 	}
 	TTF_CloseFont(font);
 
