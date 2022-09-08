@@ -139,6 +139,7 @@ struct Entity
 	int regeneration = 1;
 	int level = 1;
 	int protection;
+	int agility;
 
 	int x()
 	{
@@ -174,7 +175,7 @@ struct Player : Entity
 
 	int equipment[5][2]{ {-1,0},{-1,0},{-1, 0},{-1, 0},{-1,0} };
 
-	int params[4]{ 1,1,1,1 };
+	int params[5]{ 1,1,1,1,1 };
 };
 
 struct Enemy : Entity
@@ -252,7 +253,7 @@ Item* items;
 
 Overlay overlay;
 
-SDL_Color colors[7];
+SDL_Color colors[8];
 
 Lamp lamps[LAMPS_COUNT];
 
@@ -343,7 +344,7 @@ void RecalculatePlayer()
 	player.health = Min(player.maxHealth, player.health);
 }
 
-int GetItemBonus(int bonusId)
+int GetItemsBonus(int bonusId)
 {
 	int bonus = 0;
 	for (int i = 0; i < 5; i++)
@@ -361,10 +362,31 @@ int GetItemBonus(int bonusId)
 					bonus += (item.bonuses[j].value + item.level - 1);
 				else if (item.bonuses[j].type == 2 && bonusId == 2)
 					bonus += (item.bonuses[j].value + item.level - 1);
+				else if (item.bonuses[j].type == 3 && bonusId == 3)
+					bonus += item.bonuses[j].value;
+				else if (item.bonuses[j].type == 4 && bonusId == 4)
+					bonus += item.bonuses[j].value;
+				else if (item.bonuses[j].type == 5 && bonusId == 5)
+					bonus += (item.bonuses[j].value + item.level - 1);
 			}
 		}
 	}
 	return bonus;
+}
+
+int GetCellBonus(int cellId, int bonusId)
+{
+	if (player.equipment[cellId][0] != -1)
+	{
+		Item item = items[player.equipment[cellId][0]];
+		item.level = player.equipment[cellId][1];
+
+		for (int j = 0; j < item.bonusesCount; j++)
+		{
+			if (item.bonuses[j].type == bonusId)
+				return item.bonuses[j].value;
+		}
+	}
 }
 
 void InitColors()
@@ -376,6 +398,7 @@ void InitColors()
 	colors[4] = { 232,211,68 };
 	colors[5] = { 200,200,255 };
 	colors[6] = { 190,162,88 };
+	colors[7] = { 255,142,68 };
 }
 
 void DeInit(char error)
@@ -412,6 +435,7 @@ void LoadTextures()
 	textures[29] = IMG_LoadTexture(ren, "GFX\\EQP\\Item4.png");
 	textures[30] = IMG_LoadTexture(ren, "GFX\\EQP\\Item5.png");
 	textures[31] = IMG_LoadTexture(ren, "GFX\\EQP\\Item6.png");
+	textures[32] = IMG_LoadTexture(ren, "GFX\\EQP\\Item7.png");
 	textures[50] = IMG_LoadTexture(ren, "GFX\\Lamp.png");
 }
 
@@ -464,14 +488,15 @@ void KillEnemy(int id)
 
 void InitButtons()
 {
-	buttons = (Button*)malloc(sizeof(Button) * 7);
+	buttons = (Button*)malloc(sizeof(Button) * 16);
 	buttons[0] = *(new Button({ 652,100 }, new char[7]{ "Attack" }, 296, 24, false, 30, 6, true));
 	buttons[1] = *(new Button({ 928,480 }, new char[2]{ "\0" }, 32, 32, false, NULL, 7, false));
 	buttons[2] = *(new Button({ 928,512 }, new char[2]{ "\0" }, 32, 32, false, NULL, 9, false));
 	buttons[3] = *(new Button({ 928,558 }, new char[2]{ "\0" }, 24, 24, false, NULL, 8, false));
 	buttons[4] = *(new Button({ 928,590 }, new char[2]{ "\0" }, 24, 24, false, NULL, 8, false));
 	buttons[5] = *(new Button({ 928,622 }, new char[2]{ "\0" }, 24, 24, false, NULL, 8, false));
-	buttons[6] = *(new Button({ 400,674 }, new char[5]{ "Robe" }, 160, 24, false, 64, NULL, true));
+	buttons[6] = *(new Button({ 928,654 }, new char[2]{ "\0" }, 24, 24, false, NULL, 8, false));
+	buttons[15] = *(new Button({ 400,674 }, new char[5]{ "Robe" }, 160, 24, false, 64, NULL, true));
 }
 
 void Init()
@@ -852,7 +877,7 @@ void DrawUI()
 		offset = PrintText("Points ", { 656, 520 }, 16, 255, 0);
 		PrintText(player.points, { offset.x, 520 }, 16, 255, 0);
 
-		int bn = GetItemBonus(0);
+		int bn = GetItemsBonus(0);
 
 		offset = PrintText("Strength ", { 656, 560 }, 12, 255, 0);
 		offset = PrintText(player.params[0], { offset.x, 560 }, 12, 255, 0);
@@ -867,7 +892,7 @@ void DrawUI()
 			PrintText(floor(1 + player.params[0] * 0.4), { offset.x, 560 }, 12, 255, 0);
 		}
 
-		bn = GetItemBonus(1);
+		bn = GetItemsBonus(1);
 
 		offset = PrintText("Vitality ", { 656, 592 }, 12, 255, 0);
 		offset = PrintText(player.params[1], { offset.x, 592 }, 12, 255, 0);
@@ -882,7 +907,7 @@ void DrawUI()
 			PrintText(floor(1 + player.params[1] * 0.4), { offset.x, 592 }, 12, 255, 0);
 		}
 
-		bn = GetItemBonus(2);
+		bn = GetItemsBonus(2);
 
 		offset = PrintText("Protection ", { 656, 624 }, 12, 255, 0);
 		offset = PrintText(player.params[2], { offset.x, 624 }, 12, 255, 0);
@@ -897,7 +922,22 @@ void DrawUI()
 			PrintText(floor(1 + player.params[2] * 0.4), { offset.x, 624 }, 12, 255, 0);
 		}
 
-		for (int i = 0; i < 3; i++)
+		bn = GetItemsBonus(5);
+
+		offset = PrintText("Agility ", { 656, 656 }, 12, 255, 0);
+		offset = PrintText(player.params[3], { offset.x, 656 }, 12, 255, 0);
+		if (bn)
+		{
+			offset = PrintText(" + ", { offset.x, 656 }, 12, 255, 5);
+			offset = PrintText(bn, { offset.x, 656 }, 12, 255, 5);
+		}
+		if (player.points > 0)
+		{
+			offset = PrintText("Cost: ", { offset.x + 16, 656 }, 12, 255, 0);
+			PrintText(floor(1 + player.params[3] * 0.4), { offset.x, 656 }, 12, 255, 0);
+		}
+
+		for (int i = 0; i < 4; i++)
 		{
 			if (player.points >= floor(1 + player.params[i] * 0.4))
 				buttons[3 + i].active = true;
@@ -919,7 +959,6 @@ void DrawUI()
 		SDL_SetRenderDrawColor(ren, 0, 0, 0, 55);
 		SDL_RenderFillRect(ren, &rect);
 
-		RenderImage(13, { 768,704 }, 64, 64, 255);
 		RenderImage(19, { 640,480 }, 32, 32, 255);
 		PrintText(player.gold, { 676, 488 }, 16, 255, 4);
 
@@ -954,6 +993,17 @@ void DrawUI()
 		else
 		{
 			RenderImage(12, { 768,640 }, 64, 64, 255);
+		}
+
+		if (player.equipment[3][0] != -1)
+		{
+			RenderImage(17, { 768,704 }, 64, 64, 255);
+			RenderImage(items[player.equipment[3][0]].iconTextureId, { 768,704 }, 64, 64, 255);
+			Item item = items[player.equipment[3][0]];
+		}
+		else
+		{
+			RenderImage(13, { 768,704 }, 64, 64, 255);
 		}
 
 		if (player.equipment[4][0] != -1)
@@ -1023,11 +1073,33 @@ void DrawUI()
 				case 2:
 					offset = PrintText("Protection ", { 336,408 + i * 24 }, 16, 255, 0);
 					break;
+				case 3:
+					offset = PrintText("Moves +", { 336,408 + i * 24 }, 16, 255, 0);
+					break;
+				case 4:
+					offset = PrintText("Attacks +", { 336,408 + i * 24 }, 16, 255, 0);
+					break;
 				default:
 					break;
 				}
 
-				PrintText(item.bonuses[i].value + (item.level - 1), { offset.x,408 + i * 24 }, 16, 255, 0);
+				if (item.bonuses[i].type != 3 && item.bonuses[i].type != 4)
+					offset = PrintText(item.bonuses[i].value + (item.level - 1), { offset.x,408 + i * 24 }, 16, 255, 0);
+				else
+					offset = PrintText(item.bonuses[i].value, { offset.x,408 + i * 24 }, 16, 255, 0);
+
+				int cellBonus = GetCellBonus(item.type, item.bonuses[i].type);
+
+				if (cellBonus >= item.bonuses[i].value)
+				{
+					offset = PrintText(" -", { offset.x,408 + i * 24 }, 16, 255, 7);
+					offset = PrintText(cellBonus - item.bonuses[i].value, {offset.x,408 + i * 24}, 16, 255, 7);
+				}
+				else
+				{
+					offset = PrintText(" +", { offset.x,408 + i * 24 }, 16, 255, 7);
+					offset = PrintText(cellBonus - item.bonuses[i].value, { offset.x,408 + i * 24 }, 16, 255, 7);
+				}
 			}
 
 			int bnDown = 432 + item.bonusesCount * 24;
@@ -1038,25 +1110,44 @@ void DrawUI()
 
 			for (int i = 0; i < item.requirementsCount; i++)
 			{
+				int color;
 				switch (item.requirements[i].type)
 				{
 				case 0:
-					offset = PrintText("Level ", { 336,bnDown + i * 24 }, 16, 255, 0);
+				{
+					color = player.level >= item.requirements[i].value ? 0 : 7;
+					offset = PrintText("Level ", { 336,bnDown + i * 24 }, 16, 255, color);
 					break;
+				}
 				case 1:
-					offset = PrintText("Strength ", { 336,bnDown + i * 24 }, 16, 255, 0);
+				{
+					color = player.params[0] >= item.requirements[i].value ? 0 : 7;
+					offset = PrintText("Strength ", { 336,bnDown + i * 24 }, 16, 255, color);
 					break;
+				}
 				case 2:
-					offset = PrintText("Vitality ", { 336,bnDown + i * 24 }, 16, 255, 0);
+				{
+					color = player.params[1] >= item.requirements[i].value ? 0 : 7;
+					offset = PrintText("Vitality ", { 336,bnDown + i * 24 }, 16, 255, color);
 					break;
+				}
 				case 3:
-					offset = PrintText("Protection ", { 336,bnDown + i * 24 }, 16, 255, 0);
+				{
+					color = player.params[2] >= item.requirements[i].value ? 0 : 7;
+					offset = PrintText("Protection ", { 336,bnDown + i * 24 }, 16, 255, color);
 					break;
+				}
+				case 4:
+				{
+					color = player.params[3] >= item.requirements[i].value ? 0 : 7;
+					offset = PrintText("Agility ", { 336,bnDown + i * 24 }, 16, 255, color);
+					break;
+				}
 				default:
 					break;
 				}
 
-				PrintText(item.requirements[i].value + (item.level - 1), { offset.x,bnDown + i * 24 }, 16, 255, 0);
+				PrintText(item.requirements[i].value + (item.level - 1), { offset.x,bnDown + i * 24 }, 16, 255, color);
 			}
 
 			bool robe = true;
@@ -1086,9 +1177,9 @@ void DrawUI()
 			}
 
 			if (robe)
-				buttons[6].active = true;
+				buttons[15].active = true;
 
-			buttons[6].DrawButton();
+			buttons[15].DrawButton();
 		}
 	}
 }
@@ -1424,11 +1515,11 @@ void CheckMove()
 
 	if (!canMove)
 	{
-		player.moves = 0;
-		player.attacks = 0;
+		player.moves = 1;
+		player.attacks = 1;
 		moves++;
-		player.moves++;
-		player.attacks++;
+		player.moves += GetItemsBonus(3);
+		player.attacks += GetItemsBonus(4);
 
 		for (int i = 0; i < enemiesCount; i++)
 		{
@@ -1500,7 +1591,7 @@ void ButtonAction(int buttonId)
 			playerMenu = 0;
 		}
 	}
-	else if (buttonId >= 3 && buttonId <= 5)
+	else if (buttonId >= 3 && buttonId <= 6)
 	{
 		int reqPoints = floor(1 + player.params[buttonId - 3] * 0.4);
 
@@ -1511,7 +1602,7 @@ void ButtonAction(int buttonId)
 			RecalculatePlayer();
 		}
 	}
-	else if (buttonId == 6)
+	else if (buttonId == 15)
 	{
 		Drop droped = drop[itemMenu];
 		int type = items[droped.id].type;
@@ -1568,7 +1659,7 @@ int CheckButtonClick(Position mPos)
 	}
 	else if ((mPos.x < 320 || mPos.x>640 || mPos.y < 240 || mPos.y>720))
 		playerMenu = 0;
-	for (int i = 0; i < 7; i++)
+	for (int i = 0; i < 16; i++)
 	{
 		Button button = buttons[i];
 		if (mPos.x >= button.position.x && mPos.y >= button.position.y && mPos.x <= button.position.x + button.width && mPos.y <= button.position.y + button.height && button.active)

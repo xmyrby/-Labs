@@ -18,9 +18,13 @@
 0  -  Strength
 1  -  Vitality
 2  -  Protection
+3  -  Moves
+4  -  Attacks
+5  -  Agility
 
 #Requirements
 0  -  Level
 1  -  Strength
 2  -  Vitality
 3  -  Protection
+4  -  Agility
