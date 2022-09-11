@@ -1,0 +1,8 @@
+D:\GitHub\-Labs\SIAOD1\SIAOD1\bin\Debug\SIAOD1.exe.config
+D:\GitHub\-Labs\SIAOD1\SIAOD1\bin\Debug\SIAOD1.exe
+D:\GitHub\-Labs\SIAOD1\SIAOD1\bin\Debug\SIAOD1.pdb
+D:\GitHub\-Labs\SIAOD1\SIAOD1\obj\Debug\SIAOD1.csproj.AssemblyReference.cache
+D:\GitHub\-Labs\SIAOD1\SIAOD1\obj\Debug\SIAOD1.csproj.SuggestedBindingRedirects.cache
+D:\GitHub\-Labs\SIAOD1\SIAOD1\obj\Debug\SIAOD1.csproj.CoreCompileInputs.cache
+D:\GitHub\-Labs\SIAOD1\SIAOD1\obj\Debug\SIAOD1.exe
+D:\GitHub\-Labs\SIAOD1\SIAOD1\obj\Debug\SIAOD1.pdb
