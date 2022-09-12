@@ -5,6 +5,11 @@
       "ProjectGuid": "4c05474d-d047-4987-9a12-24e40ef138e3",
       "DisplayName": "SIAOD1",
       "ColorIndex": 0
+    },
+    "a2fe74e1-b743-11d0-ae1a-00a0c90fffc3": {
+      "ProjectGuid": "a2fe74e1-b743-11d0-ae1a-00a0c90fffc3",
+      "DisplayName": "Прочие файлы",
+      "ColorIndex": -1
     }
   },
   "NextColorIndex": 1

@@ -18,11 +18,14 @@ namespace SIAOD1
             outputController.PrintStudents(students);
 
             Console.ReadLine();
-            Console.Clear();
 
-            students = students.OrderBy(w => w.Surname).ToList();
+            outputController.SortStudents(students);
 
             outputController.PrintStudents(students);
+
+            outputController.FilterByAverage(students);
+
+            outputController.PrintStudentsWithAverageOnly(students, double.Parse(Console.ReadLine()));
 
             Console.ReadLine();
         }

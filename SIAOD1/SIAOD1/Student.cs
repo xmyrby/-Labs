@@ -16,14 +16,17 @@ namespace SIAOD1
         public int MyProperty { get; set; }
 
         public int[] Rates = new int[5];
+        public double Average { get; set; }
 
-        public int AverageRate()
+        public double AverageRate()
         {
             int sum = 0;
             for (int i = 0; i < 5; i++)
                 sum += Rates[i];
 
-            return sum / 5;
+            Average = (double)sum / 5.0;
+
+            return Average;
         }
     }
 }
