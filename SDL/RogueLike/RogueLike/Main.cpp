@@ -164,6 +164,7 @@ struct Entity
 	int level = 1;
 	int protection;
 	int agility;
+	int blinding = 0;
 
 	int x()
 	{
@@ -508,6 +509,8 @@ void KillEnemy(int id)
 	int gold = enemies[id].goldReward;
 	gold = Random(gold / 2, gold);
 	player.gold += gold;
+
+	overlay.AddParticle(enemies[id].position, 3, 9, 20);
 
 	if (Random(0, 100) <= enemies[id].dropChance)
 	{
