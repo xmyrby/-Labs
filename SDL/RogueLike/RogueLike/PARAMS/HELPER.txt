@@ -4,7 +4,7 @@
 #Items
 	-(Count of Items)
 	-(Name)
-	-(Texture Id) -(Type) -(Bonuses Count) -(Requirements Count)
+	-(Texture Id) -(Type) -(Bonuses Count) -(Requirements Count) -(Range of attack) -(Special Parametr)
 	-(Bonus Type) -(Bonus Value) VxBonusesCount
 	-(Requirement Type) -(Requirement Value) VxRequirementsCount
 

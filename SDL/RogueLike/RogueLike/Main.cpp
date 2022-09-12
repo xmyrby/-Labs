@@ -146,6 +146,8 @@ struct Item
 	int bonusesCount;
 	int level = 1;
 	int requirementsCount;
+	int range;
+	bool specialParam;
 
 	ItemParam* bonuses;
 	ItemParam* requirements;
@@ -198,7 +200,7 @@ struct Player : Entity
 	int mana;
 	int maxMana;
 
-	int equipment[5][2]{ {-1,0},{-1,0},{-1, 0},{-1, 0},{-1,0} };
+	int equipment[6][2]{ {-1,0},{-1,0},{-1, 0},{-1, 0},{-1,0},{-1,0} };
 
 	int params[5]{ 1,1,1,1,1 };
 };
@@ -403,7 +405,7 @@ void InitItems()
 		fgets(items[i].name, 126, ft);
 
 		items[i].name[strlen(items[i].name) - 1] = '\0';
-		fscanf_s(ft, "%d %d %d %d", &items[i].iconTextureId, &items[i].type, &items[i].bonusesCount, &items[i].requirementsCount);
+		fscanf_s(ft, "%d %d %d %d %d %d", &items[i].iconTextureId, &items[i].type, &items[i].bonusesCount, &items[i].requirementsCount, &items[i].range, &items[i].specialParam);
 		items[i].bonuses = (ItemParam*)malloc(sizeof(ItemParam) * items[i].bonusesCount);
 		items[i].requirements = (ItemParam*)malloc(sizeof(ItemParam) * items[i].requirementsCount);
 		for (int j = 0; j < items[i].bonusesCount; j++)
@@ -421,6 +423,10 @@ void RecalculatePlayer()
 	player.damage = player.params[0] + GetItemsBonus(0);
 	player.protection = player.params[2] + GetItemsBonus(2);
 	player.agility = player.params[3] + GetItemsBonus(5);
+	if (player.equipment[4][0] != -1)
+		player.attackrange = items[player.equipment[4][0]].range;
+	else
+		player.attackrange = 1;
 
 	player.health = Min(player.maxHealth, player.health);
 }
@@ -464,6 +470,7 @@ void LoadTextures()
 	textures[12] = IMG_LoadTexture(ren, "GFX\\PantsMenuCell.png");
 	textures[13] = IMG_LoadTexture(ren, "GFX\\BootsMenuCell.png");
 	textures[14] = IMG_LoadTexture(ren, "GFX\\WeaponMenuCell.png");
+	textures[15] = IMG_LoadTexture(ren, "GFX\\ShieldMenuCell.png");
 	textures[17] = IMG_LoadTexture(ren, "GFX\\MenuCell.png");
 	textures[19] = IMG_LoadTexture(ren, "GFX\\GoldMenu.png");
 	textures[25] = IMG_LoadTexture(ren, "GFX\\EQP\\Item0.png");
@@ -475,6 +482,9 @@ void LoadTextures()
 	textures[31] = IMG_LoadTexture(ren, "GFX\\EQP\\Item6.png");
 	textures[32] = IMG_LoadTexture(ren, "GFX\\EQP\\Item7.png");
 	textures[33] = IMG_LoadTexture(ren, "GFX\\EQP\\Item8.png");
+	textures[34] = IMG_LoadTexture(ren, "GFX\\EQP\\Item9.png");
+	textures[35] = IMG_LoadTexture(ren, "GFX\\EQP\\Item10.png");
+	textures[36] = IMG_LoadTexture(ren, "GFX\\EQP\\Item11.png");
 	textures[50] = IMG_LoadTexture(ren, "GFX\\Lamp.png");
 }
 
@@ -1032,7 +1042,6 @@ void DrawUI()
 		{
 			RenderImage(17, { 768,512 }, 64, 64, 255);
 			RenderImage(items[player.equipment[0][0]].iconTextureId, { 768,512 }, 64, 64, 255);
-			Item item = items[player.equipment[0][0]];
 		}
 		else
 		{
@@ -1043,7 +1052,6 @@ void DrawUI()
 		{
 			RenderImage(17, { 768,576 }, 64, 64, 255);
 			RenderImage(items[player.equipment[1][0]].iconTextureId, { 768,576 }, 64, 64, 255);
-			Item item = items[player.equipment[1][0]];
 		}
 		else
 		{
@@ -1054,7 +1062,6 @@ void DrawUI()
 		{
 			RenderImage(17, { 768,640 }, 64, 64, 255);
 			RenderImage(items[player.equipment[2][0]].iconTextureId, { 768,640 }, 64, 64, 255);
-			Item item = items[player.equipment[2][0]];
 		}
 		else
 		{
@@ -1065,7 +1072,6 @@ void DrawUI()
 		{
 			RenderImage(17, { 768,704 }, 64, 64, 255);
 			RenderImage(items[player.equipment[3][0]].iconTextureId, { 768,704 }, 64, 64, 255);
-			Item item = items[player.equipment[3][0]];
 		}
 		else
 		{
@@ -1076,11 +1082,20 @@ void DrawUI()
 		{
 			RenderImage(17, { 688,576 }, 64, 64, 255);
 			RenderImage(items[player.equipment[4][0]].iconTextureId, { 688,576 }, 64, 64, 255);
-			Item item = items[player.equipment[4][0]];
 		}
 		else
 		{
 			RenderImage(14, { 688,576 }, 64, 64, 255);
+		}
+
+		if (player.equipment[5][0] != -1)
+		{
+			RenderImage(17, { 848,576 }, 64, 64, 255);
+			RenderImage(items[player.equipment[5][0]].iconTextureId, { 848,576 }, 64, 64, 255);
+		}
+		else
+		{
+			RenderImage(15, { 848,576 }, 64, 64, 255);
 		}
 	}
 	else if (playerMenu == 3)
@@ -1115,7 +1130,18 @@ void DrawUI()
 				PrintText("On Feet", { 416,300 }, 16, 255, 0);
 				break;
 			case 4:
-				PrintText("One-Arm Weapon", { 416,300 }, 16, 255, 0);
+			{
+				if (item.range == 1)
+					if (item.specialParam)
+						PrintText("Two-Handed Weapon", { 416,300 }, 16, 255, 0);
+					else
+						PrintText("One-Handed Weapon", { 416,300 }, 16, 255, 0);
+				else
+					PrintText("Small Weapon", { 416,300 }, 16, 255, 0);
+				break;
+			}
+			case 5:
+				PrintText("Shield", { 416,300 }, 16, 255, 0);
 				break;
 			default:
 				break;
@@ -1360,7 +1386,7 @@ void SpawnPlayer()
 	player.maxHealth = 10;
 	player.health = 10;
 
-	//AddDrop(2, player.position, 1);
+	//AddDrop(9, player.position, 1);
 }
 
 void SpawnEnemies()
@@ -1573,6 +1599,8 @@ void MakeEnemyMove(Enemy& enemy)
 			if (CheckAttackDist(enemy, player))
 			{
 				int damage = round(enemy.damage / floor(1 + player.protection / 3));
+				if (Random(1, 100) <= player.agility)
+					damage = 0;
 				player.health -= damage;
 				enemy.moves--;
 				overlay.AddNum(player.position, -damage, 1);
@@ -1659,6 +1687,9 @@ void ButtonAction(int buttonId)
 	if (buttonId == 0 && player.attacks && playerMenu != 3)
 	{
 		int damage = round(player.damage / floor(1 + enemies[player.selectedEnemy].protection / 3));
+
+		if (Random(1, 100)<=player.agility)
+			damage *= 2;
 
 		enemies[player.selectedEnemy].health -= damage;
 		player.attacks -= 1;

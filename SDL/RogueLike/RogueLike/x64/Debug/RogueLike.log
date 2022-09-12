@@ -1,29 +1,30 @@
 ﻿  Main.cpp
-D:\GitHub\-Labs\SDL\RogueLike\RogueLike\Main.cpp(288,15): warning C4244: инициализация: преобразование "double" в "float", возможна потеря данных
-D:\GitHub\-Labs\SDL\RogueLike\RogueLike\Main.cpp(494,16): warning C4477: "fscanf_s": в строке форматирования "%s" требуется аргумент типа "unsigned int", но вариативный аргумент "2" имеет тип "size_t"
-D:\GitHub\-Labs\SDL\RogueLike\RogueLike\Main.cpp(494,16): message : этот аргумент используется в качестве размера буфера
-D:\GitHub\-Labs\SDL\RogueLike\RogueLike\Main.cpp(616,32): warning C4244: return: преобразование "double" в "int", возможна потеря данных
-D:\GitHub\-Labs\SDL\RogueLike\RogueLike\Main.cpp(696,14): warning C4244: return: преобразование "double" в "float", возможна потеря данных
-D:\GitHub\-Labs\SDL\RogueLike\RogueLike\Main.cpp(701,11): warning C4244: инициализация: преобразование "int" в "float", возможна потеря данных
-D:\GitHub\-Labs\SDL\RogueLike\RogueLike\Main.cpp(701,28): warning C4244: инициализация: преобразование "int" в "float", возможна потеря данных
-D:\GitHub\-Labs\SDL\RogueLike\RogueLike\Main.cpp(710,21): warning C4244: =: преобразование "float" в "int", возможна потеря данных
-D:\GitHub\-Labs\SDL\RogueLike\RogueLike\Main.cpp(711,21): warning C4244: =: преобразование "float" в "int", возможна потеря данных
-D:\GitHub\-Labs\SDL\RogueLike\RogueLike\Main.cpp(739,12): warning C4244: инициализация: преобразование "double" в "int", возможна потеря данных
-D:\GitHub\-Labs\SDL\RogueLike\RogueLike\Main.cpp(758,12): warning C4244: инициализация: преобразование "double" в "int", возможна потеря данных
-D:\GitHub\-Labs\SDL\RogueLike\RogueLike\Main.cpp(789,8): warning C4244: инициализация: преобразование "double" в "int", возможна потеря данных
-D:\GitHub\-Labs\SDL\RogueLike\RogueLike\Main.cpp(795,13): warning C4244: return: преобразование "double" в "float", возможна потеря данных
-D:\GitHub\-Labs\SDL\RogueLike\RogueLike\Main.cpp(836,85): warning C4244: аргумент: преобразование "double" в "int", возможна потеря данных
-D:\GitHub\-Labs\SDL\RogueLike\RogueLike\Main.cpp(836,46): warning C4244: =: преобразование "int" в "float", возможна потеря данных
-D:\GitHub\-Labs\SDL\RogueLike\RogueLike\Main.cpp(958,19): warning C4244: аргумент: преобразование "double" в "int", возможна потеря данных
-D:\GitHub\-Labs\SDL\RogueLike\RogueLike\Main.cpp(973,19): warning C4244: аргумент: преобразование "double" в "int", возможна потеря данных
-D:\GitHub\-Labs\SDL\RogueLike\RogueLike\Main.cpp(988,19): warning C4244: аргумент: преобразование "double" в "int", возможна потеря данных
-D:\GitHub\-Labs\SDL\RogueLike\RogueLike\Main.cpp(1003,19): warning C4244: аргумент: преобразование "double" в "int", возможна потеря данных
-D:\GitHub\-Labs\SDL\RogueLike\RogueLike\Main.cpp(1575,16): warning C4244: инициализация: преобразование "double" в "int", возможна потеря данных
-D:\GitHub\-Labs\SDL\RogueLike\RogueLike\Main.cpp(1635,18): warning C4244: *=: преобразование "double" в "int", возможна потеря данных
-D:\GitHub\-Labs\SDL\RogueLike\RogueLike\Main.cpp(1661,14): warning C4244: инициализация: преобразование "double" в "int", возможна потеря данных
-D:\GitHub\-Labs\SDL\RogueLike\RogueLike\Main.cpp(1696,17): warning C4244: инициализация: преобразование "double" в "int", возможна потеря данных
-D:\GitHub\-Labs\SDL\RogueLike\RogueLike\Main.cpp(1771,1): warning C4067: непредвиденные лексемы за директивой препроцессора, требуется newline
-D:\GitHub\-Labs\SDL\RogueLike\RogueLike\Main.cpp(1774,12): warning C4244: аргумент: преобразование "time_t" в "unsigned int", возможна потеря данных
-D:\GitHub\-Labs\SDL\RogueLike\RogueLike\Main.cpp(369): warning C4715: GetCellBonus: значение возвращается не при всех путях выполнения
-D:\GitHub\-Labs\SDL\RogueLike\RogueLike\Main.cpp(1438): warning C4715: `FindPath'::`2'::Root::addBranch: значение возвращается не при всех путях выполнения
+D:\GitHub\-Labs\SDL\RogueLike\RogueLike\Main.cpp(290,15): warning C4244: инициализация: преобразование "double" в "float", возможна потеря данных
+D:\GitHub\-Labs\SDL\RogueLike\RogueLike\Main.cpp(408,16): warning C4477: "fscanf_s": в строке форматирования "%d" требуется аргумент типа "int *", но вариативный аргумент "6" имеет тип "bool *"
+D:\GitHub\-Labs\SDL\RogueLike\RogueLike\Main.cpp(504,16): warning C4477: "fscanf_s": в строке форматирования "%s" требуется аргумент типа "unsigned int", но вариативный аргумент "2" имеет тип "size_t"
+D:\GitHub\-Labs\SDL\RogueLike\RogueLike\Main.cpp(504,16): message : этот аргумент используется в качестве размера буфера
+D:\GitHub\-Labs\SDL\RogueLike\RogueLike\Main.cpp(626,32): warning C4244: return: преобразование "double" в "int", возможна потеря данных
+D:\GitHub\-Labs\SDL\RogueLike\RogueLike\Main.cpp(706,14): warning C4244: return: преобразование "double" в "float", возможна потеря данных
+D:\GitHub\-Labs\SDL\RogueLike\RogueLike\Main.cpp(711,11): warning C4244: инициализация: преобразование "int" в "float", возможна потеря данных
+D:\GitHub\-Labs\SDL\RogueLike\RogueLike\Main.cpp(711,28): warning C4244: инициализация: преобразование "int" в "float", возможна потеря данных
+D:\GitHub\-Labs\SDL\RogueLike\RogueLike\Main.cpp(720,21): warning C4244: =: преобразование "float" в "int", возможна потеря данных
+D:\GitHub\-Labs\SDL\RogueLike\RogueLike\Main.cpp(721,21): warning C4244: =: преобразование "float" в "int", возможна потеря данных
+D:\GitHub\-Labs\SDL\RogueLike\RogueLike\Main.cpp(749,12): warning C4244: инициализация: преобразование "double" в "int", возможна потеря данных
+D:\GitHub\-Labs\SDL\RogueLike\RogueLike\Main.cpp(768,12): warning C4244: инициализация: преобразование "double" в "int", возможна потеря данных
+D:\GitHub\-Labs\SDL\RogueLike\RogueLike\Main.cpp(799,8): warning C4244: инициализация: преобразование "double" в "int", возможна потеря данных
+D:\GitHub\-Labs\SDL\RogueLike\RogueLike\Main.cpp(805,13): warning C4244: return: преобразование "double" в "float", возможна потеря данных
+D:\GitHub\-Labs\SDL\RogueLike\RogueLike\Main.cpp(846,85): warning C4244: аргумент: преобразование "double" в "int", возможна потеря данных
+D:\GitHub\-Labs\SDL\RogueLike\RogueLike\Main.cpp(846,46): warning C4244: =: преобразование "int" в "float", возможна потеря данных
+D:\GitHub\-Labs\SDL\RogueLike\RogueLike\Main.cpp(968,19): warning C4244: аргумент: преобразование "double" в "int", возможна потеря данных
+D:\GitHub\-Labs\SDL\RogueLike\RogueLike\Main.cpp(983,19): warning C4244: аргумент: преобразование "double" в "int", возможна потеря данных
+D:\GitHub\-Labs\SDL\RogueLike\RogueLike\Main.cpp(998,19): warning C4244: аргумент: преобразование "double" в "int", возможна потеря данных
+D:\GitHub\-Labs\SDL\RogueLike\RogueLike\Main.cpp(1013,19): warning C4244: аргумент: преобразование "double" в "int", возможна потеря данных
+D:\GitHub\-Labs\SDL\RogueLike\RogueLike\Main.cpp(1601,16): warning C4244: инициализация: преобразование "double" в "int", возможна потеря данных
+D:\GitHub\-Labs\SDL\RogueLike\RogueLike\Main.cpp(1663,18): warning C4244: *=: преобразование "double" в "int", возможна потеря данных
+D:\GitHub\-Labs\SDL\RogueLike\RogueLike\Main.cpp(1689,14): warning C4244: инициализация: преобразование "double" в "int", возможна потеря данных
+D:\GitHub\-Labs\SDL\RogueLike\RogueLike\Main.cpp(1727,17): warning C4244: инициализация: преобразование "double" в "int", возможна потеря данных
+D:\GitHub\-Labs\SDL\RogueLike\RogueLike\Main.cpp(1802,1): warning C4067: непредвиденные лексемы за директивой препроцессора, требуется newline
+D:\GitHub\-Labs\SDL\RogueLike\RogueLike\Main.cpp(1805,12): warning C4244: аргумент: преобразование "time_t" в "unsigned int", возможна потеря данных
+D:\GitHub\-Labs\SDL\RogueLike\RogueLike\Main.cpp(371): warning C4715: GetCellBonus: значение возвращается не при всех путях выполнения
+D:\GitHub\-Labs\SDL\RogueLike\RogueLike\Main.cpp(1464): warning C4715: `FindPath'::`2'::Root::addBranch: значение возвращается не при всех путях выполнения
   RogueLike.vcxproj -> D:\GitHub\-Labs\SDL\RogueLike\x64\Debug\RogueLike.exe
