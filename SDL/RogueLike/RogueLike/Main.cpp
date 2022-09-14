@@ -98,7 +98,6 @@ struct Lamp
 	int bright;
 };
 
-
 Position PrintText(int var, Position position, int size, Uint8 alpha, int colorId);
 Position PrintText(const char* var, Position position, int siz, Uint8 alpha, int colorId);
 void RenderImage(int textureId, Position position, int w, int h, int alpha);
@@ -317,6 +316,8 @@ SDL_Color colors[14];
 
 Lamp lamps[LAMPS_COUNT];
 
+int stats[10];
+
 int map[MAP_SIZE][MAP_SIZE];
 int mapOverview[MAP_SIZE][MAP_SIZE];
 Drop* drop;
@@ -364,6 +365,28 @@ struct Enemy : Entity
 
 Enemy* enemies;
 Enemy* enemiesTypes;
+
+void LoadStats()
+{
+	FILE* f;
+	if (fopen_s(&f, "stats.save", "rb") != 0)
+		exit(1);
+	
+	fread(&stats, sizeof(int), 10, f);
+
+	fclose(f);
+}
+
+void SaveStats()
+{
+	FILE* f;
+	if (fopen_s(&f, "stats.save", "wb") != 0)
+		exit(1);
+
+	fwrite(&stats, sizeof(int), 10, f);
+
+	fclose(f);
+}
 
 int GetItemsBonus(int bonusId)
 {
@@ -588,10 +611,15 @@ void InitEnemies()
 
 void KillEnemy(int id)
 {
-	player.xp += enemies[id].xpReward + enemies[id].xpReward * enemies[id].level / 4;
+	stats[0]++;
+	int xp = enemies[id].xpReward + enemies[id].xpReward * enemies[id].level / 4;
+	player.xp += xp;
+	stats[3] += xp;
+
 	int gold = enemies[id].goldReward;
 	gold = Random(gold / 2, gold);
 	player.gold += gold;
+	stats[4] += gold;
 
 	overlay.AddParticle(enemies[id].position, 3, 9, 20);
 
@@ -723,6 +751,8 @@ void Init()
 	InitColors();
 
 	InitItems();
+
+	LoadStats();
 
 	overlay.Init();
 
@@ -1721,7 +1751,13 @@ void MakeEnemyMove(Enemy& enemy)
 			{
 				int damage = round(enemy.damage / floor(1 + player.protection / 3));
 				if (Random(1, 100) <= player.agility)
+				{
 					damage = 0;
+					stats[8]++;
+				}
+
+				stats[2] += damage;
+
 				player.health -= damage;
 				enemy.moves--;
 				overlay.AddNum(player.position, -damage, 1);
@@ -1795,6 +1831,8 @@ void CheckMove()
 		moves++;
 		player.moves += GetItemsBonus(3);
 		player.attacks += GetItemsBonus(4);
+		stats[6]++;
+		SaveStats();
 
 		for (int i = 0; i < enemiesCount; i++)
 		{
@@ -1839,7 +1877,12 @@ void ButtonAction(int buttonId)
 		int damage = round(player.damage / floor(1 + enemies[player.selectedEnemy].protection / 3));
 
 		if (Random(1, 100) <= player.agility)
+		{
 			damage *= 2;
+			stats[7]++;
+		}
+
+		stats[1] += damage;
 
 		enemies[player.selectedEnemy].health -= damage;
 		player.attacks -= 1;
@@ -2059,10 +2102,13 @@ int main()
 			if (moved)
 			{
 				player.moves--;
+				stats[5] ++;
+
 				if (player.health < player.maxHealth)
 				{
 					player.health = Min(player.health + player.regeneration, player.maxHealth);
 					overlay.AddNum(player.position, player.regeneration, 3);
+					stats[9]++;
 				}
 			}
 
