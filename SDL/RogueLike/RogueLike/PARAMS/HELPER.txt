@@ -1,10 +1,10 @@
 #EnemiesTypes
 	-(Count of Types)-(Name)
-	-(Texture Id) -(Health) -(Attacks) -(Moves) -(Damage) -(Attack Range) -(Regeneration) -(XpReward) -(Protection) -(GoldReward) -(DropChance)
+	-(Texture Id) -(Icon Id) -(Health) -(Attacks) -(Moves) -(Damage) -(Attack Range) -(Regeneration) -(XpReward) -(Protection) -(Gold Reward) -(Drop Chance) -(Spawn Chance)
 #Items
 	-(Count of Items)
 	-(Name)
-	-(Texture Id) -(Type) -(Bonuses Count) -(Requirements Count) -(Range of attack) -(Special Parametr)
+	-(Texture Id) -(Type) -(Bonuses Count) -(Requirements Count) -(Range of attack) -(Special Parametr) -(Minimum Level Drop) -(Drop Chance)
 	-(Bonus Type) -(Bonus Value) VxBonusesCount
 	-(Requirement Type) -(Requirement Value) VxRequirementsCount
 

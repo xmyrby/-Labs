@@ -8,7 +8,7 @@ SDL_Window* win = NULL;
 SDL_Renderer* ren = NULL;
 SDL_Surface* win_surf = NULL;
 TTF_Font* font = NULL;
-SDL_Texture* textures[51];
+SDL_Texture* textures[75];
 SDL_Texture* lastRender;
 
 int winWdt = 960;
@@ -148,6 +148,8 @@ struct Item
 	int requirementsCount;
 	int range;
 	bool specialParam;
+	int minLvlDrop;
+	int dropChance;
 
 	ItemParam* bonuses;
 	ItemParam* requirements;
@@ -210,10 +212,12 @@ struct Enemy : Entity
 	int type = 0;
 	Path path;
 	char name[100];
+	int textureId;
 	int iconTextureId;
 	int xpReward;
 	int goldReward;
 	int dropChance;
+	int spawnChance;
 
 	void NewPath(Path nPath)
 	{
@@ -405,7 +409,7 @@ void InitItems()
 		fgets(items[i].name, 126, ft);
 
 		items[i].name[strlen(items[i].name) - 1] = '\0';
-		fscanf_s(ft, "%d %d %d %d %d %d", &items[i].iconTextureId, &items[i].type, &items[i].bonusesCount, &items[i].requirementsCount, &items[i].range, &items[i].specialParam);
+		fscanf_s(ft, "%d %d %d %d %d %d %d %d", &items[i].iconTextureId, &items[i].type, &items[i].bonusesCount, &items[i].requirementsCount, &items[i].range, &items[i].specialParam, &items[i].minLvlDrop, &items[i].dropChance);
 		items[i].bonuses = (ItemParam*)malloc(sizeof(ItemParam) * items[i].bonusesCount);
 		items[i].requirements = (ItemParam*)malloc(sizeof(ItemParam) * items[i].requirementsCount);
 		for (int j = 0; j < items[i].bonusesCount; j++)
@@ -458,9 +462,9 @@ void LoadTextures()
 	textures[0] = IMG_LoadTexture(ren, "GFX\\AttackMoves.png");
 	textures[1] = IMG_LoadTexture(ren, "GFX\\MoveMoves.png");
 	textures[2] = IMG_LoadTexture(ren, "GFX\\PlayerPawn.png");
-	textures[3] = IMG_LoadTexture(ren, "GFX\\TigerPawn.png");
+
 	textures[4] = IMG_LoadTexture(ren, "GFX\\Selection.png");
-	textures[5] = IMG_LoadTexture(ren, "GFX\\TigerIcon.png");
+
 	textures[6] = IMG_LoadTexture(ren, "GFX\\AttackIcon.png");
 	textures[7] = IMG_LoadTexture(ren, "GFX\\PlayerMenuButton.png");
 	textures[8] = IMG_LoadTexture(ren, "GFX\\UpgradeMenuButton.png");
@@ -486,6 +490,10 @@ void LoadTextures()
 	textures[35] = IMG_LoadTexture(ren, "GFX\\EQP\\Item10.png");
 	textures[36] = IMG_LoadTexture(ren, "GFX\\EQP\\Item11.png");
 	textures[50] = IMG_LoadTexture(ren, "GFX\\Lamp.png");
+	textures[60] = IMG_LoadTexture(ren, "GFX\\TigerPawn.png");
+	textures[61] = IMG_LoadTexture(ren, "GFX\\TigerIcon.png");
+	textures[62] = IMG_LoadTexture(ren, "GFX\\GoblinSmaller.png");
+	textures[63] = IMG_LoadTexture(ren, "GFX\\GoblinSmallerIcon.png");
 }
 
 void InitEnemies()
@@ -501,7 +509,10 @@ void InitEnemies()
 
 	for (int i = 0; i < enemiesTypesCount; i++)
 	{
-		fscanf_s(ft, "%s %d %d %d %d %d %d %d %d %d %d %d", &enemiesTypes[i].name, sizeof(enemiesTypes[i].name), &enemiesTypes[i].iconTextureId, &enemiesTypes[i].maxHealth, &enemiesTypes[i].attacks, &enemiesTypes[i].moves, &enemiesTypes[i].damage, &enemiesTypes[i].attackrange, &enemiesTypes[i].regeneration, &enemiesTypes[i].xpReward, &enemiesTypes[i].protection, &enemiesTypes[i].goldReward, &enemiesTypes[i].dropChance);
+		fgets(enemiesTypes[i].name, 126, ft);
+
+		enemiesTypes[i].name[strlen(enemiesTypes[i].name) - 1] = '\0';
+		fscanf_s(ft, "%d %d %d %d %d %d %d %d %d %d %d %d %d", &enemiesTypes[i].textureId, &enemiesTypes[i].iconTextureId, &enemiesTypes[i].maxHealth, &enemiesTypes[i].attacks, &enemiesTypes[i].moves, &enemiesTypes[i].damage, &enemiesTypes[i].attackrange, &enemiesTypes[i].regeneration, &enemiesTypes[i].xpReward, &enemiesTypes[i].protection, &enemiesTypes[i].goldReward, &enemiesTypes[i].dropChance, &enemiesTypes[i].spawnChance);
 		enemiesTypes[i].health = enemiesTypes[i].maxHealth;
 		enemiesTypes[i].type = i;
 	}
@@ -510,7 +521,18 @@ void InitEnemies()
 
 	enemies = (Enemy*)malloc(sizeof(Enemy) * enemiesCount);
 	for (int i = 0; i < enemiesCount; i++)
-		enemies[i].type = rand() % enemiesTypesCount;
+	{
+		bool spawned = false;
+		while (!spawned)
+		{
+			int id = rand() % enemiesTypesCount;
+			if (Random(1, 100) <= enemiesTypes[id].spawnChance)
+			{
+				enemies[i].type = id;
+				spawned = true;
+			}
+		}
+	}
 }
 
 void KillEnemy(int id)
@@ -522,9 +544,20 @@ void KillEnemy(int id)
 
 	overlay.AddParticle(enemies[id].position, 3, 9, 20);
 
-	if (Random(0, 100) <= enemies[id].dropChance)
+	if (Random(1, 100) <= enemies[id].dropChance)
 	{
-		AddDrop(Random(0, itemsCount - 1), enemies[id].position, enemies[id].level);
+		bool droped = false;
+		while (!droped)
+		{
+			int itemId = Random(0, itemsCount - 1);
+			Item item = items[itemId];
+			if (enemies[id].level >= item.minLvlDrop)
+				if (Random(1, 100) <= item.dropChance)
+				{
+					droped = true;
+					AddDrop(itemId, enemies[id].position, enemies[id].level);
+				}
+		}
 	}
 
 	for (int i = id; i < enemiesCount - 1; i++)
@@ -903,7 +936,7 @@ void DrawUI()
 		SDL_Rect rect = { 640,0,320,480 };
 		SDL_SetRenderDrawColor(ren, 0, 0, 0, 55);
 		SDL_RenderFillRect(ren, &rect);
-		RenderImage(5, { 652, 16 }, 48, 48, 255);
+		RenderImage(enemies[player.selectedEnemy].iconTextureId, { 652, 16 }, 48, 48, 255);
 		PrintText(enemies[player.selectedEnemy].name, { 716, 20 }, 16, 255, 0);
 		PrintText("Health: ", { 716, 44 }, 16, 255, 0);
 		offset = PrintText(enemies[player.selectedEnemy].health, { 808, 44 }, 16, 255, 0);
@@ -1367,7 +1400,7 @@ void Draw()
 			SDL_SetRenderDrawColor(ren, GetAlpha(198, blocks), GetAlpha(101, blocks), GetAlpha(202, blocks), 255);
 			SDL_RenderFillRect(ren, &rect);
 			if (blocks <= 5)
-				RenderImage(3, { rect.x, rect.y }, 32, 32, GetAlpha(255, blocks));
+				RenderImage(enemies[i].textureId, { rect.x, rect.y }, 32, 32, GetAlpha(255, blocks));
 		}
 	}
 
@@ -1688,7 +1721,7 @@ void ButtonAction(int buttonId)
 	{
 		int damage = round(player.damage / floor(1 + enemies[player.selectedEnemy].protection / 3));
 
-		if (Random(1, 100)<=player.agility)
+		if (Random(1, 100) <= player.agility)
 			damage *= 2;
 
 		enemies[player.selectedEnemy].health -= damage;
