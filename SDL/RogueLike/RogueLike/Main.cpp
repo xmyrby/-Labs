@@ -8,7 +8,7 @@ SDL_Window* win = NULL;
 SDL_Renderer* ren = NULL;
 SDL_Surface* win_surf = NULL;
 TTF_Font* font = NULL;
-SDL_Texture* textures[75];
+SDL_Texture* textures[100];
 SDL_Texture* lastRender;
 
 int winWdt = 960;
@@ -69,13 +69,6 @@ struct OverlayNum
 	int alpha;
 };
 
-struct Lamp
-{
-	int textureId;
-	Position position;
-	int bright;
-};
-
 struct OverlayParticle
 {
 	Position pos;
@@ -88,9 +81,28 @@ struct OverlayParticle
 	float moveSpeed;
 };
 
+struct OverlayProjectile
+{
+	Position pos;
+	Position lPos;
+	float offX;
+	float offY;
+	int textureId;
+	float angleOfMove;
+};
+
+struct Lamp
+{
+	int textureId;
+	Position position;
+	int bright;
+};
+
+
 Position PrintText(int var, Position position, int size, Uint8 alpha, int colorId);
 Position PrintText(const char* var, Position position, int siz, Uint8 alpha, int colorId);
 void RenderImage(int textureId, Position position, int w, int h, int alpha);
+int RayTracing(Position position, Position mainPos);
 bool CheckEntity(Position pos);
 
 struct ItemParam
@@ -169,6 +181,8 @@ struct Entity
 	int protection;
 	int agility;
 	int blinding = 0;
+	//int* x = &position.x;
+	//int* y = &position.y;
 
 	int x()
 	{
@@ -201,58 +215,25 @@ struct Player : Entity
 	int gold;
 	int mana;
 	int maxMana;
-
-	int equipment[6][2]{ {-1,0},{-1,0},{-1, 0},{-1, 0},{-1,0},{-1,0} };
+	//9 - Bow
+	int equipment[6][2]{ {-1,0},{-1,0},{-1, 0},{-1, 0},{9,1},{-1,0} };
 
 	int params[5]{ 1,1,1,1,1 };
-};
-
-struct Enemy : Entity
-{
-	int type = 0;
-	Path path;
-	char name[100];
-	int textureId;
-	int iconTextureId;
-	int xpReward;
-	int goldReward;
-	int dropChance;
-	int spawnChance;
-
-	void NewPath(Path nPath)
-	{
-		path = nPath;
-		path.next = 0;
-	}
-
-	void Move()
-	{
-		if (path.len > 0 && moves > 0)
-		{
-			if (CheckEntity(path.path[path.next]))
-			{
-				position = path.path[path.next];
-				moves--;
-				path.next++;
-				if (path.next >= path.len - 1)
-					path.len = 0;
-				health = Min(health + regeneration, maxHealth);
-			}
-		}
-	}
 };
 
 struct Overlay
 {
 	OverlayNum* overlayNums;
 	OverlayParticle* overlayParticles;
+	OverlayProjectile* overlayProjectiles;
 	int numsCount = 0;
 	int particlesCount = 0;
-
+	int projectilesCount = 0;
 	void Init()
 	{
 		overlayNums = (OverlayNum*)malloc(sizeof(OverlayNum));
 		overlayParticles = (OverlayParticle*)malloc(sizeof(OverlayParticle));
+		overlayProjectiles = (OverlayProjectile*)malloc(sizeof(OverlayProjectile));
 	}
 
 	void ClearNum(int id)
@@ -277,6 +258,17 @@ struct Overlay
 		overlayParticles = (OverlayParticle*)realloc(overlayParticles, sizeof(OverlayParticle) * particlesCount);
 	}
 
+	void ClearProjectile(int id)
+	{
+		for (int i = id; i < projectilesCount - 1; i++)
+		{
+			overlayProjectiles[i] = overlayProjectiles[i + 1];
+		}
+		projectilesCount--;
+
+		overlayProjectiles = (OverlayProjectile*)realloc(overlayProjectiles, sizeof(OverlayProjectile) * projectilesCount);
+	}
+
 	void AddNum(Position pos, int num, int color)
 	{
 		overlayNums = (OverlayNum*)realloc(overlayNums, sizeof(OverlayNum) * (numsCount + 1));
@@ -298,6 +290,13 @@ struct Overlay
 		}
 		particlesCount += count;
 	}
+
+	void AddProjectile(Position pos, Position lpos, int textureId, float angleOfMove)
+	{
+		overlayProjectiles = (OverlayProjectile*)realloc(overlayProjectiles, sizeof(OverlayProjectile) * (projectilesCount + 1));
+		overlayProjectiles[projectilesCount] = { pos,lpos,16,16,textureId,angleOfMove };
+		projectilesCount++;
+	}
 };
 
 struct Drop
@@ -307,24 +306,65 @@ struct Drop
 	int level;
 };
 
-Player player;
+Overlay overlay;
 
-Enemy* enemies;
-Enemy* enemiesTypes;
+Player player;
 
 Button* buttons;
 
 Item* items;
 
-Overlay overlay;
-
-SDL_Color colors[10];
+SDL_Color colors[14];
 
 Lamp lamps[LAMPS_COUNT];
 
 int map[MAP_SIZE][MAP_SIZE];
 int mapOverview[MAP_SIZE][MAP_SIZE];
 Drop* drop;
+
+struct Enemy : Entity
+{
+	int type = 0;
+	Path path;
+	char name[100];
+	int textureId;
+	int iconTextureId;
+	int xpReward;
+	int goldReward;
+	int dropChance;
+	int spawnChance;
+	int color;
+
+	void NewPath(Path nPath)
+	{
+		path = nPath;
+		path.next = 0;
+	}
+
+	void Move()
+	{
+		if (path.len > 0 && moves > 0)
+		{
+			if (CheckEntity(path.path[path.next]))
+			{
+				position = path.path[path.next];
+				moves--;
+				path.next++;
+				if (path.next >= path.len - 1)
+					path.len = 0;
+				if (health < maxHealth && regeneration>0)
+				{
+					health = Min(health + regeneration, maxHealth);
+					if (RayTracing(player.position, position) < 5)
+						overlay.AddNum(position, regeneration, 3);
+				}
+			}
+		}
+	}
+};
+
+Enemy* enemies;
+Enemy* enemiesTypes;
 
 int GetItemsBonus(int bonusId)
 {
@@ -447,6 +487,10 @@ void InitColors()
 	colors[7] = { 255,142,68 };
 	colors[8] = { 142,255,68 };
 	colors[9] = { 255,35,15 };
+	colors[10] = { 198,101,202 };
+	colors[11] = { 164,202,101 };
+	colors[12] = { 101,202,122 };
+	colors[13] = { 200,200,200 };
 }
 
 void DeInit(char error)
@@ -492,8 +536,16 @@ void LoadTextures()
 	textures[50] = IMG_LoadTexture(ren, "GFX\\Lamp.png");
 	textures[60] = IMG_LoadTexture(ren, "GFX\\TigerPawn.png");
 	textures[61] = IMG_LoadTexture(ren, "GFX\\TigerIcon.png");
-	textures[62] = IMG_LoadTexture(ren, "GFX\\GoblinSmaller.png");
+	textures[62] = IMG_LoadTexture(ren, "GFX\\GoblinSmallerPawn.png");
 	textures[63] = IMG_LoadTexture(ren, "GFX\\GoblinSmallerIcon.png");
+	textures[64] = IMG_LoadTexture(ren, "GFX\\GoblinWarriorPawn.png");
+	textures[65] = IMG_LoadTexture(ren, "GFX\\GoblinWarriorIcon.png");
+	textures[66] = IMG_LoadTexture(ren, "GFX\\GoblinMiniPawn.png");
+	textures[67] = IMG_LoadTexture(ren, "GFX\\GoblinMiniIcon.png");
+	textures[68] = IMG_LoadTexture(ren, "GFX\\GoblinMonkPawn.png");
+	textures[69] = IMG_LoadTexture(ren, "GFX\\GoblinMonkIcon.png");
+	textures[90] = IMG_LoadTexture(ren, "GFX\\Arrow.png");
+	textures[91] = IMG_LoadTexture(ren, "GFX\\MonkFireBall.png");
 }
 
 void InitEnemies()
@@ -512,7 +564,7 @@ void InitEnemies()
 		fgets(enemiesTypes[i].name, 126, ft);
 
 		enemiesTypes[i].name[strlen(enemiesTypes[i].name) - 1] = '\0';
-		fscanf_s(ft, "%d %d %d %d %d %d %d %d %d %d %d %d %d", &enemiesTypes[i].textureId, &enemiesTypes[i].iconTextureId, &enemiesTypes[i].maxHealth, &enemiesTypes[i].attacks, &enemiesTypes[i].moves, &enemiesTypes[i].damage, &enemiesTypes[i].attackrange, &enemiesTypes[i].regeneration, &enemiesTypes[i].xpReward, &enemiesTypes[i].protection, &enemiesTypes[i].goldReward, &enemiesTypes[i].dropChance, &enemiesTypes[i].spawnChance);
+		fscanf_s(ft, "%d %d %d %d %d %d %d %d %d %d %d %d %d %d", &enemiesTypes[i].textureId, &enemiesTypes[i].iconTextureId, &enemiesTypes[i].maxHealth, &enemiesTypes[i].attacks, &enemiesTypes[i].moves, &enemiesTypes[i].damage, &enemiesTypes[i].attackrange, &enemiesTypes[i].regeneration, &enemiesTypes[i].xpReward, &enemiesTypes[i].protection, &enemiesTypes[i].goldReward, &enemiesTypes[i].dropChance, &enemiesTypes[i].spawnChance, &enemiesTypes[i].color);
 		enemiesTypes[i].health = enemiesTypes[i].maxHealth;
 		enemiesTypes[i].type = i;
 	}
@@ -568,6 +620,48 @@ void KillEnemy(int id)
 	player.selectedEnemy = -1;
 
 	enemies = (Enemy*)realloc(enemies, sizeof(Enemy) * enemiesCount);
+}
+
+float GetAngle(Position a, Position b)
+{
+	return atan2(a.y - b.y, a.x - b.x);
+}
+
+int RayTracing(Position position, Position mainPos)
+{
+	float ax = position.x, ay = position.y;
+	float angle = GetAngle(mainPos, position);
+	int blocks = 0;
+	while (position.x != mainPos.x || position.y != mainPos.y)
+	{
+		if (position.x != mainPos.x)
+			ax += cos(angle);
+		if (position.y != mainPos.y)
+			ay += sin(angle);
+		position.x = round(ax);
+		position.y = round(ay);
+		if (map[position.x][position.y] == 1)
+			blocks += 5;
+
+		blocks += 1;
+	}
+
+	return blocks;
+}
+
+void SpawnEnemy(Position pos, int id, int level)
+{
+	enemiesCount++;
+	enemies = (Enemy*)realloc(enemies, sizeof(Enemy) * enemiesCount);
+	enemies[enemiesCount - 1] = enemiesTypes[id];
+	enemies[enemiesCount - 1].position = pos;
+	enemies[enemiesCount - 1].level = level;
+	enemies[enemiesCount - 1].maxHealth += enemiesTypes[id].maxHealth / 5 * (level - 1);
+	enemies[enemiesCount - 1].health = enemiesTypes[id].maxHealth;
+	enemies[enemiesCount - 1].damage = enemiesTypes[id].damage + level - 1;
+	Enemy enemy = enemies[enemiesCount - 1];
+	if (RayTracing(player.position, pos) <= 5)
+		overlay.AddParticle(pos, 3, 13, 20);
 }
 
 void InitButtons()
@@ -734,33 +828,6 @@ void Generate()
 	}
 }
 
-float GetAngle(Position a, Position b)
-{
-	return atan2(a.y - b.y, a.x - b.x);
-}
-
-int RayTracing(Position position, Position mainPos)
-{
-	float ax = position.x, ay = position.y;
-	float angle = GetAngle(mainPos, position);
-	int blocks = 0;
-	while (position.x != mainPos.x || position.y != mainPos.y)
-	{
-		if (position.x != mainPos.x)
-			ax += cos(angle);
-		if (position.y != mainPos.y)
-			ay += sin(angle);
-		position.x = round(ax);
-		position.y = round(ay);
-		if (map[position.x][position.y] == 1)
-			blocks += 5;
-
-		blocks += 1;
-	}
-
-	return blocks;
-}
-
 int GetSize(const char* text)
 {
 	int count = 0;
@@ -881,6 +948,24 @@ void DrawOverlay()
 
 		if (overlay.overlayParticles[i].alpha <= 0)
 			overlay.ClearParticle(i);
+	}
+
+	for (int i = 0; i < overlay.projectilesCount; i++)
+	{
+		OverlayProjectile oProj = overlay.overlayProjectiles[i];
+		Position pos = oProj.pos;
+		pos.x = ConvBig(pos.x, player.x()) + (int)oProj.offX;
+		pos.y = ConvBig(pos.y, player.y()) + (int)oProj.offY;
+
+		SDL_Rect rect = { pos.x ,pos.y,16,16 };
+		SDL_RenderCopyEx(ren, textures[oProj.textureId], NULL, &rect, oProj.angleOfMove * 180 / M_PI, NULL, SDL_FLIP_NONE);
+
+		overlay.overlayProjectiles[i].offX += cos(oProj.angleOfMove) * 10;
+		overlay.overlayProjectiles[i].offY += sin(oProj.angleOfMove) * 10;
+
+		if (Distance({ int(oProj.pos.x + floor(oProj.offX / 16)), int(oProj.pos.y + floor(oProj.offY / 16))
+			}, oProj.lPos) <= 1)
+			overlay.ClearProjectile(i);
 	}
 }
 
@@ -1397,7 +1482,7 @@ void Draw()
 				if (Distance(player.position, lamps[l].position) <= 15 && RayTracing(lamps[l].position, player.position) <= 5)
 					blocks = Min(blocks, Max(RayTracing(enemies[i].position, lamps[l].position) + lamps[l].bright, 0));
 			rect = { ConvBig(enemies[i].x(), player.x()) ,ConvBig(enemies[i].y(), player.y()),32,32 };
-			SDL_SetRenderDrawColor(ren, GetAlpha(198, blocks), GetAlpha(101, blocks), GetAlpha(202, blocks), 255);
+			SDL_SetRenderDrawColor(ren, GetAlpha(colors[enemies[i].color].r, blocks), GetAlpha(colors[enemies[i].color].g, blocks), GetAlpha(colors[enemies[i].color].b, blocks), 255);
 			SDL_RenderFillRect(ren, &rect);
 			if (blocks <= 5)
 				RenderImage(enemies[i].textureId, { rect.x, rect.y }, 32, 32, GetAlpha(255, blocks));
@@ -1619,7 +1704,7 @@ void MakeEnemyMove(Enemy& enemy)
 {
 	if (RayTracing(enemy.position, player.position) <= 5)
 	{
-		while (enemy.moves > 0 && !CheckAttackDist(enemy, player))
+		while (enemy.moves > 0 && !CheckAttackDist(enemy, player) && enemy.type != 4)
 		{
 			enemy.NewPath(FindPath(enemy.position, player.position));
 			enemy.Move();
@@ -1629,7 +1714,11 @@ void MakeEnemyMove(Enemy& enemy)
 
 		for (int i = 0; i < enemy.attacks; i++)
 		{
-			if (CheckAttackDist(enemy, player))
+			int action = 0;
+			if (enemy.type == 4)
+				action = Random(0, 1);
+
+			if (CheckAttackDist(enemy, player) && !action)
 			{
 				int damage = round(enemy.damage / floor(1 + player.protection / 3));
 				if (Random(1, 100) <= player.agility)
@@ -1638,6 +1727,33 @@ void MakeEnemyMove(Enemy& enemy)
 				enemy.moves--;
 				overlay.AddNum(player.position, -damage, 1);
 				overlay.AddParticle(player.position, 2, 9, 15);
+				if (enemy.type == 4)
+					overlay.AddProjectile(enemy.position, player.position, 91, GetAngle(player.position, enemy.position));
+				else if (enemy.type == 1)
+					overlay.AddProjectile(enemy.position, player.position, 90, GetAngle(player.position, enemy.position));
+
+			}
+			else if (action)
+			{
+				if (enemy.path.len > 0)
+					enemy.Move();
+				else if (Random(0, 1) == 0)
+				{
+					enemy.NewPath(FindPath(enemy.position, { enemy.position.x + Random(-2,2),enemy.position.y + Random(-2,2) }));
+					enemy.Move();
+				}
+				else
+				{
+					bool spawned = false;
+					Position pos;
+					while (!spawned)
+					{
+						pos = { Random(enemy.x() - 3,enemy.x() + 3),Random(enemy.y() - 3,enemy.y() + 3) };
+						if (map[pos.x][pos.y] == 0 && CheckEntity(pos))
+							spawned = true;
+					}
+					SpawnEnemy(pos, Random(1, 3), enemy.level);
+				}
 			}
 		}
 	}
@@ -1665,7 +1781,7 @@ void CheckMove()
 		canMove = false;
 		for (int i = 0; i < enemiesCount; i++)
 		{
-			if (CheckAttackDist(player, enemies[i]) && RayTracing(player.position, enemies[i].position) <= 5)
+			if (CheckAttackDist(player, enemies[i]) && RayTracing(player.position, enemies[i].position) < 5)
 			{
 				canMove = true;
 				break;
@@ -1719,6 +1835,8 @@ void ButtonAction(int buttonId)
 {
 	if (buttonId == 0 && player.attacks && playerMenu != 3)
 	{
+		if (player.attackrange > 1)
+			overlay.AddProjectile(player.position, enemies[player.selectedEnemy].position, 90, GetAngle(enemies[player.selectedEnemy].position, player.position));
 		int damage = round(player.damage / floor(1 + enemies[player.selectedEnemy].protection / 3));
 
 		if (Random(1, 100) <= player.agility)

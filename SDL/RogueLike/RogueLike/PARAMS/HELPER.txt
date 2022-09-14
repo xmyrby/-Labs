@@ -1,6 +1,6 @@
 #EnemiesTypes
 	-(Count of Types)-(Name)
-	-(Texture Id) -(Icon Id) -(Health) -(Attacks) -(Moves) -(Damage) -(Attack Range) -(Regeneration) -(XpReward) -(Protection) -(Gold Reward) -(Drop Chance) -(Spawn Chance)
+	-(Texture Id) -(Icon Id) -(Health) -(Attacks) -(Moves) -(Damage) -(Attack Range) -(Regeneration) -(XpReward) -(Protection) -(Gold Reward) -(Drop Chance) -(Spawn Chance) -(Color)
 #Items
 	-(Count of Items)
 	-(Name)
