@@ -215,8 +215,7 @@ struct Player : Entity
 	int gold;
 	int mana;
 	int maxMana;
-	//9 - Bow
-	int equipment[6][2]{ {-1,0},{-1,0},{-1, 0},{-1, 0},{9,1},{-1,0} };
+	int equipment[6][2]{ {-1,0},{-1,0},{-1, 0},{-1, 0},{-1,0},{-1,0} };
 
 	int params[5]{ 1,1,1,1,1 };
 };
@@ -1887,20 +1886,31 @@ void ButtonAction(int buttonId)
 	else if (buttonId == 15)
 	{
 		Drop droped = drop[itemMenu];
-		int type = items[droped.id].type;
+		Item item = items[droped.id];
 
-		if (player.equipment[type][0] != -1)
+		if (item.type == 4 && item.specialParam && player.equipment[5][0] != 1)
 		{
-			drop[itemMenu].id = player.equipment[type][0];
-			drop[itemMenu].level = player.equipment[type][1];
+			AddDrop(player.equipment[5][0], player.position, player.equipment[5][1]);
+			player.equipment[5][0] = -1;
+		}
+		else if (item.type == 5 && player.equipment[4][0] != 1 && items[player.equipment[4][0]].specialParam)
+		{
+			AddDrop(player.equipment[4][0], player.position, player.equipment[4][1]);
+			player.equipment[4][0] = -1;
+		}
+
+		if (player.equipment[item.type][0] != -1)
+		{
+			drop[itemMenu].id = player.equipment[item.type][0];
+			drop[itemMenu].level = player.equipment[item.type][1];
 		}
 		else
 		{
 			DeleteDrop(itemMenu);
 		}
 
-		player.equipment[type][0] = droped.id;
-		player.equipment[type][1] = droped.level;
+		player.equipment[item.type][0] = droped.id;
+		player.equipment[item.type][1] = droped.level;
 
 		itemMenu = -1;
 		itemMenuType = -1;
