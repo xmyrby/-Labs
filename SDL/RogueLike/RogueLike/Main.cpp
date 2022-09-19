@@ -113,6 +113,14 @@ void RenderImage(int textureId, Position position, int w, int h, int alpha);
 int RayTracing(Position position, Position mainPos);
 bool CheckEntity(Position pos);
 
+int GetSize(const char* text)
+{
+	int count = 0;
+	while (text[count] != '\0')
+		count++;
+	return count;
+}
+
 struct ItemParam
 {
 	int type;
@@ -128,6 +136,7 @@ struct Button
 	int offset;
 	int textureId;
 	bool border;
+	int textAlign;
 
 	void DrawButton()
 	{
@@ -142,12 +151,33 @@ struct Button
 			SDL_SetRenderDrawColor(ren, 255, 255, 255, 255 - alpha);
 			SDL_RenderDrawRect(ren, &rect);
 		}
-		PrintText(text, { position.x + offset,position.y + 6 }, height / 2, 255 - alpha, 0);
+		int tWidth = 0.75 * GetSize(text) * (height / 2);
+		switch (textAlign)
+		{
+		case 0:
+		{
+			PrintText(text, { position.x + offset,position.y + height / 4 }, height / 2, 255 - alpha, 0);
+			break;
+		}
+		case 1:
+		{
+			PrintText(text, { position.x + offset + width / 2 - tWidth / 2,position.y + height / 4 }, height / 2, 255 - alpha, 0);
+			break;
+		}
+		case 2:
+		{
+			PrintText(text, { position.x + offset + width - tWidth,position.y + height / 4 }, height / 2, 255 - alpha, 0);
+			break;
+		}
+		default:
+			break;
+		}
+
 		if (textureId != NULL)
 			RenderImage(textureId, position, height, height, 255 - alpha);
 	}
 
-	Button(Position pos, char* txt, unsigned int wd, unsigned int ht, bool act, int off, int texture, bool bord) : position(pos), text(txt), width(wd), height(ht), active(act), offset(off), textureId(texture), border(bord) {
+	Button(Position pos, char* txt, unsigned int wd, unsigned int ht, bool act, int off, int texture, bool bord, int align) : position(pos), text(txt), width(wd), height(ht), active(act), offset(off), textureId(texture), border(bord), textAlign(align) {
 	}
 };
 
@@ -574,8 +604,13 @@ void LoadTextures()
 	textures[13] = IMG_LoadTexture(ren, "GFX\\BootsMenuCell.png");
 	textures[14] = IMG_LoadTexture(ren, "GFX\\WeaponMenuCell.png");
 	textures[15] = IMG_LoadTexture(ren, "GFX\\ShieldMenuCell.png");
+
 	textures[17] = IMG_LoadTexture(ren, "GFX\\MenuCell.png");
+
 	textures[19] = IMG_LoadTexture(ren, "GFX\\GoldMenu.png");
+	textures[20] = IMG_LoadTexture(ren, "GFX\\Exit.png");
+	textures[21] = IMG_LoadTexture(ren, "GFX\\QR.png");
+
 	textures[25] = IMG_LoadTexture(ren, "GFX\\EQP\\Item0.png");
 	textures[26] = IMG_LoadTexture(ren, "GFX\\EQP\\Item1.png");
 	textures[27] = IMG_LoadTexture(ren, "GFX\\EQP\\Item2.png");
@@ -588,7 +623,9 @@ void LoadTextures()
 	textures[34] = IMG_LoadTexture(ren, "GFX\\EQP\\Item9.png");
 	textures[35] = IMG_LoadTexture(ren, "GFX\\EQP\\Item10.png");
 	textures[36] = IMG_LoadTexture(ren, "GFX\\EQP\\Item11.png");
+
 	textures[50] = IMG_LoadTexture(ren, "GFX\\Lamp.png");
+
 	textures[60] = IMG_LoadTexture(ren, "GFX\\TigerPawn.png");
 	textures[61] = IMG_LoadTexture(ren, "GFX\\TigerIcon.png");
 	textures[62] = IMG_LoadTexture(ren, "GFX\\GoblinSmallerPawn.png");
@@ -599,6 +636,7 @@ void LoadTextures()
 	textures[67] = IMG_LoadTexture(ren, "GFX\\GoblinMiniIcon.png");
 	textures[68] = IMG_LoadTexture(ren, "GFX\\GoblinMonkPawn.png");
 	textures[69] = IMG_LoadTexture(ren, "GFX\\GoblinMonkIcon.png");
+
 	textures[90] = IMG_LoadTexture(ren, "GFX\\Arrow.png");
 	textures[91] = IMG_LoadTexture(ren, "GFX\\MonkFireBall.png");
 }
@@ -625,21 +663,6 @@ void InitEnemies()
 	}
 
 	fclose(ft);
-
-	enemies = (Enemy*)malloc(sizeof(Enemy) * enemiesCount);
-	for (int i = 0; i < enemiesCount; i++)
-	{
-		bool spawned = false;
-		while (!spawned)
-		{
-			int id = rand() % enemiesTypesCount;
-			if (Random(1, 100) <= enemiesTypes[id].spawnChance)
-			{
-				enemies[i].type = id;
-				spawned = true;
-			}
-		}
-	}
 }
 
 void KillEnemy(int id)
@@ -709,6 +732,28 @@ int RayTracing(Position position, Position mainPos)
 	return blocks;
 }
 
+int RTBack(Position position, Position mainPos, int backMap[31][31])
+{
+	float ax = position.x, ay = position.y;
+	float angle = GetAngle(mainPos, position);
+	int blocks = 0;
+	while (position.x != mainPos.x || position.y != mainPos.y)
+	{
+		if (position.x != mainPos.x)
+			ax += cos(angle);
+		if (position.y != mainPos.y)
+			ay += sin(angle);
+		position.x = round(ax);
+		position.y = round(ay);
+		if (backMap[position.x][position.y] == 1)
+			blocks += 5;
+
+		blocks += 1;
+	}
+
+	return Max(0, blocks / 1.5);
+}
+
 void SpawnEnemy(Position pos, int id, int level)
 {
 	enemiesCount++;
@@ -726,15 +771,21 @@ void SpawnEnemy(Position pos, int id, int level)
 
 void InitButtons()
 {
-	buttons = (Button*)malloc(sizeof(Button) * 16);
-	buttons[0] = *(new Button({ 652,100 }, new char[7]{ "Attack" }, 296, 24, false, 30, 6, true));
-	buttons[1] = *(new Button({ 928,480 }, new char[2]{ "\0" }, 32, 32, false, NULL, 7, false));
-	buttons[2] = *(new Button({ 928,512 }, new char[2]{ "\0" }, 32, 32, false, NULL, 9, false));
-	buttons[3] = *(new Button({ 928,558 }, new char[2]{ "\0" }, 24, 24, false, NULL, 8, false));
-	buttons[4] = *(new Button({ 928,590 }, new char[2]{ "\0" }, 24, 24, false, NULL, 8, false));
-	buttons[5] = *(new Button({ 928,622 }, new char[2]{ "\0" }, 24, 24, false, NULL, 8, false));
-	buttons[6] = *(new Button({ 928,654 }, new char[2]{ "\0" }, 24, 24, false, NULL, 8, false));
-	buttons[15] = *(new Button({ 400,674 }, new char[5]{ "Robe" }, 160, 24, false, 64, NULL, true));
+	buttons = (Button*)malloc(sizeof(Button) * 26);
+	buttons[0] = *(new Button({ 652,100 }, new char[7]{ "Attack" }, 296, 24, false, 30, 6, true, 0));
+	buttons[1] = *(new Button({ 928,480 }, new char[2]{ "\0" }, 32, 32, false, NULL, 7, false, 0));
+	buttons[2] = *(new Button({ 928,512 }, new char[2]{ "\0" }, 32, 32, false, NULL, 9, false, 0));
+	buttons[3] = *(new Button({ 928,558 }, new char[2]{ "\0" }, 24, 24, false, NULL, 8, false, 0));
+	buttons[4] = *(new Button({ 928,590 }, new char[2]{ "\0" }, 24, 24, false, NULL, 8, false, 0));
+	buttons[5] = *(new Button({ 928,622 }, new char[2]{ "\0" }, 24, 24, false, NULL, 8, false, 0));
+	buttons[6] = *(new Button({ 928,654 }, new char[2]{ "\0" }, 24, 24, false, NULL, 8, false, 0));
+	buttons[15] = *(new Button({ 400,674 }, new char[5]{ "Robe" }, 160, 24, false, NULL, NULL, true, 1));
+	buttons[20] = *(new Button({ 320,315 }, new char[8]{ "PLAY" }, 320, 32, false, NULL, NULL, true, 1));
+	buttons[21] = *(new Button({ 320,390 }, new char[8]{ "OPTIONS" }, 320, 32, false, NULL, NULL, true, 1));
+	buttons[22] = *(new Button({ 320,465 }, new char[8]{ "STATS" }, 320, 32, false, NULL, NULL, true, 1));
+	buttons[23] = *(new Button({ 320,540 }, new char[8]{ "ABOUT" }, 320, 32, false, NULL, NULL, true, 1));
+	buttons[24] = *(new Button({ 320,615 }, new char[8]{ "EXIT" }, 320, 32, false, NULL, NULL, true, 1));
+	buttons[25] = *(new Button({ 612,196 }, new char[2]{ "\0" }, 32, 32, false, NULL, 20, true, 0));
 }
 
 void Init()
@@ -890,12 +941,66 @@ void Generate()
 	}
 }
 
-int GetSize(const char* text)
+void GBack(int backMap[31][31])
 {
-	int count = 0;
-	while (text[count] != '\0')
-		count++;
-	return count;
+	struct Ant
+	{
+		Position position;
+	};
+
+	for (int i = 0; i < 31; i++)
+		for (int j = 0; j < 31; j++)
+			backMap[i][j] = 1;
+
+	Ant ants[2];
+	int cells = 0;
+
+	for (int i = 0; i < 2; i++)
+	{
+		ants[i] = { Random(31 / 4,31 / 4 * 3), Random(31 / 4,31 / 4 * 3) };
+		backMap[ants[i].position.x][ants[i].position.y] = 0;
+		cells++;
+	}
+
+	int cl = Random(25, 50);
+
+	while (cells < cl)
+		for (int j = 0; j < 2; j++)
+		{
+			Ant ant = ants[j];
+
+			for (int i = 0; i < 1000; i++)
+			{
+				int dir = Random(0, 3);
+
+				switch (dir)
+				{
+				case 0:
+					if (ant.position.x > 1)
+						ant.position.x--;
+					break;
+				case 1:
+					if (ant.position.x < 31 - 2)
+						ant.position.x++;
+					break;
+				case 2:
+					if (ant.position.y > 1)
+						ant.position.y--;
+					break;
+				case 3:
+					if (ant.position.y < 31 - 2)
+						ant.position.y++;
+					break;
+				default:
+					break;
+				}
+				if (backMap[ant.position.x][ant.position.y] != 0 && CheckCell(ant.position.x - 2, ant.position.y - 2))
+				{
+					backMap[ant.position.x][ant.position.y] = 0;
+					cells++;
+				}
+			}
+		}
 }
 
 Position PrintText(int var, Position position, int size, Uint8 alpha, int colorId)
@@ -972,6 +1077,62 @@ bool CheckAttackDist(Entity a, Entity b)
 	if (a.attackrange >= int(round(sqrt((a.x() - b.x()) * (a.x() - b.x()) + (a.y() - b.y()) * (a.y() - b.y())))))
 		return true;
 	return false;
+}
+
+void DBack(int backMap[31][31])
+{
+	static int alpha;
+	static bool side = true;
+	SDL_SetRenderDrawColor(ren, 0, 0, 0, 255);
+	SDL_RenderClear(ren);
+	if (saveMap)
+	{
+		alpha = 10;
+		side = true;
+		for (int i = 0; i < 31; i++)
+			for (int j = 0; j < 31; j++)
+			{
+				SDL_Rect rect = { i * 32 - 16,j * 32 - 16,32,32 };
+
+				int blocks = RTBack({ i, j }, { 15,15 }, backMap);
+				SDL_SetRenderDrawColor(ren, GetAlpha(30, blocks), GetAlpha(30, blocks), GetAlpha(30, blocks), 255);
+				SDL_RenderFillRect(ren, &rect);
+
+				if (backMap[i][j] == 1)
+				{
+					SDL_SetRenderDrawColor(ren, GetAlpha(138, blocks), GetAlpha(22, blocks), GetAlpha(31, blocks), 255);
+					SDL_RenderFillRect(ren, &rect);
+				}
+				else if (backMap[i][j] == 0)
+				{
+					SDL_SetRenderDrawColor(ren, GetAlpha(30, blocks), GetAlpha(30, blocks), GetAlpha(30, blocks), 255);
+					SDL_RenderFillRect(ren, &rect);
+				}
+			}
+
+		SDL_Surface* lastRenderSur = SDL_CreateRGBSurface(0, winWdt, winHgt, 32, 0x00ff0000, 0x0000ff00, 0x000000ff, 0xff000000);
+		SDL_RenderReadPixels(ren, NULL, SDL_GetWindowPixelFormat(win), lastRenderSur->pixels, lastRenderSur->pitch);
+		SDL_DestroyTexture(lastRender);
+		lastRender = SDL_CreateTextureFromSurface(ren, lastRenderSur);
+		SDL_FreeSurface(lastRenderSur);
+
+		SDL_SetRenderDrawColor(ren, 0, 0, 0, 255);
+		SDL_RenderClear(ren);
+
+		saveMap = false;
+	}
+
+	SDL_SetTextureAlphaMod(lastRender, alpha);
+	SDL_Rect rect = { 0,0,winWdt,winHgt };
+	SDL_RenderCopy(ren, lastRender, NULL, &rect);
+	if (side)
+	{
+		alpha = Min(255, alpha + 1);
+		if (alpha == 255)
+			side = false;
+	}
+	else
+		alpha = Max(10, alpha - 1);
 }
 
 void DrawOverlay()
@@ -1566,6 +1727,51 @@ void Draw()
 	DrawUI();
 }
 
+void DrawMenu(int menuId)
+{
+	SDL_Rect rect = { 300,180,360,600 };
+	SDL_SetRenderDrawColor(ren, 0, 0, 0, 155);
+	SDL_RenderFillRect(ren, &rect);
+
+	if (menuId == 0)
+	{
+		
+	}
+	else if (menuId == 1)
+	{
+		PrintText("GAME STATS", { 378,196 }, 24, 255, 0);
+		Position offset = PrintText("Mobs Killed: ", { 316,264 }, 16, 255, 0);
+		PrintText(stats[0], { offset.x,264 }, 16, 255, 0);
+		offset = PrintText("Damage Given: ", { 316,304 }, 16, 255, 0);
+		PrintText(stats[1], { offset.x,304 }, 16, 255, 0);
+		offset = PrintText("Damage Taken: ", { 316,344 }, 16, 255, 0);
+		PrintText(stats[2], { offset.x,344 }, 16, 255, 0);
+		offset = PrintText("Experience Gained: ", { 316,384 }, 16, 255, 0);
+		PrintText(stats[3], { offset.x,384 }, 16, 255, 0);
+		offset = PrintText("Gold Gained: ", { 316,424 }, 16, 255, 0);
+		PrintText(stats[4], { offset.x,424 }, 16, 255, 0);
+		offset = PrintText("Steps: ", { 316,464 }, 16, 255, 0);
+		PrintText(stats[5], { offset.x,464 }, 16, 255, 0);
+		offset = PrintText("Moves: ", { 316,504 }, 16, 255, 0);
+		PrintText(stats[6], { offset.x,504 }, 16, 255, 0);
+		offset = PrintText("Critical Hits: ", { 316,544 }, 16, 255, 0);
+		PrintText(stats[7], { offset.x,544 }, 16, 255, 0);
+		offset = PrintText("Dodges: ", { 316,584 }, 16, 255, 0);
+		PrintText(stats[8], { offset.x,584 }, 16, 255, 0);
+		offset = PrintText("Health Restored: ", { 316,624 }, 16, 255, 0);
+		PrintText(stats[9], { offset.x,624 }, 16, 255, 0);
+	}
+	else if (menuId == 2)
+	{
+		PrintText("BE SAVEFUL", { 390,196 }, 24, 255, 0);
+		PrintText("GitHub: github.com/xmyrby", { 330,264 }, 16, 255, 0);
+		PrintText("VK: vk.com/bluelite.studio", { 324,292 }, 16, 255, 0);
+		RenderImage(21, { 300,316 }, 360, 360, 255);
+		PrintText("SDL2 based game", { 386,684 }, 16, 255, 0);
+		PrintText("Version: b1.0.0.01", { 316,752 }, 12, 255, 0);
+	}
+}
+
 void SpawnPlayer()
 {
 	do
@@ -1582,6 +1788,20 @@ void SpawnPlayer()
 
 void SpawnEnemies()
 {
+	enemies = (Enemy*)realloc(enemies, sizeof(Enemy) * enemiesCount);
+	for (int i = 0; i < enemiesCount; i++)
+	{
+		bool spawned = false;
+		while (!spawned)
+		{
+			int id = rand() % enemiesTypesCount;
+			if (Random(1, 100) <= enemiesTypes[id].spawnChance)
+			{
+				enemies[i].type = id;
+				spawned = true;
+			}
+		}
+	}
 	for (int i = 0; i < enemiesCount; i++)
 	{
 		Enemy enemy;
@@ -1885,7 +2105,6 @@ void CheckMove()
 		player.moves += GetItemsBonus(3);
 		player.attacks += GetItemsBonus(4);
 		stats[6]++;
-		SaveStats();
 
 		for (int i = 0; i < enemiesCount; i++)
 		{
@@ -2073,6 +2292,137 @@ int CheckButtonClick(Position mPos)
 	return -1;
 }
 
+int Menu()
+{
+	int menuId = -1;
+	Position _mouse{ 0,0 };
+	int backMap[31][31];
+	int lastTime = SDL_GetTicks(), newTime, delta = 0, lastGen = SDL_GetTicks();
+	int buttonC = -1;
+	GBack(backMap);
+	saveMap = true;
+
+	while (true)
+	{
+		SDL_PumpEvents();
+		Uint32 events = SDL_GetMouseState(&_mouse.x, &_mouse.y);
+		if (lastTime - lastGen >= 5500)
+		{
+			GBack(backMap);
+			saveMap = true;
+			lastGen = lastTime;
+		}
+
+		DBack(backMap);
+
+		for (int i = 20; i < 26; i++)
+		{
+			Button button = buttons[i];
+			if (_mouse.x >= button.position.x && _mouse.y >= button.position.y && _mouse.x <= button.position.x + button.width && _mouse.y <= button.position.y + button.height && button.active)
+			{
+				if (i != 25)
+				{
+					buttons[i].width = 400;
+					buttons[i].position.x = 280;
+					buttons[i].height = 48;
+					buttons[i].position.y = 307 + 75 * (i - 20);
+				}
+
+				if ((events & SDL_BUTTON_LMASK) != 0)
+					buttonC = i;
+			}
+			else
+			{
+				if (i != 25)
+				{
+					buttons[i].width = 320;
+					buttons[i].height = 32;
+					buttons[i].position.x = 320;
+					buttons[i].position.y = 315 + 75 * (i - 20);
+				}
+			}
+		}
+
+		switch (buttonC)
+		{
+		case 20:
+		{
+			moves = 0;
+			enemiesCount = 200;
+			enemiesTypesCount = 0;
+			lastBtnId = -1;
+			playerMenu = 0;
+			itemsCount = 0;
+			dropCount = 0;
+			itemMenuType = 0;
+			itemMenu = 0;
+			saveMap = true;
+			showMap = false;
+			return 0;
+			break;
+		}
+		case 21:
+		{
+			menuId = 0;
+			break;
+		}
+		case 22:
+		{
+			menuId = 1;
+			break;
+		}
+		case 23:
+		{
+			menuId = 2;
+			break;
+		}
+		case 24:
+		{
+			SaveStats();
+			DeInit(123);
+			break;
+		}
+		case 25:
+		{
+			menuId = -1;
+			break;
+		}
+		default:
+			break;
+		}
+		buttonC = -1;
+
+		if (menuId != -1)
+		{
+			for (int i = 20; i < 25; i++)
+				buttons[i].active = false;
+			DrawMenu(menuId);
+			buttons[25].active = true;
+			buttons[25].DrawButton();
+		}
+		else
+		{
+			for (int i = 20; i < 25; i++)
+			{
+				buttons[i].active = true;
+				buttons[i].DrawButton();
+			}
+			buttons[25].active = false;
+		}
+
+		SDL_RenderPresent(ren);
+
+		newTime = SDL_GetTicks();
+		delta = newTime - lastTime;
+		lastTime = newTime;
+
+		if (delta < 16)
+		{
+			SDL_Delay(16 - delta);
+		}
+	}
+}
+
 #undef main;
 int main()
 {
@@ -2091,6 +2441,8 @@ int main()
 	SpawnPlayer();
 	SpawnEnemies();
 	RecalculatePlayer();
+
+	Menu();
 
 	while (true)
 	{
