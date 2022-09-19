@@ -30,9 +30,15 @@ int dropCount = 0;
 int itemMenuType = 0;
 int itemMenu = 0;
 
+int seed = 0;
+
 bool saveMap = true;
 
 bool showMap = false;
+
+bool game = false;
+
+int lastTime = SDL_GetTicks(), newTime, delta = 0;
 
 int Random(int a, int b)
 {
@@ -181,6 +187,56 @@ struct Button
 	}
 };
 
+struct TextBox
+{
+	Position position;
+	int width, height;
+	int value;
+	char* text;
+	bool active;
+	bool type;
+	bool focus = false;
+
+	void DrawTextBox()
+	{
+		int alpha = 0;
+		if (!active)
+			alpha = 125;
+		SDL_Rect rect = { position.x,position.y,width,height };
+		SDL_SetRenderDrawColor(ren, 55, 55, 55, 150 - alpha);
+		SDL_RenderFillRect(ren, &rect);
+		SDL_SetRenderDrawColor(ren, 255, 255, 255, 255 - alpha);
+		SDL_RenderDrawRect(ren, &rect);
+		if (!type)
+			PrintText(text, { position.x + 4,position.y + height / 4 }, height / 2, 255 - alpha, 0);
+		else
+			PrintText(value, { position.x + 4,position.y + height / 4 }, height / 2, 255 - alpha, 0);
+
+		if (focus)
+		{
+			int offset = 0;
+			if (!type)
+				offset = int(0.75 * GetSize(text) * height / 2 + 4);
+			else
+			{
+				int i = 0;
+				for (int a = 1; a < value; a *= 10)
+					i++;
+				if (i == 0)
+					i++;
+				offset = int(0.75 * i * height / 2 + 4);
+			}
+
+			rect = { position.x + offset,position.y + height / 6,2,height / 3 * 2 };
+			SDL_SetRenderDrawColor(ren, 255, 255, 255, 255 - alpha);
+			SDL_RenderDrawRect(ren, &rect);
+		}
+	}
+
+	TextBox(Position pos, unsigned int wd, unsigned int ht, unsigned int val, char* txt, bool act, bool tp) : position(pos), width(wd), height(ht), value(val), text(txt), active(act), type(tp) {
+	}
+};
+
 struct Path
 {
 	int len;
@@ -256,6 +312,37 @@ struct Player : Entity
 	int equipment[6][2]{ {-1,0},{-1,0},{-1, 0},{-1, 0},{-1,0},{-1,0} };
 
 	int params[5]{ 1,1,1,1,1 };
+
+	void Reset()
+	{
+		selectedEnemy = -1;
+
+		level = 1;
+		xp = 0;
+		next = 100;
+		points = 3;
+		gold = 0;
+		mana = 0;
+		maxMana = 0;
+		health = 0;
+		maxHealth = 0;
+		moves = 1;
+		attacks = 1;
+		damage = 1;
+		attackrange = 1;
+		regeneration = 1;
+
+		for (int i = 0; i < 6; i++)
+		{
+			equipment[i][0] = -1;
+			equipment[i][1] = 0;
+		}
+
+		for (int i = 0; i < 5; i++)
+		{
+			params[i] = 1;
+		}
+	}
 };
 
 struct Overlay
@@ -372,6 +459,7 @@ Overlay overlay;
 Player player;
 
 Button* buttons;
+TextBox* textBoxes;
 
 Item* items;
 
@@ -771,7 +859,7 @@ void SpawnEnemy(Position pos, int id, int level)
 
 void InitButtons()
 {
-	buttons = (Button*)malloc(sizeof(Button) * 26);
+	buttons = (Button*)malloc(sizeof(Button) * 27);
 	buttons[0] = *(new Button({ 652,100 }, new char[7]{ "Attack" }, 296, 24, false, 30, 6, true, 0));
 	buttons[1] = *(new Button({ 928,480 }, new char[2]{ "\0" }, 32, 32, false, NULL, 7, false, 0));
 	buttons[2] = *(new Button({ 928,512 }, new char[2]{ "\0" }, 32, 32, false, NULL, 9, false, 0));
@@ -786,6 +874,14 @@ void InitButtons()
 	buttons[23] = *(new Button({ 320,540 }, new char[8]{ "ABOUT" }, 320, 32, false, NULL, NULL, true, 1));
 	buttons[24] = *(new Button({ 320,615 }, new char[8]{ "EXIT" }, 320, 32, false, NULL, NULL, true, 1));
 	buttons[25] = *(new Button({ 612,196 }, new char[2]{ "\0" }, 32, 32, false, NULL, 20, true, 0));
+	buttons[26] = *(new Button({ 320,464 }, new char[5]{ "Exit" }, 320, 32, false, NULL, 20, true, 1));
+}
+
+void InitTextBoxes()
+{
+	textBoxes = (TextBox*)malloc(sizeof(TextBox) * 2);
+	textBoxes[0] = *(new TextBox({ 316,248 }, 328, 48, 0, new char[2]{ "\0" }, false, true));
+	textBoxes[1] = *(new TextBox({ 316,396 }, 328, 48, 200, new char[2]{ "\0" }, false, true));
 }
 
 void Init()
@@ -830,6 +926,8 @@ void Init()
 
 	InitButtons();
 
+	InitTextBoxes();
+
 	InitEnemies();
 
 	InitColors();
@@ -852,6 +950,19 @@ bool CheckCell(int x, int y)
 				weight++;
 
 	if (weight < CELLS_DENSITY)
+		return false;
+	return true;
+}
+
+bool CCBack(int x, int y, int backMap[31][31])
+{
+	int weight = 0;
+	for (int i = x; i < x + 5; i++)
+		for (int j = y; j < y + 5; j++)
+			if (backMap[i][j] != 0)
+				weight++;
+
+	if (weight < 4)
 		return false;
 	return true;
 }
@@ -994,7 +1105,7 @@ void GBack(int backMap[31][31])
 				default:
 					break;
 				}
-				if (backMap[ant.position.x][ant.position.y] != 0 && CheckCell(ant.position.x - 2, ant.position.y - 2))
+				if (backMap[ant.position.x][ant.position.y] != 0 && CCBack(ant.position.x - 2, ant.position.y - 2, backMap))
 				{
 					backMap[ant.position.x][ant.position.y] = 0;
 					cells++;
@@ -1640,6 +1751,18 @@ void DrawUI()
 			buttons[15].DrawButton();
 		}
 	}
+	else if (playerMenu == 4)
+	{
+		player.health = 0;
+		SDL_Rect rect = { 0,0,960,960 };
+		SDL_SetRenderDrawColor(ren, 0, 0, 0, 155);
+		SDL_RenderFillRect(ren, &rect);
+		if (player.health <= 0)
+		{
+			Position offset = PrintText("YOU DIE", { 354,360 }, 48, 255, 0);
+		}
+		buttons[26].DrawButton();
+	}
 }
 
 void Draw()
@@ -1735,7 +1858,17 @@ void DrawMenu(int menuId)
 
 	if (menuId == 0)
 	{
-		
+		for (int i = 0; i < 2; i++)
+		{
+			textBoxes[i].DrawTextBox();
+		}
+
+		PrintText("Generation seed", { 316,216 }, 16, 255, 0);
+
+		PrintText("0 - Random seed", { 316,304 }, 12, 155, 0);
+
+		PrintText("Enemies count", { 316,364 }, 16, 255, 0);
+
 	}
 	else if (menuId == 1)
 	{
@@ -1782,8 +1915,6 @@ void SpawnPlayer()
 
 	player.maxHealth = 10;
 	player.health = 10;
-
-	//AddDrop(9, player.position, 1);
 }
 
 void SpawnEnemies()
@@ -1809,7 +1940,7 @@ void SpawnEnemies()
 		{
 			enemy.x(Random(0, MAP_SIZE - 1));
 			enemy.y(Random(0, MAP_SIZE - 1));
-		} while (map[enemy.x()][enemy.y()] != 0);
+		} while (map[enemy.x()][enemy.y()] != 0 || !CheckEntity(enemy.position) || Distance(enemy.position, player.position) <= 10);
 		enemies[i] = enemiesTypes[enemies[i].type];
 		enemies[i].position = enemy.position;
 		enemies[i].level = Random(1, 3);
@@ -2142,7 +2273,7 @@ int CheckSelection(Position position)
 
 void ButtonAction(int buttonId)
 {
-	if (buttonId == 0 && player.attacks && playerMenu != 3)
+	if (buttonId == 0 && player.attacks && playerMenu != 3 && playerMenu != 4)
 	{
 		if (player.attackrange > 1)
 			overlay.AddProjectile(player.position, enemies[player.selectedEnemy].position, 90, GetAngle(enemies[player.selectedEnemy].position, player.position));
@@ -2265,11 +2396,18 @@ void ButtonAction(int buttonId)
 			playerMenu = 0;
 		}
 	}
+	else if (buttonId == 26)
+	{
+		game = false;
+		SaveStats();
+		buttons[26].active = false;
+		player.Reset();
+	}
 }
 
 int CheckButtonClick(Position mPos)
 {
-	if (playerMenu != 3)
+	if (playerMenu != 3 && playerMenu != 4)
 	{
 		for (int i = 0; i < dropCount; i++)
 		{
@@ -2280,13 +2418,16 @@ int CheckButtonClick(Position mPos)
 			}
 		}
 	}
-	else if ((mPos.x < 320 || mPos.x>640 || mPos.y < 240 || mPos.y>720))
+	else if ((mPos.x < 320 || mPos.x>640 || mPos.y < 240 || mPos.y>720) && playerMenu != 4)
 		playerMenu = 0;
-	for (int i = 0; i < 16; i++)
+	for (int i = 0; i < 27; i++)
 	{
-		Button button = buttons[i];
-		if (mPos.x >= button.position.x && mPos.y >= button.position.y && mPos.x <= button.position.x + button.width && mPos.y <= button.position.y + button.height && button.active)
-			return i;
+		if ((playerMenu != 4 && i < 16) || i == 26)
+		{
+			Button button = buttons[i];
+			if (mPos.x >= button.position.x && mPos.y >= button.position.y && mPos.x <= button.position.x + button.width && mPos.y <= button.position.y + button.height && button.active)
+				return i;
+		}
 	}
 
 	return -1;
@@ -2297,8 +2438,9 @@ int Menu()
 	int menuId = -1;
 	Position _mouse{ 0,0 };
 	int backMap[31][31];
-	int lastTime = SDL_GetTicks(), newTime, delta = 0, lastGen = SDL_GetTicks();
+	int lastGen = SDL_GetTicks();
 	int buttonC = -1;
+	int lastInputButton = -1;
 	GBack(backMap);
 	saveMap = true;
 
@@ -2314,6 +2456,60 @@ int Menu()
 		}
 
 		DBack(backMap);
+
+		if (menuId == 0)
+		{
+			const Uint8* state = SDL_GetKeyboardState(NULL);
+			for (int i = 0; i < 2; i++)
+			{
+				textBoxes[i].active = true;
+				TextBox textBox = textBoxes[i];
+				if ((events & SDL_BUTTON_LMASK) != 0)
+					if (_mouse.x >= textBox.position.x && _mouse.y >= textBox.position.y && _mouse.x <= textBox.position.x + textBox.width && _mouse.y <= textBox.position.y + textBox.height && textBox.active)
+						textBoxes[i].focus = true;
+					else
+						textBoxes[i].focus = false;
+			}
+			for (int i = 30; i < 40; i++)
+			{
+				if (state[i] != 0 && lastInputButton != i)
+				{
+					lastInputButton = i;
+					for (int j = 0; j < 2; j++)
+					{
+						if (textBoxes[j].focus)
+							if (textBoxes[j].type)
+							{
+								if (j == 0)
+								{
+									textBoxes[j].value = Min(textBoxes[j].value * 10 + (i - 29) % 10, 65535);
+								}
+								else if (j == 1)
+									textBoxes[j].value = Min(textBoxes[j].value * 10 + (i - 29) % 10, 200);
+
+
+
+							}
+					}
+				}
+				else if (state[i] == 0 && lastInputButton == i)
+					lastInputButton = -1;
+			}
+
+			if (state[SDL_SCANCODE_BACKSPACE] && lastInputButton != 42)
+			{
+				lastInputButton = 42;
+				for (int j = 0; j < 2; j++)
+					if (textBoxes[j].focus)
+						if (textBoxes[j].type)
+							textBoxes[j].value /= 10;
+			}
+			else if (state[SDL_SCANCODE_BACKSPACE] == 0 && lastInputButton == 42)
+				lastInputButton = -1;
+		}
+		else
+			for (int i = 0; i < 1; i++)
+				textBoxes[i].active = false;
 
 		for (int i = 20; i < 26; i++)
 		{
@@ -2348,16 +2544,15 @@ int Menu()
 		case 20:
 		{
 			moves = 0;
-			enemiesCount = 200;
-			enemiesTypesCount = 0;
+			enemiesCount = textBoxes[1].value;
 			lastBtnId = -1;
 			playerMenu = 0;
-			itemsCount = 0;
 			dropCount = 0;
 			itemMenuType = 0;
 			itemMenu = 0;
 			saveMap = true;
 			showMap = false;
+			seed = textBoxes[0].value;
 			return 0;
 			break;
 		}
@@ -2432,125 +2627,162 @@ int main()
 	Position _mouse{ 0,0 };
 
 	bool _down = false;
-	int lastTime = SDL_GetTicks(), newTime, delta = 0;
 
 	font = TTF_OpenFont("Fonts\\MainFont.ttf", 20);
 	SDL_Event event;
 
-	Generate();
-	SpawnPlayer();
-	SpawnEnemies();
-	RecalculatePlayer();
-
-	Menu();
-
 	while (true)
 	{
-		const Uint8* state = SDL_GetKeyboardState(NULL);
+		Menu();
 
-		SDL_PumpEvents();
-		Uint32 events = SDL_GetMouseState(&_mouse.x, &_mouse.y);
+		if (seed == 0)
+			srand(time(NULL));
+		else
+			srand(seed);
 
-		if ((events & SDL_BUTTON_LMASK) != 0 && !_down)
+		Generate();
+		SpawnPlayer();
+		SpawnEnemies();
+		RecalculatePlayer();
+
+		game = true;
+
+		int lastInputButton = -1;
+		while (game)
 		{
-			_down = true;
-			lastBtnId = CheckButtonClick(_mouse);
-			if (lastBtnId < 100)
+			if (player.health <= 0)
 			{
-				ButtonAction(lastBtnId);
-				if (playerMenu != 3)
-					player.selectedEnemy = CheckSelection(_mouse);
+				buttons[26].active = true;
+				playerMenu = 4;
 			}
-			else
+
+			const Uint8* state = SDL_GetKeyboardState(NULL);
+
+			SDL_PumpEvents();
+			Uint32 events = SDL_GetMouseState(&_mouse.x, &_mouse.y);
+
+			if ((events & SDL_BUTTON_LMASK) != 0 && !_down)
 			{
-				player.selectedEnemy = CheckSelection(_mouse);
-				if (player.selectedEnemy == -1)
+				_down = true;
+				lastBtnId = CheckButtonClick(_mouse);
+				if (lastBtnId < 100)
+				{
 					ButtonAction(lastBtnId);
-			}
-		}
-		if ((events & SDL_BUTTON_LMASK) == 0)
-			_down = false;
-
-		SDL_PollEvent(&event);
-
-		if ((event.type == SDL_KEYDOWN || event.type == SDL_KEYUP) && playerMenu != 3)
-		{
-			bool moved = false;
-			if (state[SDL_SCANCODE_W])
-			{
-				if (map[player.x()][player.y() - 1] == 0 && player.moves > 0 && CheckEntity({ player.x(), player.y() - 1 }))
-				{
-					player.position.y--;
-					moved = true;
+					if (playerMenu != 3 && playerMenu != 4)
+						player.selectedEnemy = CheckSelection(_mouse);
 				}
-			}
-			else if (state[SDL_SCANCODE_S])
-			{
-				if (map[player.x()][player.y() + 1] == 0 && player.moves > 0 && CheckEntity({ player.x(), player.y() + 1 }))
-				{
-					player.position.y++;
-					moved = true;
-				}
-			}
-			else if (state[SDL_SCANCODE_A])
-			{
-				if (map[player.x() - 1][player.y()] == 0 && player.moves > 0 && CheckEntity({ player.x() - 1, player.y() }))
-				{
-					player.position.x--;
-					moved = true;
-				}
-			}
-			else if (state[SDL_SCANCODE_D])
-			{
-				if (map[player.x() + 1][player.y()] == 0 && player.moves > 0 && CheckEntity({ player.x() + 1, player.y() }))
-				{
-					player.position.x++;
-					moved = true;
-				}
-			}
-			else if (state[SDL_SCANCODE_SPACE])
-			{
-				player.moves = 0;
-				player.attacks = 0;
-			}
-			else if (state[SDL_SCANCODE_M])
-			{
-				if (showMap)
-					showMap = false;
 				else
-					showMap = true;
-			}
-
-			if (moved)
-			{
-				player.moves--;
-				stats[5] ++;
-
-				if (player.health < player.maxHealth)
 				{
-					player.health = Min(player.health + player.regeneration, player.maxHealth);
-					overlay.AddNum(player.position, player.regeneration, 3);
-					stats[9]++;
+					player.selectedEnemy = CheckSelection(_mouse);
+					if (player.selectedEnemy == -1)
+						ButtonAction(lastBtnId);
 				}
 			}
+			if ((events & SDL_BUTTON_LMASK) == 0)
+				_down = false;
 
-			CheckMove();
-
-			if (moved)
+			SDL_PollEvent(&event);
+			if ((event.type == SDL_KEYDOWN || event.type == SDL_KEYUP) && playerMenu != 3)
 			{
-				saveMap = true;
+				if (state[SDL_SCANCODE_ESCAPE] && lastInputButton == -1)
+				{
+					lastInputButton = 41;
+					if (playerMenu == 0)
+					{
+						buttons[26].active = true;
+						playerMenu = 4;
+					}
+					else if (playerMenu == 4 && player.health > 0)
+					{
+						buttons[26].active = false;
+						playerMenu = 0;
+					}
+				}
+				else if (!state[SDL_SCANCODE_ESCAPE])
+				{
+					lastInputButton = -1;
+				}
+
+				if (playerMenu != 4)
+				{
+					bool moved = false;
+					if (state[SDL_SCANCODE_W])
+					{
+						if (map[player.x()][player.y() - 1] == 0 && player.moves > 0 && CheckEntity({ player.x(), player.y() - 1 }))
+						{
+							player.position.y--;
+							moved = true;
+						}
+					}
+					else if (state[SDL_SCANCODE_S])
+					{
+						if (map[player.x()][player.y() + 1] == 0 && player.moves > 0 && CheckEntity({ player.x(), player.y() + 1 }))
+						{
+							player.position.y++;
+							moved = true;
+						}
+					}
+					else if (state[SDL_SCANCODE_A])
+					{
+						if (map[player.x() - 1][player.y()] == 0 && player.moves > 0 && CheckEntity({ player.x() - 1, player.y() }))
+						{
+							player.position.x--;
+							moved = true;
+						}
+					}
+					else if (state[SDL_SCANCODE_D])
+					{
+						if (map[player.x() + 1][player.y()] == 0 && player.moves > 0 && CheckEntity({ player.x() + 1, player.y() }))
+						{
+							player.position.x++;
+							moved = true;
+						}
+					}
+					else if (state[SDL_SCANCODE_SPACE])
+					{
+						player.moves = 0;
+						player.attacks = 0;
+					}
+					else if (state[SDL_SCANCODE_M])
+					{
+						if (showMap)
+							showMap = false;
+						else
+							showMap = true;
+					}
+
+					if (moved)
+					{
+						player.moves--;
+						stats[5] ++;
+
+						if (player.health < player.maxHealth)
+						{
+							player.health = Min(player.health + player.regeneration, player.maxHealth);
+							overlay.AddNum(player.position, player.regeneration, 3);
+							stats[9]++;
+						}
+					}
+
+					CheckMove();
+
+					if (moved)
+					{
+						saveMap = true;
+					}
+				}
 			}
-		}
-		Draw();
-		SDL_RenderPresent(ren);
+			Draw();
+			SDL_RenderPresent(ren);
 
-		newTime = SDL_GetTicks();
-		delta = newTime - lastTime;
-		lastTime = newTime;
+			newTime = SDL_GetTicks();
+			delta = newTime - lastTime;
+			lastTime = newTime;
 
-		if (delta < 16)
-		{
-			SDL_Delay(16 - delta);
+			if (delta < 16)
+			{
+				SDL_Delay(16 - delta);
+			}
 		}
 	}
 	TTF_CloseFont(font);
