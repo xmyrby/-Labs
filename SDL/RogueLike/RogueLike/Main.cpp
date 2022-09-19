@@ -21,7 +21,7 @@ const int CELLS_FILL = 10000;
 const int ANTS_COUNT = 6;
 const int LAMPS_COUNT = 15;
 
-int enemiesCount = 200;
+int enemiesCount = 250;
 int enemiesTypesCount = 0;
 int lastBtnId = -1;
 int playerMenu = 0;
@@ -463,7 +463,7 @@ TextBox* textBoxes;
 
 Item* items;
 
-SDL_Color colors[14];
+SDL_Color colors[15];
 
 Lamp lamps[LAMPS_COUNT];
 
@@ -664,6 +664,7 @@ void InitColors()
 	colors[11] = { 164,202,101 };
 	colors[12] = { 101,202,122 };
 	colors[13] = { 200,200,200 };
+	colors[14] = { 202,147,101 };
 }
 
 void DeInit(char error)
@@ -724,6 +725,8 @@ void LoadTextures()
 	textures[67] = IMG_LoadTexture(ren, "GFX\\GoblinMiniIcon.png");
 	textures[68] = IMG_LoadTexture(ren, "GFX\\GoblinMonkPawn.png");
 	textures[69] = IMG_LoadTexture(ren, "GFX\\GoblinMonkIcon.png");
+	textures[70] = IMG_LoadTexture(ren, "GFX\\JugPawn.png");
+	textures[71] = IMG_LoadTexture(ren, "GFX\\JugIcon.png");
 
 	textures[90] = IMG_LoadTexture(ren, "GFX\\Arrow.png");
 	textures[91] = IMG_LoadTexture(ren, "GFX\\MonkFireBall.png");
@@ -881,7 +884,7 @@ void InitTextBoxes()
 {
 	textBoxes = (TextBox*)malloc(sizeof(TextBox) * 2);
 	textBoxes[0] = *(new TextBox({ 316,248 }, 328, 48, 0, new char[2]{ "\0" }, false, true));
-	textBoxes[1] = *(new TextBox({ 316,396 }, 328, 48, 200, new char[2]{ "\0" }, false, true));
+	textBoxes[1] = *(new TextBox({ 316,396 }, 328, 48, 250, new char[2]{ "\0" }, false, true));
 }
 
 void Init()
@@ -1758,9 +1761,8 @@ void DrawUI()
 		SDL_SetRenderDrawColor(ren, 0, 0, 0, 155);
 		SDL_RenderFillRect(ren, &rect);
 		if (player.health <= 0)
-		{
-			Position offset = PrintText("YOU DIE", { 354,360 }, 48, 255, 0);
-		}
+			Position offset = PrintText("YOU DIED", { 336,360 }, 48, 255, 0);
+
 		buttons[26].DrawButton();
 	}
 }
@@ -2485,10 +2487,7 @@ int Menu()
 									textBoxes[j].value = Min(textBoxes[j].value * 10 + (i - 29) % 10, 65535);
 								}
 								else if (j == 1)
-									textBoxes[j].value = Min(textBoxes[j].value * 10 + (i - 29) % 10, 200);
-
-
-
+									textBoxes[j].value = Min(textBoxes[j].value * 10 + (i - 29) % 10, 250);
 							}
 					}
 				}
@@ -2633,6 +2632,7 @@ int main()
 
 	while (true)
 	{
+		SDL_PumpEvents();
 		Menu();
 
 		if (seed == 0)
@@ -2657,8 +2657,6 @@ int main()
 			}
 
 			const Uint8* state = SDL_GetKeyboardState(NULL);
-
-			SDL_PumpEvents();
 			Uint32 events = SDL_GetMouseState(&_mouse.x, &_mouse.y);
 
 			if ((events & SDL_BUTTON_LMASK) != 0 && !_down)
