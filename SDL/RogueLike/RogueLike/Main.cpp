@@ -91,6 +91,15 @@ struct OverlayProjectile
 	float angleOfMove;
 };
 
+struct OverlayText
+{
+	Position pos;
+	Position offset;
+	char* text;
+	int color;
+	int alpha;
+};
+
 struct Lamp
 {
 	int textureId;
@@ -224,14 +233,17 @@ struct Overlay
 	OverlayNum* overlayNums;
 	OverlayParticle* overlayParticles;
 	OverlayProjectile* overlayProjectiles;
+	OverlayText* overlayTexts;
 	int numsCount = 0;
 	int particlesCount = 0;
 	int projectilesCount = 0;
+	int textsCount = 0;
 	void Init()
 	{
 		overlayNums = (OverlayNum*)malloc(sizeof(OverlayNum));
 		overlayParticles = (OverlayParticle*)malloc(sizeof(OverlayParticle));
 		overlayProjectiles = (OverlayProjectile*)malloc(sizeof(OverlayProjectile));
+		overlayTexts = (OverlayText*)malloc(sizeof(OverlayText));
 	}
 
 	void ClearNum(int id)
@@ -267,6 +279,17 @@ struct Overlay
 		overlayProjectiles = (OverlayProjectile*)realloc(overlayProjectiles, sizeof(OverlayProjectile) * projectilesCount);
 	}
 
+	void ClearText(int id)
+	{
+		for (int i = id; i < textsCount - 1; i++)
+		{
+			overlayTexts[i] = overlayTexts[i + 1];
+		}
+		textsCount--;
+
+		overlayTexts = (OverlayText*)realloc(overlayTexts, sizeof(OverlayText) * textsCount);
+	}
+
 	void AddNum(Position pos, int num, int color)
 	{
 		overlayNums = (OverlayNum*)realloc(overlayNums, sizeof(OverlayNum) * (numsCount + 1));
@@ -294,6 +317,16 @@ struct Overlay
 		overlayProjectiles = (OverlayProjectile*)realloc(overlayProjectiles, sizeof(OverlayProjectile) * (projectilesCount + 1));
 		overlayProjectiles[projectilesCount] = { pos,lpos,16,16,textureId,angleOfMove };
 		projectilesCount++;
+	}
+
+	void AddText(Position pos, char* text, int color)
+	{
+		overlayTexts = (OverlayText*)realloc(overlayTexts, sizeof(OverlayText) * (textsCount + 1));
+		Position posOff;
+		posOff.x = rand() % 16 + 4;
+		posOff.y = rand() % 16 + 6;
+		overlayTexts[textsCount] = { pos,posOff,text, color, 255 };
+		textsCount++;
 	}
 };
 
@@ -371,7 +404,7 @@ void LoadStats()
 	FILE* f;
 	if (fopen_s(&f, "stats.save", "rb") != 0)
 		exit(1);
-	
+
 	fread(&stats, sizeof(int), 10, f);
 
 	fclose(f);
@@ -949,8 +982,6 @@ void DrawOverlay()
 		Position pos = oNum.pos;
 		pos.x = ConvBig(pos.x, player.x()) + oNum.offset.x;
 		pos.y = ConvBig(pos.y, player.y()) + oNum.offset.y;
-		PrintText(oNum.num, pos, 16, overlay.overlayNums[i].alpha, 2);
-		pos.y--;
 		PrintText(oNum.num, pos, 16, overlay.overlayNums[i].alpha, oNum.color);
 		overlay.overlayNums[i].offset.y -= 1;
 		overlay.overlayNums[i].alpha = Max(overlay.overlayNums[i].alpha - 3, 0);
@@ -995,6 +1026,19 @@ void DrawOverlay()
 		if (Distance({ int(oProj.pos.x + floor(oProj.offX / 16)), int(oProj.pos.y + floor(oProj.offY / 16))
 			}, oProj.lPos) <= 1)
 			overlay.ClearProjectile(i);
+	}
+
+	for (int i = 0; i < overlay.textsCount; i++)
+	{
+		OverlayText oText = overlay.overlayTexts[i];
+		Position pos = oText.pos;
+		pos.x = ConvBig(pos.x, player.x()) + oText.offset.x;
+		pos.y = ConvBig(pos.y, player.y()) + oText.offset.y;
+		PrintText(oText.text, pos, 16, overlay.overlayTexts[i].alpha, oText.color);
+		overlay.overlayTexts[i].offset.y -= 1;
+		overlay.overlayTexts[i].alpha = Max(overlay.overlayTexts[i].alpha - 3, 0);
+		if (overlay.overlayTexts[i].alpha <= 0)
+			overlay.ClearText(i);
 	}
 }
 
@@ -1760,8 +1804,17 @@ void MakeEnemyMove(Enemy& enemy)
 
 				player.health -= damage;
 				enemy.moves--;
-				overlay.AddNum(player.position, -damage, 1);
-				overlay.AddParticle(player.position, 2, 9, 15);
+				if (damage)
+				{
+					overlay.AddNum(player.position, -damage, 1);
+					overlay.AddParticle(player.position, 2, 9, 15);
+				}
+				else
+				{
+					overlay.AddText(player.position, (char*)"MISS", 0);
+					overlay.AddParticle(player.position, 2, 0, 5);
+				}
+
 				if (enemy.type == 4)
 					overlay.AddProjectile(enemy.position, player.position, 91, GetAngle(player.position, enemy.position));
 				else if (enemy.type == 1)
@@ -1876,18 +1929,35 @@ void ButtonAction(int buttonId)
 			overlay.AddProjectile(player.position, enemies[player.selectedEnemy].position, 90, GetAngle(enemies[player.selectedEnemy].position, player.position));
 		int damage = round(player.damage / floor(1 + enemies[player.selectedEnemy].protection / 3));
 
+		bool crit = false;
 		if (Random(1, 100) <= player.agility)
 		{
 			damage *= 2;
 			stats[7]++;
+			crit = true;
 		}
 
 		stats[1] += damage;
 
 		enemies[player.selectedEnemy].health -= damage;
 		player.attacks -= 1;
-		overlay.AddNum(enemies[player.selectedEnemy].position, -damage, 1);
-		overlay.AddParticle(enemies[player.selectedEnemy].position, 2, 9, 15);
+		if (damage)
+		{
+			if (crit)
+			{
+				overlay.AddNum(enemies[player.selectedEnemy].position, -damage, 9);
+				Position pos = enemies[player.selectedEnemy].position;
+				pos.y--;
+				overlay.AddText(pos, (char*)"CRIT", 9);
+			}
+			else
+				overlay.AddNum(enemies[player.selectedEnemy].position, -damage, 1);
+
+			overlay.AddParticle(enemies[player.selectedEnemy].position, 2, 9, 15);
+		}
+		else
+			overlay.AddText(enemies[player.selectedEnemy].position, (char*)"MISS", 0);
+
 		player.moves = Max(0, player.moves - 1);
 		if (enemies[player.selectedEnemy].health <= 0)
 			KillEnemy(player.selectedEnemy);
