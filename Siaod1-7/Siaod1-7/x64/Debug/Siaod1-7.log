@@ -1,0 +1,4 @@
+﻿  Source.cpp
+D:\GitHub\-Labs\Siaod1-7\Siaod1-7\Source.cpp(75,29): warning C4267: инициализация: преобразование из "size_t" в "int"; возможна потеря данных
+D:\GitHub\-Labs\Siaod1-7\Siaod1-7\Source.cpp(85,29): warning C4267: инициализация: преобразование из "size_t" в "int"; возможна потеря данных
+  Siaod1-7.vcxproj -> D:\GitHub\-Labs\Siaod1-7\x64\Debug\Siaod1-7.exe
