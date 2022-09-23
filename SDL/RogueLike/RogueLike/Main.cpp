@@ -3,6 +3,7 @@
 #include <SDL_image.h>
 #include <SDL_ttf.h>
 #include <math.h>
+#include <Windows.h>
 
 SDL_Window* win = NULL;
 SDL_Renderer* ren = NULL;
@@ -942,6 +943,11 @@ void Init()
 	overlay.Init();
 
 	SDL_SetRenderDrawBlendMode(ren, SDL_BLENDMODE_BLEND);
+
+	HWND hide_console;
+	AllocConsole();
+	hide_console = FindWindowA("ConsoleWindowClass", NULL);
+	ShowWindow(hide_console, false);
 }
 
 bool CheckCell(int x, int y)
@@ -1320,74 +1326,82 @@ void DrawOverlay()
 void DrawUI()
 {
 	Position offset;
-	offset = PrintText("Moves: ", { 10,18 }, 16, 255, 0);
-	PrintText(moves + 1, { offset.x + 4, 18 }, 16, 255, 0);
-	RenderImage(0, { 10, 52 }, 32, 32, 255);
-	PrintText(player.attacks, { 52, 60 }, 16, 255, 0);
-	RenderImage(1, { 10, 94 }, 32, 32, 255);
-	PrintText(player.moves, { 52, 104 }, 16, 255, 0);
-	PrintText("Health: ", { 10, 896 }, 16, 255, 0);
-	offset = PrintText(player.health, { 102, 896 }, 16, 255, 0);
-	offset = PrintText("/", { offset.x + 4, 896 }, 16, 255, 0);
-	PrintText(player.maxHealth, { offset.x + 4, 896 }, 16, 255, 0);
-	PrintText("Mana: ", { 10, 926 }, 16, 255, 0);
-	offset = PrintText(player.mana, { 102, 926 }, 16, 255, 0);
-	offset = PrintText("/", { offset.x + 4, 926 }, 16, 255, 0);
-	PrintText(player.maxMana, { offset.x + 4, 926 }, 16, 255, 0);
+	if (playerMenu != 4 && player.health > 0)
+	{
+		offset = PrintText("Moves: ", { 10,18 }, 16, 255, 0);
+		PrintText(moves + 1, { offset.x + 4, 18 }, 16, 255, 0);
+		RenderImage(0, { 10, 52 }, 32, 32, 255);
+		PrintText(player.attacks, { 52, 60 }, 16, 255, 0);
+		RenderImage(1, { 10, 94 }, 32, 32, 255);
+		PrintText(player.moves, { 52, 104 }, 16, 255, 0);
+		PrintText("Health: ", { 10, 896 }, 16, 255, 0);
+		offset = PrintText(player.health, { 102, 896 }, 16, 255, 0);
+		offset = PrintText("/", { offset.x + 4, 896 }, 16, 255, 0);
+		PrintText(player.maxHealth, { offset.x + 4, 896 }, 16, 255, 0);
+		PrintText("Mana: ", { 10, 926 }, 16, 255, 0);
+		offset = PrintText(player.mana, { 102, 926 }, 16, 255, 0);
+		offset = PrintText("/", { offset.x + 4, 926 }, 16, 255, 0);
+		PrintText(player.maxMana, { offset.x + 4, 926 }, 16, 255, 0);
 
-	if (player.selectedEnemy >= 0)
-		if (RayTracing(enemies[player.selectedEnemy].position, player.position) > 5)
-			player.selectedEnemy = -1;
-		else
+		if (player.selectedEnemy >= 0)
+			if (RayTracing(enemies[player.selectedEnemy].position, player.position) > 5)
+				player.selectedEnemy = -1;
+			else
+			{
+				Position position;
+				position.x = ConvBig(enemies[player.selectedEnemy].x(), player.x());
+				position.y = ConvBig(enemies[player.selectedEnemy].y(), player.y());
+				RenderImage(4, position, 32, 32, 255);
+			}
+
+
+		if (showMap)
 		{
-			Position position;
-			position.x = ConvBig(enemies[player.selectedEnemy].x(), player.x());
-			position.y = ConvBig(enemies[player.selectedEnemy].y(), player.y());
-			RenderImage(4, position, 32, 32, 255);
+			SDL_Rect rect = { 240 + (30) * 8 - 4,540 + (30) * 8 - 4,8,8 };
+			SDL_SetRenderDrawColor(ren, 255, 100, 100, 100);
+			SDL_RenderFillRect(ren, &rect);
+			for (int i = player.x() - 30; i < player.x() + 31; i++)
+				for (int j = player.y() - 30; j < player.y() + 31; j++)
+				{
+					SDL_Rect rect = { 240 + (i + 30 - player.x()) * 8 - 4,540 + (j + 30 - player.y()) * 8 - 4,8,8 };
+					if (mapOverview[i][j] == 1)
+					{
+						SDL_SetRenderDrawColor(ren, 255, 255, 255, 75 - Min(int(round(Distance({ i,j }, player.position))) * 4, 75));
+						SDL_RenderFillRect(ren, &rect);
+					}
+				}
 		}
 
-	if (showMap)
-	{
-		SDL_Rect rect = { 240 + (30) * 8 - 4,540 + (30) * 8 - 4,8,8 };
-		SDL_SetRenderDrawColor(ren, 255, 100, 100, 100);
-		SDL_RenderFillRect(ren, &rect);
-		for (int i = player.x() - 30; i < player.x() + 31; i++)
-			for (int j = player.y() - 30; j < player.y() + 31; j++)
+		if (player.selectedEnemy != -1)
+		{
+			SDL_Rect rect = { 640,0,320,480 };
+			SDL_SetRenderDrawColor(ren, 0, 0, 0, 55);
+			SDL_RenderFillRect(ren, &rect);
+			RenderImage(enemies[player.selectedEnemy].iconTextureId, { 652, 16 }, 48, 48, 255);
+			PrintText(enemies[player.selectedEnemy].name, { 716, 20 }, 16, 255, 0);
+			PrintText("Health: ", { 716, 44 }, 16, 255, 0);
+			offset = PrintText(enemies[player.selectedEnemy].health, { 808, 44 }, 16, 255, 0);
+			offset = PrintText("/", { offset.x + 4, 44 }, 16, 255, 0);
+			PrintText(enemies[player.selectedEnemy].maxHealth, { offset.x + 4, 44 }, 16, 255, 0);
+			if (enemies[player.selectedEnemy].type != 5)
 			{
-				SDL_Rect rect = { 240 + (i + 30 - player.x()) * 8 - 4,540 + (j + 30 - player.y()) * 8 - 4,8,8 };
-				if (mapOverview[i][j] == 1)
-				{
-					SDL_SetRenderDrawColor(ren, 255, 255, 255, 75 - Min(int(round(Distance({ i,j }, player.position))) * 4, 75));
-					SDL_RenderFillRect(ren, &rect);
-				}
+				offset = PrintText("Level: ", { 652, 68 }, 16, 255, 0);
+				PrintText(enemies[player.selectedEnemy].level, { offset.x + 4, 68 }, 16, 255, 0);
 			}
+
+			bool active = false;
+			if (CheckAttackDist(player, enemies[player.selectedEnemy]) && player.attacks)
+				active = true;
+			buttons[0].active = active;
+			buttons[0].DrawButton();
+		}
+		else
+		{
+			buttons[0].active = false;
+		}
 	}
+
 	buttons[15].active = false;
-
-	if (player.selectedEnemy != -1)
-	{
-		SDL_Rect rect = { 640,0,320,480 };
-		SDL_SetRenderDrawColor(ren, 0, 0, 0, 55);
-		SDL_RenderFillRect(ren, &rect);
-		RenderImage(enemies[player.selectedEnemy].iconTextureId, { 652, 16 }, 48, 48, 255);
-		PrintText(enemies[player.selectedEnemy].name, { 716, 20 }, 16, 255, 0);
-		PrintText("Health: ", { 716, 44 }, 16, 255, 0);
-		offset = PrintText(enemies[player.selectedEnemy].health, { 808, 44 }, 16, 255, 0);
-		offset = PrintText("/", { offset.x + 4, 44 }, 16, 255, 0);
-		PrintText(enemies[player.selectedEnemy].maxHealth, { offset.x + 4, 44 }, 16, 255, 0);
-		offset = PrintText("Level: ", { 652, 68 }, 16, 255, 0);
-		PrintText(enemies[player.selectedEnemy].level, { offset.x + 4, 68 }, 16, 255, 0);
-
-		bool active = false;
-		if (CheckAttackDist(player, enemies[player.selectedEnemy]) && player.attacks)
-			active = true;
-		buttons[0].active = active;
-		buttons[0].DrawButton();
-	}
-	else
-	{
-		buttons[0].active = false;
-	}
 
 	if (playerMenu == 0)
 	{
@@ -1756,12 +1770,12 @@ void DrawUI()
 	}
 	else if (playerMenu == 4)
 	{
-		player.health = 0;
+		player.health = Max(player.health, 0);
 		SDL_Rect rect = { 0,0,960,960 };
 		SDL_SetRenderDrawColor(ren, 0, 0, 0, 155);
 		SDL_RenderFillRect(ren, &rect);
 		if (player.health <= 0)
-			Position offset = PrintText("YOU DIED", { 336,360 }, 48, 255, 0);
+			PrintText("YOU DIED", { 336,360 }, 48, 255, 0);
 
 		buttons[26].DrawButton();
 	}
@@ -1818,7 +1832,6 @@ void Draw()
 		SDL_RenderCopy(ren, lastRender, NULL, &rect);
 	}
 
-
 	for (int i = 0; i < dropCount; i++)
 	{
 		int blocks = RayTracing(drop[i].position, player.position);
@@ -1826,10 +1839,14 @@ void Draw()
 			RenderImage(items[drop[i].id].iconTextureId, { ConvBig(drop[i].position.x,player.x()), ConvBig(drop[i].position.y,player.y()) }, 32, 32, GetAlpha(255, blocks));
 	}
 
-	SDL_Rect rect = { 464, 464,32,32 };
-	SDL_SetRenderDrawColor(ren, 114, 230, 221, 255);
-	SDL_RenderFillRect(ren, &rect);
-	RenderImage(2, { 464, 464 }, 32, 32, 255);
+	SDL_Rect rect;
+	if (player.health > 0)
+	{
+		rect = { 464, 464,32,32 };
+		SDL_SetRenderDrawColor(ren, 114, 230, 221, 255);
+		SDL_RenderFillRect(ren, &rect);
+		RenderImage(2, { 464, 464 }, 32, 32, 255);
+	}
 
 	SDL_SetRenderDrawColor(ren, 114, 230, 221, 255);
 	for (int i = 0; i < enemiesCount; i++)
@@ -2308,7 +2325,10 @@ void ButtonAction(int buttonId)
 			overlay.AddParticle(enemies[player.selectedEnemy].position, 2, 9, 15);
 		}
 		else
+		{
 			overlay.AddText(enemies[player.selectedEnemy].position, (char*)"MISS", 0);
+			overlay.AddParticle(player.position, 2, 0, 5);
+		}
 
 		player.moves = Max(0, player.moves - 1);
 		if (enemies[player.selectedEnemy].health <= 0)
@@ -2474,7 +2494,7 @@ int Menu()
 			}
 			for (int i = 30; i < 40; i++)
 			{
-				if (state[i] != 0 && lastInputButton != i)
+				if (state[i] != 0 && lastInputButton == -1)
 				{
 					lastInputButton = i;
 					for (int j = 0; j < 2; j++)
@@ -2484,7 +2504,7 @@ int Menu()
 							{
 								if (j == 0)
 								{
-									textBoxes[j].value = Min(textBoxes[j].value * 10 + (i - 29) % 10, 65535);
+									textBoxes[j].value = Min(textBoxes[j].value * 10 + (i - 29) % 10, INT_MAX / 10);
 								}
 								else if (j == 1)
 									textBoxes[j].value = Min(textBoxes[j].value * 10 + (i - 29) % 10, 250);
@@ -2617,6 +2637,17 @@ int Menu()
 	}
 }
 
+void FlushEvents()
+{
+	SDL_Event e;
+	int i = 1;
+	while (SDL_PollEvent(&e) != 0)
+	{
+		SDL_FlushEvents(0, i);
+		i *= 2;
+	}
+}
+
 #undef main;
 int main()
 {
@@ -2632,7 +2663,7 @@ int main()
 
 	while (true)
 	{
-		SDL_PumpEvents();
+		FlushEvents();
 		Menu();
 
 		if (seed == 0)
@@ -2648,6 +2679,7 @@ int main()
 		game = true;
 
 		int lastInputButton = -1;
+		FlushEvents();
 		while (game)
 		{
 			if (player.health <= 0)
