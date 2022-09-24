@@ -29,6 +29,23 @@ void GetStudents(Student* students, int& count)
 	fclose(ft);
 }
 
+void GetStudentsKeyBoard(Student* students, int& count)
+{
+	do
+	{
+		printf("Введите количество студентов: ");
+		scanf_s("%d", &count);
+	} while (count <= 0 || count > 10);
+
+	for (int i = 0; i < count; i++)
+	{
+		printf("Фамилия: ");
+		scanf_s("%s", students[i].name, 100);
+		printf("Дата рождения (день месяц год): ");
+		scanf_s("%d %d %d", &students[i].date.day, &students[i].date.month, &students[i].date.year);
+	}
+}
+
 Student GetOldest(Student* students, int count)
 {
 	int id = 0;
@@ -55,13 +72,37 @@ Student GetOldest(Student* students, int count)
 	return students[id];
 }
 
+void Chooser(Student* students, int& count)
+{
+	int type = 0;
+
+	do
+	{
+		printf("0 - Ручной ввод\n1 - Ввод с файла\nВыбор: ");
+		scanf_s("%d", &type);
+	} while (type < 0 || type>1);
+
+	switch (type)
+	{
+	case 0:
+		GetStudentsKeyBoard(students, count);
+		break;
+	case 1:
+		GetStudents(students, count);
+		break;
+	default:
+		break;
+	}
+}
+
 int main()
 {
+	system("chcp 1251 > nul");
 	Student students[10];
 	int count = 0;
-	GetStudents(students, count);
+	Chooser(students, count);
 	Student oldest = GetOldest(students, count);
-	printf("%s %d-%d-%d", oldest.name, oldest.date.day, oldest.date.month, oldest.date.year);
+	printf("Старший студент: %s %d-%d-%d", oldest.name, oldest.date.day, oldest.date.month, oldest.date.year);
 
 	return 0;
 }
