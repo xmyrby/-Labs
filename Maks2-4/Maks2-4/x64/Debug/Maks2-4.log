@@ -1,3 +1,43 @@
 ﻿  Source.cpp
-D:\GitHub\-Labs\Maks2-4\Maks2-4\Source.cpp(50,1): warning C4067: непредвиденные лексемы за директивой препроцессора, требуется newline
+D:\GitHub\-Labs\Maks2-4\Maks2-4\Source.cpp(87,11): warning C4244: инициализация: преобразование "float" в "int", возможна потеря данных
+D:\GitHub\-Labs\Maks2-4\Maks2-4\Source.cpp(88,11): warning C4244: инициализация: преобразование "float" в "int", возможна потеря данных
+D:\GitHub\-Labs\Maks2-4\Maks2-4\Source.cpp(92,40): warning C4244: аргумент: преобразование "float" в "int", возможна потеря данных
+D:\GitHub\-Labs\Maks2-4\Maks2-4\Source.cpp(92,32): warning C4244: аргумент: преобразование "float" в "int", возможна потеря данных
+D:\GitHub\-Labs\Maks2-4\Maks2-4\Source.cpp(107,24): warning C4244: аргумент: преобразование "int" в "float", возможна потеря данных
+D:\GitHub\-Labs\Maks2-4\Maks2-4\Source.cpp(107,16): warning C4244: аргумент: преобразование "int" в "float", возможна потеря данных
+D:\GitHub\-Labs\Maks2-4\Maks2-4\Source.cpp(109,24): warning C4244: аргумент: преобразование "int" в "float", возможна потеря данных
+D:\GitHub\-Labs\Maks2-4\Maks2-4\Source.cpp(109,16): warning C4244: аргумент: преобразование "int" в "float", возможна потеря данных
+D:\GitHub\-Labs\Maks2-4\Maks2-4\Source.cpp(111,24): warning C4244: аргумент: преобразование "int" в "float", возможна потеря данных
+D:\GitHub\-Labs\Maks2-4\Maks2-4\Source.cpp(111,16): warning C4244: аргумент: преобразование "int" в "float", возможна потеря данных
+D:\GitHub\-Labs\Maks2-4\Maks2-4\Source.cpp(113,24): warning C4244: аргумент: преобразование "int" в "float", возможна потеря данных
+D:\GitHub\-Labs\Maks2-4\Maks2-4\Source.cpp(113,16): warning C4244: аргумент: преобразование "int" в "float", возможна потеря данных
+D:\GitHub\-Labs\Maks2-4\Maks2-4\Source.cpp(115,24): warning C4244: аргумент: преобразование "int" в "float", возможна потеря данных
+D:\GitHub\-Labs\Maks2-4\Maks2-4\Source.cpp(115,16): warning C4244: аргумент: преобразование "int" в "float", возможна потеря данных
+D:\GitHub\-Labs\Maks2-4\Maks2-4\Source.cpp(129,9): warning C4244: инициализация: преобразование "float" в "int", возможна потеря данных
+D:\GitHub\-Labs\Maks2-4\Maks2-4\Source.cpp(151,13): warning C4244: инициализация: преобразование "double" в "int", возможна потеря данных
+D:\GitHub\-Labs\Maks2-4\Maks2-4\Source.cpp(154,24): warning C4244: =: преобразование "int" в "float", возможна потеря данных
+D:\GitHub\-Labs\Maks2-4\Maks2-4\Source.cpp(155,26): warning C4244: =: преобразование "int" в "float", возможна потеря данных
+D:\GitHub\-Labs\Maks2-4\Maks2-4\Source.cpp(156,24): warning C4244: =: преобразование "int" в "float", возможна потеря данных
+D:\GitHub\-Labs\Maks2-4\Maks2-4\Source.cpp(157,26): warning C4244: =: преобразование "double" в "float", возможна потеря данных
+D:\GitHub\-Labs\Maks2-4\Maks2-4\Source.cpp(171,27): warning C4244: +=: преобразование "double" в "float", возможна потеря данных
+D:\GitHub\-Labs\Maks2-4\Maks2-4\Source.cpp(172,29): warning C4244: +=: преобразование "double" в "float", возможна потеря данных
+D:\GitHub\-Labs\Maks2-4\Maks2-4\Source.cpp(175,83): warning C4244: аргумент: преобразование "float" в "int", возможна потеря данных
+D:\GitHub\-Labs\Maks2-4\Maks2-4\Source.cpp(175,68): warning C4244: аргумент: преобразование "float" в "int", возможна потеря данных
+D:\GitHub\-Labs\Maks2-4\Maks2-4\Source.cpp(175,53): warning C4244: аргумент: преобразование "float" в "int", возможна потеря данных
+D:\GitHub\-Labs\Maks2-4\Maks2-4\Source.cpp(175,38): warning C4244: аргумент: преобразование "float" в "int", возможна потеря данных
+D:\GitHub\-Labs\Maks2-4\Maks2-4\Source.cpp(184,14): warning C4244: return: преобразование "double" в "float", возможна потеря данных
+D:\GitHub\-Labs\Maks2-4\Maks2-4\Source.cpp(199,27): warning C4838: Преобразование из "int" в "float" требует сужающего преобразования.
+D:\GitHub\-Labs\Maks2-4\Maks2-4\Source.cpp(199,27): warning C4244: инициализация: преобразование "int" в "float", возможна потеря данных
+D:\GitHub\-Labs\Maks2-4\Maks2-4\Source.cpp(199,38): warning C4838: Преобразование из "int" в "float" требует сужающего преобразования.
+D:\GitHub\-Labs\Maks2-4\Maks2-4\Source.cpp(199,38): warning C4244: инициализация: преобразование "int" в "float", возможна потеря данных
+D:\GitHub\-Labs\Maks2-4\Maks2-4\Source.cpp(220,23): warning C4244: =: преобразование "int" в "float", возможна потеря данных
+D:\GitHub\-Labs\Maks2-4\Maks2-4\Source.cpp(221,23): warning C4244: =: преобразование "int" в "float", возможна потеря данных
+D:\GitHub\-Labs\Maks2-4\Maks2-4\Source.cpp(229,51): warning C4244: аргумент: преобразование "float" в "int", возможна потеря данных
+D:\GitHub\-Labs\Maks2-4\Maks2-4\Source.cpp(229,41): warning C4244: аргумент: преобразование "float" в "int", возможна потеря данных
+D:\GitHub\-Labs\Maks2-4\Maks2-4\Source.cpp(236,44): warning C4244: аргумент: преобразование "float" в "int", возможна потеря данных
+D:\GitHub\-Labs\Maks2-4\Maks2-4\Source.cpp(236,34): warning C4244: аргумент: преобразование "float" в "int", возможна потеря данных
+D:\GitHub\-Labs\Maks2-4\Maks2-4\Source.cpp(245,28): warning C4305: +=: усечение из "double" в "float"
+D:\GitHub\-Labs\Maks2-4\Maks2-4\Source.cpp(251,40): warning C4244: аргумент: преобразование "int" в "float", возможна потеря данных
+D:\GitHub\-Labs\Maks2-4\Maks2-4\Source.cpp(303,1): warning C4067: непредвиденные лексемы за директивой препроцессора, требуется newline
+D:\GitHub\-Labs\Maks2-4\Maks2-4\Source.cpp(306,12): warning C4244: аргумент: преобразование "time_t" в "unsigned int", возможна потеря данных
   Maks2-4.vcxproj -> D:\GitHub\-Labs\Maks2-4\x64\Debug\Maks2-4.exe
