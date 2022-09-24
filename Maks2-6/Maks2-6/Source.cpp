@@ -8,7 +8,7 @@ void GetText(char text[400], const char* file)
 		exit(1);
 	}
 
-	gets_s(text, 300);
+	fgets(text, 400, ft);
 
 	fclose(ft);
 }
@@ -49,8 +49,11 @@ void PrintText(char text[400])
 
 void Remove(char textWho[400], char textRem[400])
 {
+	int len = strlen(textWho);
+	int len2 = strlen(textRem);
+	
 	char* p = strstr(textWho, textRem);
-	strcpy_s(p, sizeof(p), p + strlen(textWho));
+	strcpy_s(p, len, p + len2);
 }
 
 int main()
@@ -63,8 +66,10 @@ int main()
 	GetText(text2, "text2.txt");
 	PrintText(text1);
 
-	int kCount = GetKCount(text1);
 	int pCount = GetPCount(text1);
+	int kCount = GetKCount(text1);
+
+	GetText(text1, "text1.txt");
 
 	printf("\nКоличество слов с буквы 'К' и 'к': %d\nКоличество прописных букв: %d", kCount, pCount);
 

@@ -1,3 +1,5 @@
 ﻿  Source.cpp
 D:\GitHub\-Labs\Maks2-6\Maks2-6\Source.cpp(36,24): warning C4267: инициализация: преобразование из "size_t" в "int"; возможна потеря данных
+D:\GitHub\-Labs\Maks2-6\Maks2-6\Source.cpp(52,27): warning C4267: инициализация: преобразование из "size_t" в "int"; возможна потеря данных
+D:\GitHub\-Labs\Maks2-6\Maks2-6\Source.cpp(53,28): warning C4267: инициализация: преобразование из "size_t" в "int"; возможна потеря данных
   Maks2-6.vcxproj -> D:\GitHub\-Labs\Maks2-6\x64\Debug\Maks2-6.exe
