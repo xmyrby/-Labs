@@ -16,7 +16,7 @@ struct Student
 void GetStudents(Student* students, int& count)
 {
 	FILE* ft;
-	if (fopen_s(&ft, "Students.txt", "rt") != 0)
+	if (fopen_s(&ft, "students.txt", "rt") != 0)
 	{
 		exit(1);
 	}
@@ -95,6 +95,22 @@ void Chooser(Student* students, int& count)
 	}
 }
 
+void SaveStudents(Student* students, int& count)
+{
+	FILE* ft;
+	if (fopen_s(&ft, "students.txt", "w+") != 0)
+	{
+		exit(1);
+	}
+	fprintf(ft, "%d", count);
+	for (int i = 0; i < count; i++)
+	{
+		fprintf(ft, "%s %d-%d-%d", students[count].name, students[count].date.day, students[count].date.month, students[count].date.year);
+	}
+
+	fclose(ft);
+}
+
 int main()
 {
 	system("chcp 1251 > nul");
@@ -103,6 +119,7 @@ int main()
 	Chooser(students, count);
 	Student oldest = GetOldest(students, count);
 	printf("Старший студент: %s %d-%d-%d", oldest.name, oldest.date.day, oldest.date.month, oldest.date.year);
+	SaveStudents(students, count);
 
 	return 0;
 }
