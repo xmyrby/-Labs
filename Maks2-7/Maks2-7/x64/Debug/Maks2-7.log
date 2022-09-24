@@ -1,0 +1,3 @@
+﻿  Source.cpp
+D:\GitHub\-Labs\Maks2-7\Maks2-7\Source.cpp(205,12): warning C4244: аргумент: преобразование "time_t" в "unsigned int", возможна потеря данных
+  Maks2-7.vcxproj -> D:\GitHub\-Labs\Maks2-7\x64\Debug\Maks2-7.exe
