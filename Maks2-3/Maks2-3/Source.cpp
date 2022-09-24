@@ -106,7 +106,7 @@ Student GetOldest(Student* students, int count)
 			mDate = students[i].date;
 			id = i;
 		}
-		else if (mDate.month == students[i].date.month && mDate.day > students[i].date.day)
+		else if (mDate.year == students[i].date.year && mDate.month == students[i].date.month && mDate.day > students[i].date.day)
 		{
 			mDate = students[i].date;
 			id = i;
