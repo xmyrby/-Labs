@@ -182,7 +182,7 @@ void inputfilebin(int& m, int n[100], Numbersforfile* s)
 	}
 	else
 	{
-		fread(&m, sizeof(int), 1, f); int k = 0;
+		fread(&m, sizeof(int), 1, f);
 		if (m < 0)
 		{
 			printf("Кажется в файле кол-во строк равна отрицательному числу, проверьте и попробуйте еще раз\n");
@@ -198,11 +198,7 @@ void inputfilebin(int& m, int n[100], Numbersforfile* s)
 				exit(3);
 
 			}
-			for (int j = 0; j < n[i]; j++)
-			{
-				fread(&s[k].numb[j], sizeof(int), 1, f);
-				k++;
-			}
+			fread(&s[i].numb, sizeof(int), n[i], f);
 		}
 
 	}
