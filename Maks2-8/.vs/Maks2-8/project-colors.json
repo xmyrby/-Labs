@@ -5,7 +5,12 @@
       "ProjectGuid": "8244b16d-e7c1-455e-81ef-b9c7b56ab281",
       "DisplayName": "Maks2-8",
       "ColorIndex": 0
+    },
+    "b0463298-9a46-4d74-aa5e-027b0fe09373": {
+      "ProjectGuid": "b0463298-9a46-4d74-aa5e-027b0fe09373",
+      "DisplayName": "Maks8-Type2",
+      "ColorIndex": 1
     }
   },
-  "NextColorIndex": 1
+  "NextColorIndex": 2
 }

@@ -1,18 +1,6 @@
 #include <iostream>
 #include <malloc.h>
 
-void Inter(int& a, int& b)
-{
-	do
-	{
-		system("cls");
-		printf("Введите начало интервала: ");
-		scanf_s("%d", &a);
-		printf("Введите конец интервала: ");
-		scanf_s("%d", &b);
-	} while (a > b || a < 0 || b < 0);
-}
-
 void GetRC(int& n, int& m)
 {
 	do
@@ -23,6 +11,19 @@ void GetRC(int& n, int& m)
 		printf("Введите количество столбцов: ");
 		scanf_s("%d", &m);
 	} while (n <= 0 || m <= 0);
+}
+
+void PrintMas(int** a, int n, int m)
+{
+	printf("Массив:\n");
+	for (int i = 0; i < n; i++)
+	{
+		for (int j = 0; j < m; j++)
+		{
+			printf("%3d", a[i][j]);
+		}
+		printf("\n");
+	}
 }
 
 int** Mem(int n, int m)
@@ -41,22 +42,24 @@ int** Mem(int n, int m)
 	return a;
 }
 
-void GetSumNCount(int** a, int& sum, int& count, int n, int m, int an, int bn, int am, int bm)
-{
-	for (int i = 0; i < n; i++)
-		for (int j = 0; j < m; j++)
-			if ((i<an || i>bn) && (j<am || j>bm))
-			{
-				sum += a[i][j];
-				count++;
-			}
-}
-
 void Free(int** a, int n)
 {
-	free(a);
 	for (int i = 0; i < n; i++)
 		free(a[i]);
+	free(a);
+}
+
+double raznEl(int** mas, int sizei, int sizej)
+{
+	double sum1 = 0;
+	double sum2 = 0;
+	for (int i = 0; i < sizei; i++)
+		sum1 += mas[i][i];
+	for (int i = 0; i < sizei; i++)
+		sum2 += mas[i][sizej - i - 1];
+
+	int a = 5;
+	return sum1 - sum2;
 }
 
 int main()
@@ -72,14 +75,11 @@ int main()
 
 	system("cls");
 
-	Inter(an, bn);
-	Inter(am, bm);
+	PrintMas(a, n, m);
 
-	GetSumNCount(a, sum, count, n, m, an, bn, am, bm);
+	printf("\nРазность элементов диагоналей = %.3lf", raznEl(a, n, m));
 
 	Free(a, n);
-
-	printf("Количество: %d\nСумма: %d\n", count, sum);
 
 	return 0;
 }
