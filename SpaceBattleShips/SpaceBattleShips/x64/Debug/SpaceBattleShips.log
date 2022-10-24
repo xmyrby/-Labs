@@ -1,0 +1,30 @@
+﻿  Source.cpp
+D:\GitHub\-Labs\SpaceBattleShips\SpaceBattleShips\Source.cpp(45,13): warning C4244: return: преобразование "double" в "float", возможна потеря данных
+D:\GitHub\-Labs\SpaceBattleShips\SpaceBattleShips\Source.cpp(50,14): warning C4244: return: преобразование "double" в "float", возможна потеря данных
+D:\GitHub\-Labs\SpaceBattleShips\SpaceBattleShips\Source.cpp(144,1): warning C4305: +=: усечение из "double" в "float"
+D:\GitHub\-Labs\SpaceBattleShips\SpaceBattleShips\Source.cpp(150,70): warning C4244: аргумент: преобразование "double" в "float", возможна потеря данных
+D:\GitHub\-Labs\SpaceBattleShips\SpaceBattleShips\Source.cpp(151,23): warning C4018: >=: несоответствие типов со знаком и без знака
+D:\GitHub\-Labs\SpaceBattleShips\SpaceBattleShips\Source.cpp(155,60): warning C4838: Преобразование из "double" в "float" требует сужающего преобразования.
+D:\GitHub\-Labs\SpaceBattleShips\SpaceBattleShips\Source.cpp(155,60): warning C4244: инициализация: преобразование "double" в "float", возможна потеря данных
+D:\GitHub\-Labs\SpaceBattleShips\SpaceBattleShips\Source.cpp(160,13): warning C4244: инициализация: преобразование "double" в "float", возможна потеря данных
+D:\GitHub\-Labs\SpaceBattleShips\SpaceBattleShips\Source.cpp(162,30): warning C4244: =: преобразование "double" в "float", возможна потеря данных
+D:\GitHub\-Labs\SpaceBattleShips\SpaceBattleShips\Source.cpp(174,37): warning C4838: Преобразование из "int" в "double" требует сужающего преобразования.
+D:\GitHub\-Labs\SpaceBattleShips\SpaceBattleShips\Source.cpp(174,50): warning C4838: Преобразование из "int" в "double" требует сужающего преобразования.
+D:\GitHub\-Labs\SpaceBattleShips\SpaceBattleShips\Source.cpp(176,56): warning C4244: =: преобразование "double" в "float", возможна потеря данных
+D:\GitHub\-Labs\SpaceBattleShips\SpaceBattleShips\Source.cpp(256,12): warning C4244: инициализация: преобразование "double" в "int", возможна потеря данных
+D:\GitHub\-Labs\SpaceBattleShips\SpaceBattleShips\Source.cpp(257,28): warning C4838: Преобразование из "double" в "int" требует сужающего преобразования.
+D:\GitHub\-Labs\SpaceBattleShips\SpaceBattleShips\Source.cpp(257,28): warning C4244: инициализация: преобразование "double" в "int", возможна потеря данных
+D:\GitHub\-Labs\SpaceBattleShips\SpaceBattleShips\Source.cpp(257,39): warning C4838: Преобразование из "double" в "int" требует сужающего преобразования.
+D:\GitHub\-Labs\SpaceBattleShips\SpaceBattleShips\Source.cpp(257,39): warning C4244: инициализация: преобразование "double" в "int", возможна потеря данных
+D:\GitHub\-Labs\SpaceBattleShips\SpaceBattleShips\Source.cpp(270,28): warning C4838: Преобразование из "double" в "int" требует сужающего преобразования.
+D:\GitHub\-Labs\SpaceBattleShips\SpaceBattleShips\Source.cpp(270,28): warning C4244: инициализация: преобразование "double" в "int", возможна потеря данных
+D:\GitHub\-Labs\SpaceBattleShips\SpaceBattleShips\Source.cpp(270,39): warning C4838: Преобразование из "double" в "int" требует сужающего преобразования.
+D:\GitHub\-Labs\SpaceBattleShips\SpaceBattleShips\Source.cpp(270,39): warning C4244: инициализация: преобразование "double" в "int", возможна потеря данных
+D:\GitHub\-Labs\SpaceBattleShips\SpaceBattleShips\Source.cpp(277,28): warning C4838: Преобразование из "double" в "int" требует сужающего преобразования.
+D:\GitHub\-Labs\SpaceBattleShips\SpaceBattleShips\Source.cpp(277,28): warning C4244: инициализация: преобразование "double" в "int", возможна потеря данных
+D:\GitHub\-Labs\SpaceBattleShips\SpaceBattleShips\Source.cpp(277,39): warning C4838: Преобразование из "double" в "int" требует сужающего преобразования.
+D:\GitHub\-Labs\SpaceBattleShips\SpaceBattleShips\Source.cpp(277,39): warning C4244: инициализация: преобразование "double" в "int", возможна потеря данных
+D:\GitHub\-Labs\SpaceBattleShips\SpaceBattleShips\Source.cpp(289,91): warning C4244: аргумент: преобразование "float" в "int", возможна потеря данных
+D:\GitHub\-Labs\SpaceBattleShips\SpaceBattleShips\Source.cpp(300,92): warning C4244: аргумент: преобразование "double" в "int", возможна потеря данных
+D:\GitHub\-Labs\SpaceBattleShips\SpaceBattleShips\Source.cpp(317,1): warning C4067: непредвиденные лексемы за директивой препроцессора, требуется newline
+  SpaceBattleShips.vcxproj -> D:\GitHub\-Labs\SpaceBattleShips\x64\Debug\SpaceBattleShips.exe
