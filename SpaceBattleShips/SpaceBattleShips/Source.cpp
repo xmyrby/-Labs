@@ -16,23 +16,112 @@ int winHgt = 960;
 
 int lastTime = SDL_GetTicks(), newTime, delta = 0;
 
+const float RAD = M_PI / 180;
+const float GRAD = 180 / M_PI;
+
+void Swap(float& a, float& b)
+{
+	float c = a;
+	a = b;
+	b = c;
+}
+
 struct Position
 {
-	double x, y;
+	float x, y;
 };
 
-struct Bullet
+inline int Area(Position a, Position b, Position c)
+{
+	return (b.x - a.x) * (c.y - a.y) - (b.y - a.y) * (c.x - a.x);
+}
+
+inline bool Intersect_1(float a, float b, float c, float d)
+{
+	if (a > b)  Swap(a, b);
+	if (c > d)  Swap(c, d);
+	return max(a, c) <= min(b, d);
+}
+
+bool Intersect(Position a, Position b, Position c, Position d)
+{
+	return Intersect_1(a.x, b.x, c.x, d.x)
+		&& Intersect_1(a.y, b.y, c.y, d.y)
+		&& Area(a, b, c) * Area(a, b, d) <= 0
+		&& Area(c, d, a) * Area(c, d, b) <= 0;
+}
+
+struct BoundingBox;
+
+struct Object
 {
 	Position pos;
+	BoundingBox collider;
+	int sizeW, sizeH;
+
+	float motionAngle;
+
+	float rotateAngle;
+
+	Position GetPosRotated(float offsetX, float offsetY, float rotateAngleGrad, float rotateAngleRad)
+	{
+		if (rotateAngleGrad == NULL)
+			return { (pos.x + sizeW / 2) + (offsetX)*cos(rotateAngleRad) - (offsetY)*sin(rotateAngleRad), (pos.y + sizeH / 2) + (offsetX)*sin(rotateAngleRad) + (offsetY)*cos(rotateAngleRad) };
+		return { (pos.x + sizeW / 2) + (offsetX)*cos(rotateAngleGrad * RAD) - (offsetY)*sin(rotateAngleGrad * RAD), (pos.y + sizeH / 2) + (offsetX)*sin(rotateAngleGrad * RAD) + (offsetY)*cos(rotateAngleGrad * RAD) };
+	}
+};
+
+struct BoundingBox
+{
+	struct Side
+	{
+		Position pos1;
+		Position pos2;
+	};
+
+	Side sides[4];
+
+	void CalculateSides(Object object)
+	{
+		Position pos1, pos2;
+
+		int dW = object.sizeW / 2, dH = object.sizeH / 2;
+
+		pos1 = object.GetPosRotated(-dW, -dH);
+		pos2 = object.GetPosRotated(+dW, -dH);
+
+		sides[0] = { pos1,pos2 };
+
+		pos1 = object.GetPosRotated(+dW, +dH);
+		sides[0] = { pos2,pos1 };
+
+		pos2 = object.GetPosRotated(-dW, +dH);
+		sides[0] = { pos1,pos2 };
+
+		pos1 = object.GetPosRotated(-dW, -dH);
+		sides[0] = { pos2,pos1 };
+	}
+};
+
+struct Bullet : Object
+{
 	int textureId;
-	int w, h;
 
 	float angle;
 
+	int destroyTime;
+
 	void Move()
 	{
-		pos.x += cos(angle) * 5;
-		pos.y += sin(angle) * 5;
+		pos.x += cos(angle) * 7;
+		pos.y += sin(angle) * 7;
+	}
+
+	bool CheckActivity()
+	{
+		if (newTime >= destroyTime)
+			return true;
+		return false;
 	}
 };
 
@@ -93,6 +182,16 @@ void AddBullet(Bullet bullet)
 	bulletsCount++;
 }
 
+void DestroyBullet(int index)
+{
+	for (int i = index; i < bulletsCount - 1; i++)
+	{
+		bullets[i] = bullets[i + 1];
+	}
+	bullets = (Bullet*)realloc(bullets, sizeof(Bullet) * (bulletsCount - 1));
+	bulletsCount--;
+}
+
 struct SpaceShip
 {
 	Position pos;
@@ -101,9 +200,7 @@ struct SpaceShip
 	float maxHp;
 
 	float speed;
-	float angleOfMotion;
 
-	float rotateAngle;
 
 	int team;
 	int type;
@@ -112,6 +209,11 @@ struct SpaceShip
 
 	int damage;
 	int lastShot;
+
+	int sizeW;
+	int sizeH;
+
+	int turret = 0;
 
 	void GetTarget()
 	{
@@ -147,19 +249,29 @@ struct SpaceShip
 
 		if (targetId != -1)
 		{
-			AngularLerp(rotateAngle, GetAngle(ships[targetId].pos, pos) * 180 / M_PI, 2);
-			if (GetTickCount() >= lastShot + 500)
+			AngularLerp(rotateAngle, GetAngle(ships[targetId].pos, pos) * GRAD, 2);
+			if (newTime >= lastShot + 100)
 			{
-				lastShot = GetTickCount();
-				Position poss = { pos.x + cos(rotateAngle * M_PI / 180) * 22,pos.y + sin(rotateAngle * M_PI / 180) * 7 };
-				Bullet bullet = { pos,20 + team,8,2,rotateAngle * M_PI / 180 };
-				AddBullet(bullet);
+				lastShot = newTime;
+				Bullet bullet;
+
+				if (turret == 0)
+				{
+					bullet = { GetPosRotated(6,-9),20 + team,8,2,rotateAngle * RAD,newTime + 1000 };
+					AddBullet(bullet);
+				}
+				else if (turret == 1)
+				{
+					bullet = { GetPosRotated(6,7),20 + team,8,2,rotateAngle * RAD,newTime + 1000 };
+					AddBullet(bullet);
+				}
+				turret = (turret + 1) % 2;
 			}
 		}
 
-		float rtA = angleOfMotion * 180 / M_PI;
+		float rtA = angleOfMotion * GRAD;
 		AngularLerp(rtA, rotateAngle, 0.5);
-		angleOfMotion = rtA * M_PI / 180;
+		angleOfMotion = rtA * RAD;
 	}
 };
 
@@ -172,9 +284,9 @@ void InitShips()
 	for (int i = 0; i < shipsCount; i++)
 	{
 		Position pos = { 50 + i / 2 * 300 + i * 150,70 + (i + 1) % 2 * 820 };
-		ships[i] = { pos,100,100,0,0,float(i % 2 * 180 - 90),i % 2,0,-1, 1 };
-		ships[i].angleOfMotion = ships[i].rotateAngle * M_PI / 180;
-		ships[i].lastShot = SDL_GetTicks();
+		ships[i] = { pos,100,100,0,0,float(i % 2 * 180 - 90),i % 2,0,-1, 1,32,32 };
+		ships[i].angleOfMotion = ships[i].rotateAngle * RAD;
+		ships[i].lastShot = newTime;
 	}
 }
 
@@ -284,22 +396,27 @@ void Draw()
 	SDL_SetRenderDrawColor(ren, 0, 0, 0, 255);
 	SDL_RenderClear(ren);
 
+	SDL_SetRenderDrawColor(ren, 255, 0, 0, 255);
+
+	PrintText(bulletsCount, { 90,90 }, 16, 255, 0);
+
 	for (int i = 0; i < shipsCount; i++)
 	{
 		RenderAngleImage(ships[i].type + ships[i].team * 10, ships[i].pos, 32, 32, 255, ships[i].rotateAngle);
-		/*SDL_SetRenderDrawColor(ren, 255, 0, 0, 255);
-		SDL_RenderDrawLine(ren, ships[i].pos.x + 16, ships[i].pos.y + 16, ships[i].pos.x + cos(ships[i].angleOfMotion) * ships[i].speed * 30 + 16, ships[i].pos.y + sin(ships[i].angleOfMotion) * ships[i].speed * 30 + 16);
-		SDL_SetRenderDrawColor(ren, 0, 0, 255, 255);
-		SDL_RenderDrawLine(ren, ships[i].pos.x + 16, ships[i].pos.y + 16, ships[i].pos.x + cos(ships[i].rotateAngle * M_PI / 180) * 30 + 16, ships[i].pos.y + sin(ships[i].rotateAngle * M_PI / 180) * 30 + 16);*/
-
-		//PrintText(ships[i].rotateAngle, { ships[i].pos.x,ships[i].pos.y + 32 }, 16, 255, 0);
 	}
 
 	for (int i = 0; i < bulletsCount; i++)
 	{
-		RenderAngleImage(bullets[i].textureId, bullets[i].pos, 8, 2, 255, bullets[i].angle * 180 / M_PI);
-		bullets[i].Move();
-		SDL_Delay(1000);
+		RenderAngleImage(bullets[i].textureId, bullets[i].pos, 8, 2, 255, bullets[i].angle * GRAD);
+		if (bullets[i].CheckActivity())
+		{
+			DestroyBullet(i);
+			i--;
+		}
+		else
+		{
+			bullets[i].Move();
+		}
 	}
 
 	SDL_RenderPresent(ren);
