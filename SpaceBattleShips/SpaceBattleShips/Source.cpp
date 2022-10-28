@@ -14,6 +14,10 @@ SDL_Texture* textures[100];
 int winWdt = 960;
 int winHgt = 960;
 
+float scrollx = 480, scrolly = 480;
+float scale = 0.5;
+int scrollship = 2;
+
 int lastTime = SDL_GetTicks(), newTime, delta = 0;
 
 const float RAD = M_PI / 180;
@@ -51,26 +55,6 @@ bool Intersect(Position a, Position b, Position c, Position d)
 		&& Area(c, d, a) * Area(c, d, b) <= 0;
 }
 
-struct BoundingBox;
-
-struct Object
-{
-	Position pos;
-	BoundingBox collider;
-	int sizeW, sizeH;
-
-	float motionAngle;
-
-	float rotateAngle;
-
-	Position GetPosRotated(float offsetX, float offsetY, float rotateAngleGrad, float rotateAngleRad)
-	{
-		if (rotateAngleGrad == NULL)
-			return { (pos.x + sizeW / 2) + (offsetX)*cos(rotateAngleRad) - (offsetY)*sin(rotateAngleRad), (pos.y + sizeH / 2) + (offsetX)*sin(rotateAngleRad) + (offsetY)*cos(rotateAngleRad) };
-		return { (pos.x + sizeW / 2) + (offsetX)*cos(rotateAngleGrad * RAD) - (offsetY)*sin(rotateAngleGrad * RAD), (pos.y + sizeH / 2) + (offsetX)*sin(rotateAngleGrad * RAD) + (offsetY)*cos(rotateAngleGrad * RAD) };
-	}
-};
-
 struct BoundingBox
 {
 	struct Side
@@ -80,41 +64,83 @@ struct BoundingBox
 	};
 
 	Side sides[4];
+};
 
-	void CalculateSides(Object object)
+bool CheckCollision(BoundingBox collider1, BoundingBox collider2)
+{
+	for (int i = 0; i < 4; i++)
+	{
+		for (int j = 0; j < 4; j++)
+		{
+			if (Intersect(collider1.sides[i].pos1, collider1.sides[i].pos2, collider2.sides[j].pos1, collider2.sides[j].pos2))
+				return true;
+		}
+	}
+	return false;
+}
+
+struct Object
+{
+	Position pos;
+	BoundingBox collider;
+	int sizeW, sizeH;
+
+	float motionAngle;
+	float rotateAngle;
+
+	Position GetPosRotated(float offsetX, float offsetY)
+	{
+		if (rotateAngle == NULL)
+			return { (pos.x + sizeW / 2) + (offsetX)*cos(motionAngle) - (offsetY)*sin(motionAngle), (pos.y + sizeH / 2) + (offsetX)*sin(motionAngle) + (offsetY)*cos(motionAngle) };
+		return { (pos.x + sizeW / 2) + (offsetX)*cos(rotateAngle * RAD) - (offsetY)*sin(rotateAngle * RAD), (pos.y + sizeH / 2) + (offsetX)*sin(rotateAngle * RAD) + (offsetY)*cos(rotateAngle * RAD) };
+	}
+
+	void CalculateSides()
 	{
 		Position pos1, pos2;
 
-		int dW = object.sizeW / 2, dH = object.sizeH / 2;
+		int dW = sizeW / 2, dH = sizeH / 2;
 
-		pos1 = object.GetPosRotated(-dW, -dH);
-		pos2 = object.GetPosRotated(+dW, -dH);
+		pos1 = GetPosRotated(-dW, -dH);
+		pos2 = GetPosRotated(+dW, -dH);
 
-		sides[0] = { pos1,pos2 };
+		collider.sides[0] = { pos1,pos2 };
 
-		pos1 = object.GetPosRotated(+dW, +dH);
-		sides[0] = { pos2,pos1 };
+		pos1 = GetPosRotated(+dW, +dH);
+		collider.sides[1] = { pos2,pos1 };
 
-		pos2 = object.GetPosRotated(-dW, +dH);
-		sides[0] = { pos1,pos2 };
+		pos2 = GetPosRotated(-dW, +dH);
+		collider.sides[2] = { pos1,pos2 };
 
-		pos1 = object.GetPosRotated(-dW, -dH);
-		sides[0] = { pos2,pos1 };
+		pos1 = GetPosRotated(-dW, -dH);
+		collider.sides[3] = { pos2,pos1 };
 	}
 };
 
 struct Bullet : Object
 {
-	int textureId;
+	int team;
 
-	float angle;
+	int textureId;
 
 	int destroyTime;
 
+	int damage;
+
+	Bullet(Position posC, int sizeWC, int sizeHC, float rotateAngleC, float motionAngleC, int textureId, int destroyTime, int team, int damage) :textureId(textureId), destroyTime(destroyTime), team(team), damage(damage) {
+		pos = posC;
+		sizeW = sizeWC;
+		sizeH = sizeHC;
+		rotateAngle = rotateAngleC;
+		motionAngle = motionAngleC;
+		CalculateSides();
+	}
+
 	void Move()
 	{
-		pos.x += cos(angle) * 7;
-		pos.y += sin(angle) * 7;
+		pos.x += cos(motionAngle) * 7;
+		pos.y += sin(motionAngle) * 7;
+		CalculateSides();
 	}
 
 	bool CheckActivity()
@@ -192,33 +218,40 @@ void DestroyBullet(int index)
 	bulletsCount--;
 }
 
-struct SpaceShip
+struct SpaceShip : Object
 {
-	Position pos;
-
 	float hp;
 	float maxHp;
 
 	float speed;
 
-
 	int team;
 	int type;
 
-	int targetId;
-
 	int damage;
+
+	int turret;
+	int targetId;
 	int lastShot;
 
-	int sizeW;
-	int sizeH;
-
-	int turret = 0;
+	SpaceShip(Position posC, int sizeWC, int sizeHC, float rotateAngleC, float motionAngleC, float hp, float maxHp, float speed, int team, int type, int damage) :hp(hp), maxHp(maxHp), speed(speed), team(team), type(type), damage(damage) {
+		pos = posC;
+		sizeW = sizeWC;
+		sizeH = sizeHC;
+		rotateAngle = rotateAngleC;
+		motionAngle = motionAngleC;
+		turret = 0;
+		targetId = -1;
+		lastShot = newTime;
+		CalculateSides();
+	}
 
 	void GetTarget()
 	{
 		if (targetId != -1)
 		{
+			if (ships[targetId].team == team || shipsCount >= targetId)
+				targetId = -1;
 			if (Distance(pos, ships[targetId].pos) > 350)
 				targetId = -1;
 		}
@@ -242,51 +275,74 @@ struct SpaceShip
 		}
 
 
-		if (speed < 0.5)
-			speed += 0.01;
-		pos.x += cos(angleOfMotion) * speed;
-		pos.y += sin(angleOfMotion) * speed;
+		if (speed < 0.75)
+			speed += 0.02;
+		pos.x += cos(motionAngle) * speed;
+		pos.y += sin(motionAngle) * speed;
 
 		if (targetId != -1)
 		{
 			AngularLerp(rotateAngle, GetAngle(ships[targetId].pos, pos) * GRAD, 2);
-			if (newTime >= lastShot + 100)
+			if (newTime >= lastShot + 75)
 			{
 				lastShot = newTime;
-				Bullet bullet;
 
 				if (turret == 0)
 				{
-					bullet = { GetPosRotated(6,-9),20 + team,8,2,rotateAngle * RAD,newTime + 1000 };
+					Bullet bullet(GetPosRotated(6, -9), 8, 2, rotateAngle, rotateAngle * RAD, 20 + team, newTime + 1000, team, damage);
 					AddBullet(bullet);
 				}
 				else if (turret == 1)
 				{
-					bullet = { GetPosRotated(6,7),20 + team,8,2,rotateAngle * RAD,newTime + 1000 };
+					Bullet bullet(GetPosRotated(6, 7), 8, 2, rotateAngle, rotateAngle * RAD, 20 + team, newTime + 1000, team, damage);
 					AddBullet(bullet);
 				}
 				turret = (turret + 1) % 2;
 			}
 		}
+		else
+		{
+			rotateAngle += rand() % 7 - 3;
+		}
 
-		float rtA = angleOfMotion * GRAD;
+		float rtA = motionAngle * GRAD;
 		AngularLerp(rtA, rotateAngle, 0.5);
-		angleOfMotion = rtA * RAD;
+		motionAngle = rtA * RAD;
+		CalculateSides();
 	}
 };
 
+void DestroyShip(int index)
+{
+	for (int i = 0; i < shipsCount; i++)
+	{
+		if (ships[i].targetId == index)
+			ships[i].targetId = -1;
+	}
+
+	for (int i = index; i < shipsCount - 1; i++)
+	{
+		ships[i] = ships[i + 1];
+	}
+	ships = (SpaceShip*)realloc(ships, sizeof(SpaceShip) * (shipsCount - 1));
+	shipsCount--;
+
+	if (scrollship == index)
+		scrollship = -1;
+}
+
 void InitShips()
 {
-	shipsCount = 4;
+	shipsCount = 32;
 
 	ships = (SpaceShip*)realloc(ships, sizeof(SpaceShip) * shipsCount);
 
 	for (int i = 0; i < shipsCount; i++)
 	{
-		Position pos = { 50 + i / 2 * 300 + i * 150,70 + (i + 1) % 2 * 820 };
-		ships[i] = { pos,100,100,0,0,float(i % 2 * 180 - 90),i % 2,0,-1, 1,32,32 };
-		ships[i].angleOfMotion = ships[i].rotateAngle * RAD;
-		ships[i].lastShot = newTime;
+		Position pos = { rand() % 980,rand() % 980 };
+		float angle = rand() % 360;
+		SpaceShip ship(pos, 32, 32, angle, angle * RAD, 100, 100, 0, i % 2, 0, 1);
+		ships[i] = ship;
 	}
 }
 
@@ -357,6 +413,11 @@ void Init()
 
 Position PrintText(int var, Position position, int size, Uint8 alpha, int colorId)
 {
+	position.x += (480 / scale - scrollx);
+	position.y += (480 / scale - scrolly);
+	position.x *= scale;
+	position.y *= scale;
+	size *= scale;
 	char text[10];
 
 	_itoa_s(var, (char*)text, 10, 10);
@@ -379,14 +440,22 @@ Position PrintText(int var, Position position, int size, Uint8 alpha, int colorI
 
 void RenderImage(int textureId, Position position, int w, int h, int alpha)
 {
-	SDL_Rect rect = { position.x,position.y,w,h };
+	position.x += (480 / scale - scrollx);
+	position.y += (480 / scale - scrolly);
+	position.x *= scale;
+	position.y *= scale;
+	SDL_Rect rect = { position.x,position.y,w * scale,h * scale };
 	SDL_SetTextureAlphaMod(textures[textureId], alpha);
 	SDL_RenderCopy(ren, textures[textureId], NULL, &rect);
 }
 
 void RenderAngleImage(int textureId, Position position, int w, int h, int alpha, int angle)
 {
-	SDL_Rect rect = { position.x,position.y,w,h };
+	position.x += (480 / scale - scrollx);
+	position.y += (480 / scale - scrolly);
+	position.x *= scale;
+	position.y *= scale;
+	SDL_Rect rect = { position.x,position.y,w * scale,h * scale };
 	SDL_SetTextureAlphaMod(textures[textureId], alpha);
 	SDL_RenderCopyEx(ren, textures[textureId], NULL, &rect, angle, NULL, SDL_FLIP_NONE);
 }
@@ -398,16 +467,34 @@ void Draw()
 
 	SDL_SetRenderDrawColor(ren, 255, 0, 0, 255);
 
-	PrintText(bulletsCount, { 90,90 }, 16, 255, 0);
+	PrintText(scrollship, { 90 - (480 - scrollx),90 - (480 - scrolly) }, 16, 255, 0);
 
 	for (int i = 0; i < shipsCount; i++)
 	{
-		RenderAngleImage(ships[i].type + ships[i].team * 10, ships[i].pos, 32, 32, 255, ships[i].rotateAngle);
+		if (abs(ships[i].pos.x - scrollx) < 500 / scale && abs(ships[i].pos.y - scrolly) < 500 / scale)
+		{
+			PrintText(ships[i].hp, { ships[i].pos.x,ships[i].pos.y + 34 }, 16, 255, 0);
+			RenderAngleImage(ships[i].type + ships[i].team * 10, ships[i].pos, 32, 32, 255, ships[i].rotateAngle);
+			//if (i == scrollship)
+				//for (int j = 0; j < 4; j++)
+					//SDL_RenderDrawLineF(ren, (ships[i].collider.sides[j].pos1.x + (480 / scale - scrollx)) * scale, (ships[i].collider.sides[j].pos1.y + (480 / scale - scrolly)) * scale, (ships[i].collider.sides[j].pos2.x + (480 / scale - scrollx)) * scale, (ships[i].collider.sides[j].pos2.y + (480 / scale - scrolly)) * scale);
+		}
+
+		if (ships[i].hp <= 0)
+		{
+			DestroyShip(i);
+			i--;
+		}
 	}
 
 	for (int i = 0; i < bulletsCount; i++)
 	{
-		RenderAngleImage(bullets[i].textureId, bullets[i].pos, 8, 2, 255, bullets[i].angle * GRAD);
+		if (abs(bullets[i].pos.x - scrollx) < 500 / scale && abs(bullets[i].pos.y - scrolly) < 500 / scale)
+		{
+			RenderAngleImage(bullets[i].textureId, bullets[i].pos, 8, 2, 255, bullets[i].rotateAngle);
+		}
+		//for (int j = 0; j < 4; j++)
+			//SDL_RenderDrawLineF(ren, bullets[i].collider.sides[j].pos1.x, bullets[i].collider.sides[j].pos1.y, bullets[i].collider.sides[j].pos2.x, bullets[i].collider.sides[j].pos2.y);
 		if (bullets[i].CheckActivity())
 		{
 			DestroyBullet(i);
@@ -415,7 +502,23 @@ void Draw()
 		}
 		else
 		{
-			bullets[i].Move();
+			bool hit = false;
+			for (int j = 0; j < shipsCount; j++)
+			{
+				if (ships[j].team != bullets[i].team)
+				{
+					if (CheckCollision(bullets[i].collider, ships[j].collider))
+					{
+						ships[j].hp -= bullets[i].damage;
+						DestroyBullet(i);
+						i--;
+						hit = true;
+						break;
+					}
+				}
+			}
+			if (!hit)
+				bullets[i].Move();
 		}
 	}
 
@@ -434,18 +537,32 @@ void MoveShips()
 #undef main;
 int main()
 {
+	int nextCamSwap = 3000;
 	Init();
+
+	srand(time(NULL));
 
 	font = TTF_OpenFont("Fonts\\MainFont.ttf", 20);
 
 	while (true)
 	{
+		if (scrollship != -1)
+		{
+			scrollship = min(scrollship, shipsCount - 1);
+			scrollx = ships[scrollship].pos.x + ships[scrollship].sizeW / 2;
+			scrolly = ships[scrollship].pos.y + ships[scrollship].sizeH / 2;
+		}
 		Draw();
 		MoveShips();
-
 		newTime = SDL_GetTicks();
 		delta = newTime - lastTime;
 		lastTime = newTime;
+
+		if (newTime >= nextCamSwap)
+		{
+			nextCamSwap = newTime + 3500;
+			scrollship = rand() % shipsCount;
+		}
 
 		if (delta < 16)
 		{
