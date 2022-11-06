@@ -11,11 +11,14 @@ SDL_Surface* win_surf = NULL;
 TTF_Font* font = NULL;
 SDL_Texture* textures[100];
 
+bool devUI = false;
+bool fpsShow = true;
+
 int winWdt = 960;
 int winHgt = 960;
 
 float scrollx = 480, scrolly = 480;
-float scale = 0.5;
+float scale = 1;
 int scrollship = 2;
 
 int lastTime = SDL_GetTicks(), newTime, delta = 0;
@@ -168,9 +171,9 @@ float GetAngle(Position a, Position b)
 void Lerp(float& a, float b, float k)
 {
 	if (a > b)
-		a -= k;
+		a -= min(a - b, k);
 	else
-		a += k;
+		a += min(b - a, k);
 }
 
 void AngularLerp(float& a, float b, float k)
@@ -186,13 +189,13 @@ void AngularLerp(float& a, float b, float k)
 		a += 360;
 
 	if (a > b && a - b > 180)
-		a += k;
+		a += min(a - b, k);
 	else if (a > b && a - b < 180)
-		a -= k;
+		a -= min(a - b, k);
 	else if (a < b && b - a > 180)
-		a -= k;
+		a -= min(b - a, k);
 	else if (a < b && b - a < 180)
-		a += k;
+		a += min(b - a, k);
 }
 
 struct SpaceShip;
@@ -283,7 +286,7 @@ struct SpaceShip : Object
 		if (targetId != -1)
 		{
 			AngularLerp(rotateAngle, GetAngle(ships[targetId].pos, pos) * GRAD, 2);
-			if (newTime >= lastShot + 75)
+			if (newTime >= lastShot + 150)
 			{
 				lastShot = newTime;
 
@@ -333,7 +336,7 @@ void DestroyShip(int index)
 
 void InitShips()
 {
-	shipsCount = 32;
+	shipsCount = 20;
 
 	ships = (SpaceShip*)realloc(ships, sizeof(SpaceShip) * shipsCount);
 
@@ -341,7 +344,7 @@ void InitShips()
 	{
 		Position pos = { rand() % 980,rand() % 980 };
 		float angle = rand() % 360;
-		SpaceShip ship(pos, 32, 32, angle, angle * RAD, 100, 100, 0, i % 2, 0, 1);
+		SpaceShip ship(pos, 32, 32, angle, angle * RAD, 100, 100, 0, i % 2, 0, 0.75);
 		ships[i] = ship;
 	}
 }
@@ -465,19 +468,48 @@ void Draw()
 	SDL_SetRenderDrawColor(ren, 0, 0, 0, 255);
 	SDL_RenderClear(ren);
 
-	SDL_SetRenderDrawColor(ren, 255, 0, 0, 255);
+	if (devUI)
+	{
+		SDL_SetRenderDrawColor(ren, 25, 25, 25, 255);
+		for (int i = -50; i < 50; i++)
+		{
+			for (int j = -50; j < 50; j++)
+			{
+				SDL_Rect rect = { (i * 128 + (480 / scale - scrollx)) * scale,(j * 128 + (480 / scale - scrolly)) * scale,128 * scale,128 * scale };
+				SDL_RenderDrawRect(ren, &rect);
+			}
+		}
+	}
 
-	PrintText(scrollship, { 90 - (480 - scrollx),90 - (480 - scrolly) }, 16, 255, 0);
+	if (fpsShow && delta > 0)
+		PrintText(1000 / max(16, delta), { (900 - (480 / scale - scrollx)) * scale,(90 - (480 / scale - scrolly)) * scale }, 16 * scale, 255, 0);
+
+	if (devUI)
+		PrintText(scrollship, { (90 - (480 / scale - scrollx)) * scale,(90 - (480 / scale - scrolly)) * scale }, 16 * scale, 255, 0);
 
 	for (int i = 0; i < shipsCount; i++)
 	{
 		if (abs(ships[i].pos.x - scrollx) < 500 / scale && abs(ships[i].pos.y - scrolly) < 500 / scale)
 		{
-			PrintText(ships[i].hp, { ships[i].pos.x,ships[i].pos.y + 34 }, 16, 255, 0);
+			if (devUI)
+				PrintText(ships[i].hp, { ships[i].pos.x,ships[i].pos.y + 34 }, 16, 255, 0);
+
 			RenderAngleImage(ships[i].type + ships[i].team * 10, ships[i].pos, 32, 32, 255, ships[i].rotateAngle);
-			//if (i == scrollship)
-				//for (int j = 0; j < 4; j++)
-					//SDL_RenderDrawLineF(ren, (ships[i].collider.sides[j].pos1.x + (480 / scale - scrollx)) * scale, (ships[i].collider.sides[j].pos1.y + (480 / scale - scrolly)) * scale, (ships[i].collider.sides[j].pos2.x + (480 / scale - scrollx)) * scale, (ships[i].collider.sides[j].pos2.y + (480 / scale - scrolly)) * scale);
+
+			if (devUI)
+			{
+				SDL_SetRenderDrawColor(ren, 255, 0, 0, 255);
+				for (int j = 0; j < 4; j++)
+				{
+					SDL_RenderDrawLineF(ren, (ships[i].collider.sides[j].pos1.x + (480 / scale - scrollx)) * scale, (ships[i].collider.sides[j].pos1.y + (480 / scale - scrolly)) * scale, (ships[i].collider.sides[j].pos2.x + (480 / scale - scrollx)) * scale, (ships[i].collider.sides[j].pos2.y + (480 / scale - scrolly)) * scale);
+				}
+
+				SDL_SetRenderDrawColor(ren, 0, 255, 0, 255);
+				if (ships[i].targetId != -1)
+				{
+					SDL_RenderDrawLineF(ren, (ships[i].pos.x + ships[i].sizeW / 2 + (480 / scale - scrollx)) * scale, (ships[i].pos.y + ships[i].sizeH / 2 + (480 / scale - scrolly)) * scale, (ships[ships[i].targetId].pos.x + ships[ships[i].targetId].sizeW / 2 + (480 / scale - scrollx)) * scale, (ships[ships[i].targetId].pos.y + ships[ships[i].targetId].sizeH / 2 + (480 / scale - scrolly)) * scale);
+				}
+			}
 		}
 
 		if (ships[i].hp <= 0)
@@ -493,8 +525,16 @@ void Draw()
 		{
 			RenderAngleImage(bullets[i].textureId, bullets[i].pos, 8, 2, 255, bullets[i].rotateAngle);
 		}
-		//for (int j = 0; j < 4; j++)
-			//SDL_RenderDrawLineF(ren, bullets[i].collider.sides[j].pos1.x, bullets[i].collider.sides[j].pos1.y, bullets[i].collider.sides[j].pos2.x, bullets[i].collider.sides[j].pos2.y);
+
+		if (devUI)
+		{
+			SDL_SetRenderDrawColor(ren, 0, 0, 255, 255);
+			for (int j = 0; j < 4; j++)
+			{
+				SDL_RenderDrawLineF(ren, (bullets[i].collider.sides[j].pos1.x + (480 / scale - scrollx)) * scale, (bullets[i].collider.sides[j].pos1.y + (480 / scale - scrolly)) * scale, (bullets[i].collider.sides[j].pos2.x + (480 / scale - scrollx)) * scale, (bullets[i].collider.sides[j].pos2.y + (480 / scale - scrolly)) * scale);
+			}
+		}
+
 		if (bullets[i].CheckActivity())
 		{
 			DestroyBullet(i);
@@ -546,17 +586,18 @@ int main()
 
 	while (true)
 	{
-		if (scrollship != -1)
-		{
-			scrollship = min(scrollship, shipsCount - 1);
-			scrollx = ships[scrollship].pos.x + ships[scrollship].sizeW / 2;
-			scrolly = ships[scrollship].pos.y + ships[scrollship].sizeH / 2;
-		}
-		Draw();
-		MoveShips();
 		newTime = SDL_GetTicks();
 		delta = newTime - lastTime;
 		lastTime = newTime;
+
+		if (scrollship != -1)
+		{
+			scrollship = min(scrollship, shipsCount - 1);
+			Lerp(scrollx, ships[scrollship].pos.x + ships[scrollship].sizeW / 2 * scale, 2.5);
+			Lerp(scrolly, ships[scrollship].pos.y + ships[scrollship].sizeH / 2 * scale, 2.5);
+		}
+		Draw();
+		MoveShips();
 
 		if (newTime >= nextCamSwap)
 		{

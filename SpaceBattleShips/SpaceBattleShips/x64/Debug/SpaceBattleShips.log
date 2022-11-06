@@ -1,48 +1,59 @@
 ﻿  Source.cpp
-D:\GitHub\-Labs\SpaceBattleShips\SpaceBattleShips\Source.cpp(23,29): warning C4305: инициализация: усечение из "double" в "float"
-D:\GitHub\-Labs\SpaceBattleShips\SpaceBattleShips\Source.cpp(24,30): warning C4305: инициализация: усечение из "double" в "float"
-D:\GitHub\-Labs\SpaceBattleShips\SpaceBattleShips\Source.cpp(40,35): warning C4244: return: преобразование "float" в "int", возможна потеря данных
-D:\GitHub\-Labs\SpaceBattleShips\SpaceBattleShips\Source.cpp(104,29): warning C4244: аргумент: преобразование "int" в "float", возможна потеря данных
-D:\GitHub\-Labs\SpaceBattleShips\SpaceBattleShips\Source.cpp(104,24): warning C4244: аргумент: преобразование "int" в "float", возможна потеря данных
-D:\GitHub\-Labs\SpaceBattleShips\SpaceBattleShips\Source.cpp(105,29): warning C4244: аргумент: преобразование "int" в "float", возможна потеря данных
-D:\GitHub\-Labs\SpaceBattleShips\SpaceBattleShips\Source.cpp(105,24): warning C4244: аргумент: преобразование "int" в "float", возможна потеря данных
-D:\GitHub\-Labs\SpaceBattleShips\SpaceBattleShips\Source.cpp(109,29): warning C4244: аргумент: преобразование "int" в "float", возможна потеря данных
-D:\GitHub\-Labs\SpaceBattleShips\SpaceBattleShips\Source.cpp(109,24): warning C4244: аргумент: преобразование "int" в "float", возможна потеря данных
+D:\GitHub\-Labs\SpaceBattleShips\SpaceBattleShips\Source.cpp(26,29): warning C4305: инициализация: усечение из "double" в "float"
+D:\GitHub\-Labs\SpaceBattleShips\SpaceBattleShips\Source.cpp(27,30): warning C4305: инициализация: усечение из "double" в "float"
+D:\GitHub\-Labs\SpaceBattleShips\SpaceBattleShips\Source.cpp(43,35): warning C4244: return: преобразование "float" в "int", возможна потеря данных
+D:\GitHub\-Labs\SpaceBattleShips\SpaceBattleShips\Source.cpp(107,29): warning C4244: аргумент: преобразование "int" в "float", возможна потеря данных
+D:\GitHub\-Labs\SpaceBattleShips\SpaceBattleShips\Source.cpp(107,24): warning C4244: аргумент: преобразование "int" в "float", возможна потеря данных
+D:\GitHub\-Labs\SpaceBattleShips\SpaceBattleShips\Source.cpp(108,29): warning C4244: аргумент: преобразование "int" в "float", возможна потеря данных
+D:\GitHub\-Labs\SpaceBattleShips\SpaceBattleShips\Source.cpp(108,24): warning C4244: аргумент: преобразование "int" в "float", возможна потеря данных
 D:\GitHub\-Labs\SpaceBattleShips\SpaceBattleShips\Source.cpp(112,29): warning C4244: аргумент: преобразование "int" в "float", возможна потеря данных
 D:\GitHub\-Labs\SpaceBattleShips\SpaceBattleShips\Source.cpp(112,24): warning C4244: аргумент: преобразование "int" в "float", возможна потеря данных
 D:\GitHub\-Labs\SpaceBattleShips\SpaceBattleShips\Source.cpp(115,29): warning C4244: аргумент: преобразование "int" в "float", возможна потеря данных
 D:\GitHub\-Labs\SpaceBattleShips\SpaceBattleShips\Source.cpp(115,24): warning C4244: аргумент: преобразование "int" в "float", возможна потеря данных
-D:\GitHub\-Labs\SpaceBattleShips\SpaceBattleShips\Source.cpp(279,1): warning C4305: +=: усечение из "double" в "float"
-D:\GitHub\-Labs\SpaceBattleShips\SpaceBattleShips\Source.cpp(342,27): warning C4838: Преобразование из "int" в "float" требует сужающего преобразования.
-D:\GitHub\-Labs\SpaceBattleShips\SpaceBattleShips\Source.cpp(342,27): warning C4244: инициализация: преобразование "int" в "float", возможна потеря данных
-D:\GitHub\-Labs\SpaceBattleShips\SpaceBattleShips\Source.cpp(342,40): warning C4838: Преобразование из "int" в "float" требует сужающего преобразования.
-D:\GitHub\-Labs\SpaceBattleShips\SpaceBattleShips\Source.cpp(342,40): warning C4244: инициализация: преобразование "int" в "float", возможна потеря данных
-D:\GitHub\-Labs\SpaceBattleShips\SpaceBattleShips\Source.cpp(343,15): warning C4244: инициализация: преобразование "int" в "float", возможна потеря данных
-D:\GitHub\-Labs\SpaceBattleShips\SpaceBattleShips\Source.cpp(420,10): warning C4244: *=: преобразование "float" в "int", возможна потеря данных
-D:\GitHub\-Labs\SpaceBattleShips\SpaceBattleShips\Source.cpp(429,12): warning C4244: инициализация: преобразование "double" в "int", возможна потеря данных
-D:\GitHub\-Labs\SpaceBattleShips\SpaceBattleShips\Source.cpp(430,28): warning C4838: Преобразование из "float" в "int" требует сужающего преобразования.
-D:\GitHub\-Labs\SpaceBattleShips\SpaceBattleShips\Source.cpp(430,28): warning C4244: инициализация: преобразование "float" в "int", возможна потеря данных
-D:\GitHub\-Labs\SpaceBattleShips\SpaceBattleShips\Source.cpp(430,39): warning C4838: Преобразование из "float" в "int" требует сужающего преобразования.
-D:\GitHub\-Labs\SpaceBattleShips\SpaceBattleShips\Source.cpp(430,39): warning C4244: инициализация: преобразование "float" в "int", возможна потеря данных
-D:\GitHub\-Labs\SpaceBattleShips\SpaceBattleShips\Source.cpp(447,28): warning C4838: Преобразование из "float" в "int" требует сужающего преобразования.
-D:\GitHub\-Labs\SpaceBattleShips\SpaceBattleShips\Source.cpp(447,28): warning C4244: инициализация: преобразование "float" в "int", возможна потеря данных
-D:\GitHub\-Labs\SpaceBattleShips\SpaceBattleShips\Source.cpp(447,39): warning C4838: Преобразование из "float" в "int" требует сужающего преобразования.
-D:\GitHub\-Labs\SpaceBattleShips\SpaceBattleShips\Source.cpp(447,39): warning C4244: инициализация: преобразование "float" в "int", возможна потеря данных
-D:\GitHub\-Labs\SpaceBattleShips\SpaceBattleShips\Source.cpp(447,44): warning C4838: Преобразование из "float" в "int" требует сужающего преобразования.
-D:\GitHub\-Labs\SpaceBattleShips\SpaceBattleShips\Source.cpp(447,44): warning C4244: инициализация: преобразование "float" в "int", возможна потеря данных
-D:\GitHub\-Labs\SpaceBattleShips\SpaceBattleShips\Source.cpp(447,54): warning C4838: Преобразование из "float" в "int" требует сужающего преобразования.
-D:\GitHub\-Labs\SpaceBattleShips\SpaceBattleShips\Source.cpp(447,54): warning C4244: инициализация: преобразование "float" в "int", возможна потеря данных
-D:\GitHub\-Labs\SpaceBattleShips\SpaceBattleShips\Source.cpp(458,28): warning C4838: Преобразование из "float" в "int" требует сужающего преобразования.
-D:\GitHub\-Labs\SpaceBattleShips\SpaceBattleShips\Source.cpp(458,28): warning C4244: инициализация: преобразование "float" в "int", возможна потеря данных
-D:\GitHub\-Labs\SpaceBattleShips\SpaceBattleShips\Source.cpp(458,39): warning C4838: Преобразование из "float" в "int" требует сужающего преобразования.
-D:\GitHub\-Labs\SpaceBattleShips\SpaceBattleShips\Source.cpp(458,39): warning C4244: инициализация: преобразование "float" в "int", возможна потеря данных
-D:\GitHub\-Labs\SpaceBattleShips\SpaceBattleShips\Source.cpp(458,44): warning C4838: Преобразование из "float" в "int" требует сужающего преобразования.
-D:\GitHub\-Labs\SpaceBattleShips\SpaceBattleShips\Source.cpp(458,44): warning C4244: инициализация: преобразование "float" в "int", возможна потеря данных
-D:\GitHub\-Labs\SpaceBattleShips\SpaceBattleShips\Source.cpp(458,54): warning C4838: Преобразование из "float" в "int" требует сужающего преобразования.
-D:\GitHub\-Labs\SpaceBattleShips\SpaceBattleShips\Source.cpp(458,54): warning C4244: инициализация: преобразование "float" в "int", возможна потеря данных
-D:\GitHub\-Labs\SpaceBattleShips\SpaceBattleShips\Source.cpp(476,22): warning C4244: аргумент: преобразование "float" в "int", возможна потеря данных
-D:\GitHub\-Labs\SpaceBattleShips\SpaceBattleShips\Source.cpp(477,92): warning C4244: аргумент: преобразование "float" в "int", возможна потеря данных
-D:\GitHub\-Labs\SpaceBattleShips\SpaceBattleShips\Source.cpp(494,80): warning C4244: аргумент: преобразование "float" в "int", возможна потеря данных
-D:\GitHub\-Labs\SpaceBattleShips\SpaceBattleShips\Source.cpp(537,1): warning C4067: непредвиденные лексемы за директивой препроцессора, требуется newline
-D:\GitHub\-Labs\SpaceBattleShips\SpaceBattleShips\Source.cpp(543,12): warning C4244: аргумент: преобразование "time_t" в "unsigned int", возможна потеря данных
+D:\GitHub\-Labs\SpaceBattleShips\SpaceBattleShips\Source.cpp(118,29): warning C4244: аргумент: преобразование "int" в "float", возможна потеря данных
+D:\GitHub\-Labs\SpaceBattleShips\SpaceBattleShips\Source.cpp(118,24): warning C4244: аргумент: преобразование "int" в "float", возможна потеря данных
+D:\GitHub\-Labs\SpaceBattleShips\SpaceBattleShips\Source.cpp(282,1): warning C4305: +=: усечение из "double" в "float"
+D:\GitHub\-Labs\SpaceBattleShips\SpaceBattleShips\Source.cpp(345,27): warning C4838: Преобразование из "int" в "float" требует сужающего преобразования.
+D:\GitHub\-Labs\SpaceBattleShips\SpaceBattleShips\Source.cpp(345,27): warning C4244: инициализация: преобразование "int" в "float", возможна потеря данных
+D:\GitHub\-Labs\SpaceBattleShips\SpaceBattleShips\Source.cpp(345,40): warning C4838: Преобразование из "int" в "float" требует сужающего преобразования.
+D:\GitHub\-Labs\SpaceBattleShips\SpaceBattleShips\Source.cpp(345,40): warning C4244: инициализация: преобразование "int" в "float", возможна потеря данных
+D:\GitHub\-Labs\SpaceBattleShips\SpaceBattleShips\Source.cpp(346,15): warning C4244: инициализация: преобразование "int" в "float", возможна потеря данных
+D:\GitHub\-Labs\SpaceBattleShips\SpaceBattleShips\Source.cpp(347,74): warning C4244: аргумент: преобразование "double" в "int", возможна потеря данных
+D:\GitHub\-Labs\SpaceBattleShips\SpaceBattleShips\Source.cpp(423,10): warning C4244: *=: преобразование "float" в "int", возможна потеря данных
+D:\GitHub\-Labs\SpaceBattleShips\SpaceBattleShips\Source.cpp(432,12): warning C4244: инициализация: преобразование "double" в "int", возможна потеря данных
+D:\GitHub\-Labs\SpaceBattleShips\SpaceBattleShips\Source.cpp(433,28): warning C4838: Преобразование из "float" в "int" требует сужающего преобразования.
+D:\GitHub\-Labs\SpaceBattleShips\SpaceBattleShips\Source.cpp(433,28): warning C4244: инициализация: преобразование "float" в "int", возможна потеря данных
+D:\GitHub\-Labs\SpaceBattleShips\SpaceBattleShips\Source.cpp(433,39): warning C4838: Преобразование из "float" в "int" требует сужающего преобразования.
+D:\GitHub\-Labs\SpaceBattleShips\SpaceBattleShips\Source.cpp(433,39): warning C4244: инициализация: преобразование "float" в "int", возможна потеря данных
+D:\GitHub\-Labs\SpaceBattleShips\SpaceBattleShips\Source.cpp(450,28): warning C4838: Преобразование из "float" в "int" требует сужающего преобразования.
+D:\GitHub\-Labs\SpaceBattleShips\SpaceBattleShips\Source.cpp(450,28): warning C4244: инициализация: преобразование "float" в "int", возможна потеря данных
+D:\GitHub\-Labs\SpaceBattleShips\SpaceBattleShips\Source.cpp(450,39): warning C4838: Преобразование из "float" в "int" требует сужающего преобразования.
+D:\GitHub\-Labs\SpaceBattleShips\SpaceBattleShips\Source.cpp(450,39): warning C4244: инициализация: преобразование "float" в "int", возможна потеря данных
+D:\GitHub\-Labs\SpaceBattleShips\SpaceBattleShips\Source.cpp(450,44): warning C4838: Преобразование из "float" в "int" требует сужающего преобразования.
+D:\GitHub\-Labs\SpaceBattleShips\SpaceBattleShips\Source.cpp(450,44): warning C4244: инициализация: преобразование "float" в "int", возможна потеря данных
+D:\GitHub\-Labs\SpaceBattleShips\SpaceBattleShips\Source.cpp(450,54): warning C4838: Преобразование из "float" в "int" требует сужающего преобразования.
+D:\GitHub\-Labs\SpaceBattleShips\SpaceBattleShips\Source.cpp(450,54): warning C4244: инициализация: преобразование "float" в "int", возможна потеря данных
+D:\GitHub\-Labs\SpaceBattleShips\SpaceBattleShips\Source.cpp(461,28): warning C4838: Преобразование из "float" в "int" требует сужающего преобразования.
+D:\GitHub\-Labs\SpaceBattleShips\SpaceBattleShips\Source.cpp(461,28): warning C4244: инициализация: преобразование "float" в "int", возможна потеря данных
+D:\GitHub\-Labs\SpaceBattleShips\SpaceBattleShips\Source.cpp(461,39): warning C4838: Преобразование из "float" в "int" требует сужающего преобразования.
+D:\GitHub\-Labs\SpaceBattleShips\SpaceBattleShips\Source.cpp(461,39): warning C4244: инициализация: преобразование "float" в "int", возможна потеря данных
+D:\GitHub\-Labs\SpaceBattleShips\SpaceBattleShips\Source.cpp(461,44): warning C4838: Преобразование из "float" в "int" требует сужающего преобразования.
+D:\GitHub\-Labs\SpaceBattleShips\SpaceBattleShips\Source.cpp(461,44): warning C4244: инициализация: преобразование "float" в "int", возможна потеря данных
+D:\GitHub\-Labs\SpaceBattleShips\SpaceBattleShips\Source.cpp(461,54): warning C4838: Преобразование из "float" в "int" требует сужающего преобразования.
+D:\GitHub\-Labs\SpaceBattleShips\SpaceBattleShips\Source.cpp(461,54): warning C4244: инициализация: преобразование "float" в "int", возможна потеря данных
+D:\GitHub\-Labs\SpaceBattleShips\SpaceBattleShips\Source.cpp(478,59): warning C4838: Преобразование из "float" в "int" требует сужающего преобразования.
+D:\GitHub\-Labs\SpaceBattleShips\SpaceBattleShips\Source.cpp(478,59): warning C4244: инициализация: преобразование "float" в "int", возможна потеря данных
+D:\GitHub\-Labs\SpaceBattleShips\SpaceBattleShips\Source.cpp(478,103): warning C4838: Преобразование из "float" в "int" требует сужающего преобразования.
+D:\GitHub\-Labs\SpaceBattleShips\SpaceBattleShips\Source.cpp(478,103): warning C4244: инициализация: преобразование "float" в "int", возможна потеря данных
+D:\GitHub\-Labs\SpaceBattleShips\SpaceBattleShips\Source.cpp(478,115): warning C4838: Преобразование из "float" в "int" требует сужающего преобразования.
+D:\GitHub\-Labs\SpaceBattleShips\SpaceBattleShips\Source.cpp(478,115): warning C4244: инициализация: преобразование "float" в "int", возможна потеря данных
+D:\GitHub\-Labs\SpaceBattleShips\SpaceBattleShips\Source.cpp(478,127): warning C4838: Преобразование из "float" в "int" требует сужающего преобразования.
+D:\GitHub\-Labs\SpaceBattleShips\SpaceBattleShips\Source.cpp(478,127): warning C4244: инициализация: преобразование "float" в "int", возможна потеря данных
+D:\GitHub\-Labs\SpaceBattleShips\SpaceBattleShips\Source.cpp(485,123): warning C4244: аргумент: преобразование "float" в "int", возможна потеря данных
+D:\GitHub\-Labs\SpaceBattleShips\SpaceBattleShips\Source.cpp(488,111): warning C4244: аргумент: преобразование "float" в "int", возможна потеря данных
+D:\GitHub\-Labs\SpaceBattleShips\SpaceBattleShips\Source.cpp(495,23): warning C4244: аргумент: преобразование "float" в "int", возможна потеря данных
+D:\GitHub\-Labs\SpaceBattleShips\SpaceBattleShips\Source.cpp(497,92): warning C4244: аргумент: преобразование "float" в "int", возможна потеря данных
+D:\GitHub\-Labs\SpaceBattleShips\SpaceBattleShips\Source.cpp(526,80): warning C4244: аргумент: преобразование "float" в "int", возможна потеря данных
+D:\GitHub\-Labs\SpaceBattleShips\SpaceBattleShips\Source.cpp(577,1): warning C4067: непредвиденные лексемы за директивой препроцессора, требуется newline
+D:\GitHub\-Labs\SpaceBattleShips\SpaceBattleShips\Source.cpp(583,12): warning C4244: аргумент: преобразование "time_t" в "unsigned int", возможна потеря данных
   SpaceBattleShips.vcxproj -> D:\GitHub\-Labs\SpaceBattleShips\x64\Debug\SpaceBattleShips.exe

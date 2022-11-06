@@ -1,0 +1,11 @@
+{
+  "Version": 1,
+  "ProjectMap": {
+    "721af973-ebd2-4b7b-a714-f10ab8520de3": {
+      "ProjectGuid": "721af973-ebd2-4b7b-a714-f10ab8520de3",
+      "DisplayName": "SpaceBattleShips",
+      "ColorIndex": 0
+    }
+  },
+  "NextColorIndex": 1
+}
