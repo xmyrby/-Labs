@@ -12,14 +12,13 @@ TTF_Font* font = NULL;
 SDL_Texture* textures[100];
 
 bool devUI = false;
-bool fpsShow = true;
+bool fpsShow = false;
 
 int winWdt = 960;
 int winHgt = 960;
 
 float scrollx = 480, scrolly = 480;
 float scale = 1;
-int scrollship = 2;
 
 int lastTime = SDL_GetTicks(), newTime, delta = 0;
 
@@ -57,6 +56,14 @@ bool Intersect(Position a, Position b, Position c, Position d)
 		&& Area(a, b, c) * Area(a, b, d) <= 0
 		&& Area(c, d, a) * Area(c, d, b) <= 0;
 }
+
+struct Queue
+{
+	int count;
+	bool shot[3];
+	int maxs[3];
+	int counter[3];
+};
 
 struct BoundingBox
 {
@@ -128,9 +135,9 @@ struct Bullet : Object
 
 	int destroyTime;
 
-	int damage;
+	float damage;
 
-	Bullet(Position posC, int sizeWC, int sizeHC, float rotateAngleC, float motionAngleC, int textureId, int destroyTime, int team, int damage) :textureId(textureId), destroyTime(destroyTime), team(team), damage(damage) {
+	Bullet(Position posC, int sizeWC, int sizeHC, float rotateAngleC, float motionAngleC, int textureId, int destroyTime, int team, float damage) :textureId(textureId), destroyTime(destroyTime), team(team), damage(damage) {
 		pos = posC;
 		sizeW = sizeWC;
 		sizeH = sizeHC;
@@ -141,8 +148,8 @@ struct Bullet : Object
 
 	void Move()
 	{
-		pos.x += cos(motionAngle) * 7;
-		pos.y += sin(motionAngle) * 7;
+		pos.x += cos(motionAngle) * 14;
+		pos.y += sin(motionAngle) * 14;
 		CalculateSides();
 	}
 
@@ -221,49 +228,85 @@ void DestroyBullet(int index)
 	bulletsCount--;
 }
 
+struct Turret : Object
+{
+	int textureId;
+	int targetId = -1;
+	int type;
+	int rotating;
+	float damage;
+	int lastShot;
+	int shotInterval;
+	int shotRange;
+	Position offset;
+	int queueType;
+	int queue;
+};
+
 struct SpaceShip : Object
 {
 	float hp;
 	float maxHp;
 
 	float speed;
+	float maxSpeed;
+	float acceleration;
+	int detectRange;
+
+	float rotateSpeed;
 
 	int team;
 	int type;
 
-	int damage;
-
-	int turret;
 	int targetId;
-	int lastShot;
 
-	SpaceShip(Position posC, int sizeWC, int sizeHC, float rotateAngleC, float motionAngleC, float hp, float maxHp, float speed, int team, int type, int damage) :hp(hp), maxHp(maxHp), speed(speed), team(team), type(type), damage(damage) {
-		pos = posC;
-		sizeW = sizeWC;
-		sizeH = sizeHC;
-		rotateAngle = rotateAngleC;
-		motionAngle = motionAngleC;
-		turret = 0;
-		targetId = -1;
-		lastShot = newTime;
-		CalculateSides();
+	Queue queue;
+
+	Turret* turrets;
+	int turretsCount;
+
+	int GetTurretTarget(Turret turret)
+	{
+		if (turret.targetId > -1)
+		{
+			if (ships[targetId].team == team || shipsCount >= turret.targetId)
+				return -1;
+			if (Distance(turret.pos, ships[targetId].pos) > turret.shotRange)
+				return -1;
+		}
+		else
+			for (int i = 0; i < shipsCount; i++)
+			{
+				if (Distance(turret.pos, ships[i].pos) <= turret.shotRange && ships[i].team != team)
+					return i;
+			}
+		return -1;
 	}
 
 	void GetTarget()
 	{
-		if (targetId != -1)
+		if (targetId > -1)
 		{
 			if (ships[targetId].team == team || shipsCount >= targetId)
 				targetId = -1;
-			if (Distance(pos, ships[targetId].pos) > 350)
+			if (Distance(pos, ships[targetId].pos) > detectRange)
 				targetId = -1;
 		}
-		if (targetId == -1)
+		else
 			for (int i = 0; i < shipsCount; i++)
 			{
-				if (Distance(pos, ships[i].pos) <= 350 && ships[i].team != team)
+				if (Distance(pos, ships[i].pos) <= detectRange && ships[i].team != team)
 					targetId = i;
 			}
+
+		for (int i = 0; i < turretsCount; i++)
+		{
+			turrets[i].targetId = -1;
+			if (!turrets[i].rotating)
+				turrets[i].targetId = targetId;
+			else
+				turrets[i].targetId = GetTurretTarget(turrets[i]);
+		}
 	}
 
 	void Move()
@@ -278,42 +321,92 @@ struct SpaceShip : Object
 		}
 
 
-		if (speed < 0.75)
-			speed += 0.02;
+		if (speed < maxSpeed)
+			speed += acceleration;
 		pos.x += cos(motionAngle) * speed;
 		pos.y += sin(motionAngle) * speed;
 
-		if (targetId != -1)
-		{
-			AngularLerp(rotateAngle, GetAngle(ships[targetId].pos, pos) * GRAD, 2);
-			if (newTime >= lastShot + 150)
-			{
-				lastShot = newTime;
 
-				if (turret == 0)
+		for (int i = 0; i < turretsCount; i++)
+		{
+			turrets[i].pos = GetPosRotated(turrets[i].offset.x, turrets[i].offset.y);
+			if (turrets[i].targetId > -1)
+			{
+				if (turrets[i].rotating)
 				{
-					Bullet bullet(GetPosRotated(6, -9), 8, 2, rotateAngle, rotateAngle * RAD, 20 + team, newTime + 1000, team, damage);
-					AddBullet(bullet);
+					Position targetPos = ships[turrets[i].targetId].pos;
+					targetPos.x += ships[turrets[i].targetId].sizeW / 2;
+					targetPos.y += ships[turrets[i].targetId].sizeH / 2;
+					Position firePos = GetPosRotated(turrets[i].offset.x, turrets[i].offset.y);
+					firePos.x += turrets[i].sizeW / 2;
+					firePos.y += turrets[i].sizeH / 2;
+					turrets[i].rotateAngle = GetAngle(targetPos, firePos) * GRAD;
+
 				}
-				else if (turret == 1)
+				if (newTime >= turrets[i].lastShot + 150)
 				{
-					Bullet bullet(GetPosRotated(6, 7), 8, 2, rotateAngle, rotateAngle * RAD, 20 + team, newTime + 1000, team, damage);
-					AddBullet(bullet);
+					turrets[i].lastShot = newTime;
+					if (turrets[i].type == 0)
+					{
+						if (turrets[i].queue == queue.counter[turrets[i].queueType])
+						{
+							queue.shot[turrets[i].queueType] = true;
+							if (!turrets[i].rotating && Distance(turrets[i].pos, ships[i].pos) <= turrets[i].shotRange)
+							{
+								Bullet bullet(GetPosRotated(turrets[i].offset.x, turrets[i].offset.y), 8, 2, rotateAngle, rotateAngle * RAD, 20 + team, newTime + 1000, team, turrets[i].damage);
+								AddBullet(bullet);
+							}
+							else
+							{
+								Bullet bullet(GetPosRotated(turrets[i].offset.x, turrets[i].offset.y), 8, 2, turrets[i].rotateAngle, turrets[i].rotateAngle * RAD, 20 + team, newTime + 1000, team, turrets[i].damage);
+								AddBullet(bullet);
+							}
+						}
+					}
 				}
-				turret = (turret + 1) % 2;
 			}
 		}
-		else
+
+		for (int i = 0; i < queue.count; i++)
 		{
-			rotateAngle += rand() % 7 - 3;
+			if (queue.shot[i])
+			{
+				queue.counter[i] += 1;
+				queue.counter[i] %= queue.maxs[i];
+				queue.shot[i] = false;
+			}
 		}
 
 		float rtA = motionAngle * GRAD;
 		AngularLerp(rtA, rotateAngle, 0.5);
 		motionAngle = rtA * RAD;
 		CalculateSides();
+
+		if (targetId != -1)
+		{
+			Position targetPos = ships[targetId].pos;
+			targetPos.x += ships[targetId].sizeW / 2;
+			targetPos.y += ships[targetId].sizeH / 2;
+			Position firePos = pos;
+			firePos.x += sizeW / 2;
+			firePos.y += sizeH / 2;
+			AngularLerp(rotateAngle, GetAngle(targetPos, firePos) * GRAD, rotateSpeed);
+		}
+		else
+		{
+			for (int i = 0; i < turretsCount; i++)
+			{
+				turrets[i].rotateAngle = rotateAngle;
+			}
+			rotateAngle += rand() % 3 - 1;
+		}
+		for (int i = 0; i < turretsCount; i++)
+			turrets[i].pos = GetPosRotated(turrets[i].offset.x, turrets[i].offset.y);
 	}
 };
+
+SpaceShip* spaceShipTypes;
+int spaceShipTypesCount;
 
 void DestroyShip(int index)
 {
@@ -329,32 +422,97 @@ void DestroyShip(int index)
 	}
 	ships = (SpaceShip*)realloc(ships, sizeof(SpaceShip) * (shipsCount - 1));
 	shipsCount--;
-
-	if (scrollship == index)
-		scrollship = -1;
 }
 
-void InitShips()
+void SpawnShips()
 {
-	shipsCount = 20;
+	shipsCount = 50;
 
 	ships = (SpaceShip*)realloc(ships, sizeof(SpaceShip) * shipsCount);
 
 	for (int i = 0; i < shipsCount; i++)
 	{
-		Position pos = { rand() % 980,rand() % 980 };
-		float angle = rand() % 360;
-		SpaceShip ship(pos, 32, 32, angle, angle * RAD, 100, 100, 0, i % 2, 0, 0.75);
-		ships[i] = ship;
+		int type = 0;
+		if (i % 10 == 0)
+			type = 2;
+
+		ships[i] = spaceShipTypes[type];
+		ships[i].type = type;
+		ships[i].hp = ships[i].maxHp;
+		if (i % 10 == 0)
+		{
+			ships[i].pos.x = 750;
+			ships[i].pos.y = 750;
+			ships[i].team = 1;
+		}
+		else
+		{
+			ships[i].pos.x = 500 + rand() % 250;
+			ships[i].pos.y = 500 + rand() % 250;
+			ships[i].team = 0;
+		}
+
+		ships[i].speed = 0;
+		ships[i].motionAngle = 0 + rand() % 1000;
+		ships[i].rotateAngle = 0 + rand() % 1000;
+
+		ships[i].targetId = 0;
+
+		ships[i].turrets = (Turret*)malloc(sizeof(Turret) * ships[i].turretsCount);
+		for (int j = 0; j < ships[i].turretsCount; j++)
+		{
+			ships[i].turrets[j] = spaceShipTypes[type].turrets[j];
+		}
+
+		for (int j = 0; j < ships[i].queue.count; j++)
+		{
+			ships[i].queue.maxs[j] = spaceShipTypes[type].queue.maxs[j];
+			ships[i].queue.counter[j] = 0;
+		}
 	}
+}
+
+void InitShips()
+{
+	FILE* ft;
+	if (fopen_s(&ft, "Params\\Ships.txt", "rt") != 0)
+	{
+		exit(1);
+	}
+	fscanf_s(ft, "%d", &spaceShipTypesCount);
+
+	spaceShipTypes = (SpaceShip*)malloc(sizeof(SpaceShip) * spaceShipTypesCount);
+
+	for (int i = 0; i < spaceShipTypesCount; i++)
+	{
+		fscanf_s(ft, "%d %d %f %f %f %f %d %d %d", &spaceShipTypes[i].sizeW, &spaceShipTypes[i].sizeH, &spaceShipTypes[i].maxHp, &spaceShipTypes[i].maxSpeed, &spaceShipTypes[i].acceleration, &spaceShipTypes[i].rotateSpeed, &spaceShipTypes[i].turretsCount, &spaceShipTypes[i].detectRange, &spaceShipTypes[i].queue.count);
+
+		for (int j = 0; j < spaceShipTypes[i].queue.count; j++)
+		{
+			fscanf_s(ft, "%d", &spaceShipTypes[i].queue.maxs[j]);
+		}
+
+		spaceShipTypes[i].turrets = (Turret*)malloc(sizeof(Turret) * spaceShipTypes[i].turretsCount);
+		for (int j = 0; j < spaceShipTypes[i].turretsCount; j++)
+			fscanf_s(ft, "%d %d %d %d %d %f %d %f %f %d %d %d", &spaceShipTypes[i].turrets[j].sizeW, &spaceShipTypes[i].turrets[j].sizeH, &spaceShipTypes[i].turrets[j].textureId, &spaceShipTypes[i].turrets[j].type, &spaceShipTypes[i].turrets[j].rotating, &spaceShipTypes[i].turrets[j].damage, &spaceShipTypes[i].turrets[j].shotInterval, &spaceShipTypes[i].turrets[j].offset.x, &spaceShipTypes[i].turrets[j].offset.y, &spaceShipTypes[i].turrets[j].shotRange, &spaceShipTypes[i].turrets[j].queueType, &spaceShipTypes[i].turrets[j].queue);
+	}
+
+	SpawnShips();
 }
 
 void LoadTextures()
 {
 	textures[0] = IMG_LoadTexture(ren, "GFX\\BlueSpaceShip0.png");
+	textures[1] = IMG_LoadTexture(ren, "GFX\\BlueSpaceShip1.png");
+	textures[2] = IMG_LoadTexture(ren, "GFX\\BlueSpaceShip2.png");
 	textures[10] = IMG_LoadTexture(ren, "GFX\\RedSpaceShip0.png");
+	textures[11] = IMG_LoadTexture(ren, "GFX\\RedSpaceShip1.png");
+	textures[12] = IMG_LoadTexture(ren, "GFX\\RedSpaceShip2.png");
 	textures[20] = IMG_LoadTexture(ren, "GFX\\BlueShot.png");
 	textures[21] = IMG_LoadTexture(ren, "GFX\\RedShot.png");
+	textures[50] = IMG_LoadTexture(ren, "GFX\\Turret0.png");
+	textures[51] = IMG_LoadTexture(ren, "GFX\\Turret1.png");
+	textures[52] = IMG_LoadTexture(ren, "GFX\\Turret2.png");
 }
 
 void DeInit(char error)
@@ -463,6 +621,23 @@ void RenderAngleImage(int textureId, Position position, int w, int h, int alpha,
 	SDL_RenderCopyEx(ren, textures[textureId], NULL, &rect, angle, NULL, SDL_FLIP_NONE);
 }
 
+void SetCam()
+{
+	Position minPos{ 100000000,100000000 };
+	Position maxPos{ -100000000 ,-100000000 };
+	for (int i = 0; i < shipsCount; i++)
+	{
+		minPos.x = min(ships[i].pos.x, minPos.x);
+		minPos.y = min(ships[i].pos.y, minPos.y);
+		maxPos.x = max(ships[i].pos.x, maxPos.x);
+		maxPos.y = max(ships[i].pos.y, maxPos.y);
+	}
+
+	scale = min(960 / (maxPos.x - minPos.x), 960 / (maxPos.y - minPos.y))/1.5;
+	Lerp(scrollx, minPos.x + (maxPos.x - minPos.x) / 2, 2.5);
+	Lerp(scrolly, minPos.y + (maxPos.y - minPos.y) / 2, 2.5);
+}
+
 void Draw()
 {
 	SDL_SetRenderDrawColor(ren, 0, 0, 0, 255);
@@ -484,9 +659,6 @@ void Draw()
 	if (fpsShow && delta > 0)
 		PrintText(1000 / max(16, delta), { (900 - (480 / scale - scrollx)) * scale,(90 - (480 / scale - scrolly)) * scale }, 16 * scale, 255, 0);
 
-	if (devUI)
-		PrintText(scrollship, { (90 - (480 / scale - scrollx)) * scale,(90 - (480 / scale - scrolly)) * scale }, 16 * scale, 255, 0);
-
 	for (int i = 0; i < shipsCount; i++)
 	{
 		if (abs(ships[i].pos.x - scrollx) < 500 / scale && abs(ships[i].pos.y - scrolly) < 500 / scale)
@@ -494,7 +666,16 @@ void Draw()
 			if (devUI)
 				PrintText(ships[i].hp, { ships[i].pos.x,ships[i].pos.y + 34 }, 16, 255, 0);
 
-			RenderAngleImage(ships[i].type + ships[i].team * 10, ships[i].pos, 32, 32, 255, ships[i].rotateAngle);
+			RenderAngleImage(ships[i].type + ships[i].team * 10, ships[i].pos, ships[i].sizeW, ships[i].sizeH, 255, ships[i].rotateAngle);
+			for (int j = 0; j < ships[i].turretsCount; j++)
+				if (ships[i].turrets[j].textureId != 0)
+				{
+					Position pos = ships[i].turrets[j].pos;
+					pos.x -= ships[i].turrets[j].sizeW / 2;
+					pos.y -= ships[i].turrets[j].sizeH / 2;
+					RenderAngleImage(ships[i].turrets[j].textureId, pos, ships[i].turrets[j].sizeW, ships[i].turrets[j].sizeH, 255, ships[i].turrets[j].rotateAngle);
+
+				}
 
 			if (devUI)
 			{
@@ -547,14 +728,15 @@ void Draw()
 			{
 				if (ships[j].team != bullets[i].team)
 				{
-					if (CheckCollision(bullets[i].collider, ships[j].collider))
-					{
-						ships[j].hp -= bullets[i].damage;
-						DestroyBullet(i);
-						i--;
-						hit = true;
-						break;
-					}
+					if (Distance(bullets[i].pos, ships[j].pos) <= ships[j].sizeH + ships[j].sizeW)
+						if (CheckCollision(bullets[i].collider, ships[j].collider))
+						{
+							ships[j].hp -= bullets[i].damage;
+							DestroyBullet(i);
+							i--;
+							hit = true;
+							break;
+						}
 				}
 			}
 			if (!hit)
@@ -577,7 +759,6 @@ void MoveShips()
 #undef main;
 int main()
 {
-	int nextCamSwap = 3000;
 	Init();
 
 	srand(time(NULL));
@@ -590,20 +771,9 @@ int main()
 		delta = newTime - lastTime;
 		lastTime = newTime;
 
-		if (scrollship != -1)
-		{
-			scrollship = min(scrollship, shipsCount - 1);
-			Lerp(scrollx, ships[scrollship].pos.x + ships[scrollship].sizeW / 2 * scale, 2.5);
-			Lerp(scrolly, ships[scrollship].pos.y + ships[scrollship].sizeH / 2 * scale, 2.5);
-		}
+		SetCam();
 		Draw();
 		MoveShips();
-
-		if (newTime >= nextCamSwap)
-		{
-			nextCamSwap = newTime + 3500;
-			scrollship = rand() % shipsCount;
-		}
 
 		if (delta < 16)
 		{

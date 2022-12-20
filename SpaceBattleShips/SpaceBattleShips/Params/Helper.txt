@@ -1,0 +1,6 @@
+-ShipsCount
+-SizeW -SizeH -MaxHP -MaxSpeed -Acceleration -RotateSpeed -TurretsCount -DetectRange -QueueTypes
+#Queue
+-Count
+#Turrets
+-SizeW -SizeH -TextureId -Type -Rotating -Damage -ShotInterval -OffsetX -OffsetY -ShotRange -QueueType -ShotQueue

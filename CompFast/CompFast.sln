@@ -1,0 +1,31 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 17
+VisualStudioVersion = 17.0.32014.148
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "CompFast", "CompFast\CompFast.vcxproj", "{826E5D59-E180-487F-83C4-49BF297D1C6B}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|x64 = Debug|x64
+		Debug|x86 = Debug|x86
+		Release|x64 = Release|x64
+		Release|x86 = Release|x86
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{826E5D59-E180-487F-83C4-49BF297D1C6B}.Debug|x64.ActiveCfg = Debug|x64
+		{826E5D59-E180-487F-83C4-49BF297D1C6B}.Debug|x64.Build.0 = Debug|x64
+		{826E5D59-E180-487F-83C4-49BF297D1C6B}.Debug|x86.ActiveCfg = Debug|Win32
+		{826E5D59-E180-487F-83C4-49BF297D1C6B}.Debug|x86.Build.0 = Debug|Win32
+		{826E5D59-E180-487F-83C4-49BF297D1C6B}.Release|x64.ActiveCfg = Release|x64
+		{826E5D59-E180-487F-83C4-49BF297D1C6B}.Release|x64.Build.0 = Release|x64
+		{826E5D59-E180-487F-83C4-49BF297D1C6B}.Release|x86.ActiveCfg = Release|Win32
+		{826E5D59-E180-487F-83C4-49BF297D1C6B}.Release|x86.Build.0 = Release|Win32
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {594615AA-3096-40A9-8192-81D2C96DE36B}
+	EndGlobalSection
+EndGlobal

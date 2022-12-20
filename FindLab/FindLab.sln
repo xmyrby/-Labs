@@ -1,0 +1,31 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 17
+VisualStudioVersion = 17.0.32014.148
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "FindLab", "FindLab\FindLab.vcxproj", "{B56F18A0-5A86-4AE6-86E1-57FA2E121997}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|x64 = Debug|x64
+		Debug|x86 = Debug|x86
+		Release|x64 = Release|x64
+		Release|x86 = Release|x86
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{B56F18A0-5A86-4AE6-86E1-57FA2E121997}.Debug|x64.ActiveCfg = Debug|x64
+		{B56F18A0-5A86-4AE6-86E1-57FA2E121997}.Debug|x64.Build.0 = Debug|x64
+		{B56F18A0-5A86-4AE6-86E1-57FA2E121997}.Debug|x86.ActiveCfg = Debug|Win32
+		{B56F18A0-5A86-4AE6-86E1-57FA2E121997}.Debug|x86.Build.0 = Debug|Win32
+		{B56F18A0-5A86-4AE6-86E1-57FA2E121997}.Release|x64.ActiveCfg = Release|x64
+		{B56F18A0-5A86-4AE6-86E1-57FA2E121997}.Release|x64.Build.0 = Release|x64
+		{B56F18A0-5A86-4AE6-86E1-57FA2E121997}.Release|x86.ActiveCfg = Release|Win32
+		{B56F18A0-5A86-4AE6-86E1-57FA2E121997}.Release|x86.Build.0 = Release|Win32
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {B8B7F3D7-696D-41B5-A79C-1FE7D5FF0D4E}
+	EndGlobalSection
+EndGlobal
