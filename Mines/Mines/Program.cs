@@ -31,18 +31,19 @@ namespace Mines
             command.CommandText = $"SELECT * FROM `mines` WHERE `owner_id`={id}";
             MySqlDataReader reader = command.ExecuteReader();
 
-            List<Mine> mines = null;
+            List<Mine> mines = new List<Mine>();
             if (reader.HasRows)
             {
-                reader.Read();
-
-                mines.Add(new Mine()
+                while (reader.Read())
                 {
-                    Id = reader.GetInt16("id"),
-                    OwnerId = reader.GetInt64("owner_id"),
-                    Deep = reader.GetInt32("deep"),
-                    Income = reader.GetDouble("income")
-                });
+                    mines.Add(new Mine()
+                    {
+                        Id = reader.GetInt16("id"),
+                        OwnerId = reader.GetInt64("owner_id"),
+                        Deep = reader.GetInt32("deep"),
+                        Income = reader.GetDouble("income")
+                    });
+                }
                 reader.Close();
 
                 return mines;
@@ -59,8 +60,34 @@ namespace Mines
 
             if (keys)
             {
-                keyboard.AddButton(new AddButtonParams { Label = "Статистика", Color = KeyboardButtonColor.Default });
-                keyboard.AddButton(new AddButtonParams { Label = "Шахты", Color = KeyboardButtonColor.Default });
+                if (menu == 0)
+                {
+                    keyboard.AddButton(new AddButtonParams { Label = "Статистика", Color = KeyboardButtonColor.Default });
+                    keyboard.AddButton(new AddButtonParams { Label = "Шахты", Color = KeyboardButtonColor.Default });
+                }
+                if (menu / 100 == 1)
+                {
+                    for (int i = 0; i < prm.Count; i++)
+                    {
+                        if ((i + 1) % 3 == 0)
+                            keyboard.AddLine();
+                        keyboard.AddButton(new AddButtonParams { Label = $"Улучшить шахту {prm[i]}", Color = KeyboardButtonColor.Primary });
+                    }
+                    keyboard.AddLine();
+
+                    bool flag = false;
+                    if (menu % 100 < prm.Count / 10 + 1)
+                    {
+                        flag = true;
+                        keyboard.AddButton(new AddButtonParams { Label = "Следующая", Color = KeyboardButtonColor.Positive });
+                    }
+                    if (menu % 100 > 1)
+                    {
+                        if (flag)
+                            keyboard.AddLine();
+                        keyboard.AddButton(new AddButtonParams { Label = "Предыдущая", Color = KeyboardButtonColor.Positive });
+                    }
+                }
             }
 
             try
@@ -134,7 +161,7 @@ namespace Mines
             {
                 if (lastIncome.Minute != DateTime.Now.Minute)
                 {
-                    command.CommandText = "UPDATE `players` SET `gold`=`gold`+(SELECT SUM(`income`) FROM `mines` WHERE `owner_id` = `players`.`id`)";
+                    command.CommandText = "UPDATE `players` SET `gold`=`gold`+(SELECT SUM(`income`)+0 FROM `mines` WHERE `owner_id` = `players`.`id`)";
                     command.ExecuteNonQuery();
                     lastIncome = DateTime.Now;
                 }
@@ -156,8 +183,12 @@ namespace Mines
                     {
                         case "начать":
                             {
-                                Message("🖥Список команд:\n📊Статистика - Вывод статистики\n⏲Шахты - Вывоод списка шахт", player.Id, true, null, player.Menu);
+                                Message("🖥Список команд:\n📊Статистика - Вывод статистики\n⏲Шахты - Вывод списка шахт", player.Id, true, null, player.Menu);
                                 break;
+                            }
+                        case "меню":
+                            {
+                                goto case "начать";
                             }
                         case "статистика":
                             {
@@ -166,40 +197,59 @@ namespace Mines
                             }
                         case "шахты":
                             {
+                                Console.WriteLine(player.Menu);
                                 string answer = "⏲Ваши шахты:\n";
                                 List<Mine> mines = GetMines(player.Id);
-                                List<int> minesIds = null;
+                                List<int> minesIds = new List<int>();
 
                                 if (mines != null)
                                 {
-                                    SetMenu(player.Id, 101);
-                                    player.Id = 101;
-                                    for (int i = 0; i < Math.Min(10, mines.Count); i++)
+                                    if (player.Menu / 100 != 1 || player.Menu == 100 || player.Menu % 100 > mines.Count / 10 + 1)
+                                    {
+                                        player.Menu = 101;
+                                        SetMenu(player.Id, player.Menu);
+                                    }
+
+                                    for (int i = 10 * (player.Menu % 100) - 10; i < Math.Min(player.Menu % 100 * 10, mines.Count); i++)
                                     {
                                         minesIds.Add(mines[i].Id);
                                         answer += $"♨Шахта №{mines[i].Id} 💰{mines[i].Income}/мин 🕳{mines[i].Deep}\n";
-
-                                        Message(answer, player.Id, false, minesIds, player.Menu);
                                     }
+                                    Message(answer, player.Id, true, minesIds, player.Menu);
                                 }
                                 else
                                 {
-                                    SetMenu(player.Id, 100);
-                                    player.Id = 100;
-                                    Message("🚫У вас нет шахт", player.Id, false,null, player.Menu);
+                                    player.Menu = 100;
+                                    SetMenu(player.Id, player.Menu);
+
+                                    Message("🚫У вас нет шахт", player.Id, true, null, player.Menu);
                                 }
                                 break;
                             }
                         case "следующая":
                             {
-                                if (player.Id / 100 == 1)
+                                if (player.Menu / 100 == 1)
+                                {
+                                    player.Menu++;
+                                    SetMenu(player.Id, player.Menu);
                                     goto case "шахты";
+                                }
+                                break;
+                            }
+                        case "предыдущая":
+                            {
+                                if (player.Menu / 100 == 1)
+                                {
+                                    player.Menu--;
+                                    SetMenu(player.Id, player.Menu);
+                                    goto case "шахты";
+                                }
                                 break;
                             }
                         default:
                             {
                                 SetMenu(player.Id, 0);
-                                Message("SERVER SENT CODE 404", player.Id, false,null,0);
+                                Message("SERVER SENT CODE 404", player.Id, false, null, 0);
                                 break;
                             }
                     }

@@ -35,3 +35,39 @@ D:\GitHub\-Labs\Mines\Mines\obj\Debug\Mines.csproj.CoreCompileInputs.cache
 D:\GitHub\-Labs\Mines\Mines\obj\Debug\Mines.csproj.CopyComplete
 D:\GitHub\-Labs\Mines\Mines\obj\Debug\Mines.exe
 D:\GitHub\-Labs\Mines\Mines\obj\Debug\Mines.pdb
+F:\desktop\игры\Проекты\C++ C# C\Git\-Labs\Mines\Mines\bin\Debug\Mines.exe.config
+F:\desktop\игры\Проекты\C++ C# C\Git\-Labs\Mines\Mines\bin\Debug\Mines.exe
+F:\desktop\игры\Проекты\C++ C# C\Git\-Labs\Mines\Mines\bin\Debug\Mines.pdb
+F:\desktop\игры\Проекты\C++ C# C\Git\-Labs\Mines\Mines\bin\Debug\HtmlAgilityPack.dll
+F:\desktop\игры\Проекты\C++ C# C\Git\-Labs\Mines\Mines\bin\Debug\Microsoft.Bcl.AsyncInterfaces.dll
+F:\desktop\игры\Проекты\C++ C# C\Git\-Labs\Mines\Mines\bin\Debug\Microsoft.Extensions.DependencyInjection.Abstractions.dll
+F:\desktop\игры\Проекты\C++ C# C\Git\-Labs\Mines\Mines\bin\Debug\Microsoft.Extensions.DependencyInjection.dll
+F:\desktop\игры\Проекты\C++ C# C\Git\-Labs\Mines\Mines\bin\Debug\Microsoft.Extensions.Logging.Abstractions.dll
+F:\desktop\игры\Проекты\C++ C# C\Git\-Labs\Mines\Mines\bin\Debug\MySql.Data.dll
+F:\desktop\игры\Проекты\C++ C# C\Git\-Labs\Mines\Mines\bin\Debug\Newtonsoft.Json.dll
+F:\desktop\игры\Проекты\C++ C# C\Git\-Labs\Mines\Mines\bin\Debug\System.Buffers.dll
+F:\desktop\игры\Проекты\C++ C# C\Git\-Labs\Mines\Mines\bin\Debug\System.Memory.dll
+F:\desktop\игры\Проекты\C++ C# C\Git\-Labs\Mines\Mines\bin\Debug\System.Numerics.Vectors.dll
+F:\desktop\игры\Проекты\C++ C# C\Git\-Labs\Mines\Mines\bin\Debug\System.Runtime.CompilerServices.Unsafe.dll
+F:\desktop\игры\Проекты\C++ C# C\Git\-Labs\Mines\Mines\bin\Debug\System.Text.Encoding.CodePages.dll
+F:\desktop\игры\Проекты\C++ C# C\Git\-Labs\Mines\Mines\bin\Debug\System.Threading.Tasks.Extensions.dll
+F:\desktop\игры\Проекты\C++ C# C\Git\-Labs\Mines\Mines\bin\Debug\VkNet.dll
+F:\desktop\игры\Проекты\C++ C# C\Git\-Labs\Mines\Mines\bin\Debug\HtmlAgilityPack.pdb
+F:\desktop\игры\Проекты\C++ C# C\Git\-Labs\Mines\Mines\bin\Debug\HtmlAgilityPack.xml
+F:\desktop\игры\Проекты\C++ C# C\Git\-Labs\Mines\Mines\bin\Debug\Microsoft.Bcl.AsyncInterfaces.xml
+F:\desktop\игры\Проекты\C++ C# C\Git\-Labs\Mines\Mines\bin\Debug\Microsoft.Extensions.DependencyInjection.xml
+F:\desktop\игры\Проекты\C++ C# C\Git\-Labs\Mines\Mines\bin\Debug\Microsoft.Extensions.DependencyInjection.Abstractions.xml
+F:\desktop\игры\Проекты\C++ C# C\Git\-Labs\Mines\Mines\bin\Debug\Microsoft.Extensions.Logging.Abstractions.xml
+F:\desktop\игры\Проекты\C++ C# C\Git\-Labs\Mines\Mines\bin\Debug\Newtonsoft.Json.xml
+F:\desktop\игры\Проекты\C++ C# C\Git\-Labs\Mines\Mines\bin\Debug\System.Buffers.xml
+F:\desktop\игры\Проекты\C++ C# C\Git\-Labs\Mines\Mines\bin\Debug\System.Memory.xml
+F:\desktop\игры\Проекты\C++ C# C\Git\-Labs\Mines\Mines\bin\Debug\System.Numerics.Vectors.xml
+F:\desktop\игры\Проекты\C++ C# C\Git\-Labs\Mines\Mines\bin\Debug\System.Runtime.CompilerServices.Unsafe.xml
+F:\desktop\игры\Проекты\C++ C# C\Git\-Labs\Mines\Mines\bin\Debug\System.Text.Encoding.CodePages.xml
+F:\desktop\игры\Проекты\C++ C# C\Git\-Labs\Mines\Mines\bin\Debug\System.Threading.Tasks.Extensions.xml
+F:\desktop\игры\Проекты\C++ C# C\Git\-Labs\Mines\Mines\bin\Debug\VkNet.xml
+F:\desktop\игры\Проекты\C++ C# C\Git\-Labs\Mines\Mines\obj\Debug\Mines.csproj.AssemblyReference.cache
+F:\desktop\игры\Проекты\C++ C# C\Git\-Labs\Mines\Mines\obj\Debug\Mines.csproj.CoreCompileInputs.cache
+F:\desktop\игры\Проекты\C++ C# C\Git\-Labs\Mines\Mines\obj\Debug\Mines.csproj.CopyComplete
+F:\desktop\игры\Проекты\C++ C# C\Git\-Labs\Mines\Mines\obj\Debug\Mines.exe
+F:\desktop\игры\Проекты\C++ C# C\Git\-Labs\Mines\Mines\obj\Debug\Mines.pdb
