@@ -25,6 +25,39 @@ int lastTime = SDL_GetTicks(), newTime, delta = 0;
 const float RAD = M_PI / 180;
 const float GRAD = 180 / M_PI;
 
+Uint32 getpixel(SDL_Surface* surface, int x, int y)
+{
+	int bpp = surface->format->BytesPerPixel;
+	/* Here p is the address to the pixel we want to retrieve */
+	Uint8* p = (Uint8*)surface->pixels + y * surface->pitch + x * bpp;
+
+	switch (bpp)
+	{
+	case 1:
+		return *p;
+		break;
+
+	case 2:
+		return *(Uint16*)p;
+		break;
+
+	case 3:
+		if (SDL_BYTEORDER == SDL_BIG_ENDIAN)
+			return p[0] << 16 | p[1] << 8 | p[2];
+		else
+			return p[0] | p[1] << 8 | p[2] << 16;
+		break;
+
+	case 4:
+		return *(Uint32*)p;
+		break;
+
+	default:
+		return 0;       /* shouldn't happen, but avoids warnings */
+	}
+}
+
+
 void Swap(float& a, float& b)
 {
 	float c = a;
@@ -633,7 +666,7 @@ void SetCam()
 		maxPos.y = max(ships[i].pos.y, maxPos.y);
 	}
 
-	scale = min(960 / (maxPos.x - minPos.x), 960 / (maxPos.y - minPos.y))/1.5;
+	scale = min(960 / (maxPos.x - minPos.x), 960 / (maxPos.y - minPos.y)) / 1.5;
 	Lerp(scrollx, minPos.x + (maxPos.x - minPos.x) / 2, 2.5);
 	Lerp(scrolly, minPos.y + (maxPos.y - minPos.y) / 2, 2.5);
 }
@@ -728,7 +761,7 @@ void Draw()
 			{
 				if (ships[j].team != bullets[i].team)
 				{
-					if (Distance(bullets[i].pos, ships[j].pos) <= ships[j].sizeH + ships[j].sizeW)
+					if (Distance(bullets[i].pos, ships[j].pos) <= max(ships[j].sizeH, ships[j].sizeW))
 						if (CheckCollision(bullets[i].collider, ships[j].collider))
 						{
 							ships[j].hp -= bullets[i].damage;
